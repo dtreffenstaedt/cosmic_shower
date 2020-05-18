@@ -1,0 +1,19 @@
+#ifndef @PROJECT_NAME@_GLOBAL_H
+#define @PROJECT_NAME@_GLOBAL_H
+
+#define START_NAMESPACE namespace @PROJECT_NAME@
+
+START_NAMESPACE
+{
+namespace Config
+{
+namespace Version
+{
+    const int major = @PROJECT_VERSION_MAJOR@;
+    const int minor = @PROJECT_VERSION_MINOR@;
+    const int patch = @PROJECT_VERSION_PATCH@;
+}
+}
+}
+
+#endif // @PROJECT_NAME@_GLOBAL_H

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+shopt -s extglob
+
+rm -rfv !("generate"|"clean"|"build")
