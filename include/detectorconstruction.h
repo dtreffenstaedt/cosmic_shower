@@ -1,0 +1,10 @@
+#ifndef DETECTORCONSTRUCTION_H
+#define DETECTORCONSTRUCTION_H
+
+#include "global.h"
+
+START_NAMESPACE
+{
+}
+
+#endif // DETECTORCONSTRUCTION_H
