@@ -1,0 +1,10 @@
+#ifndef ACTIONINITIALIZATION_H
+#define ACTIONINITIALIZATION_H
+
+#include "global.h"
+
+START_NAMESPACE
+{
+}
+
+#endif // ACTIONINITIALIZATION_H
