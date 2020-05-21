@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
-project (mine)
+project (Mine)
 
 set(PROJECT_BASE_DIR ../)
 set(PROJECT_SOURCE_DIR "${PROJECT_BASE_DIR}src")
@@ -14,13 +14,18 @@ configure_file (
     "${PROJECT_CONFIG_DIR}/global.h.in"
     "${PROJECT_INCLUDE_DIR}/global.h"
 )
+find_package(Geant4 REQUIRED ui_all vis_all)
 
 include(files.cmake)
 
+include(${Geant4_USE_FILE})
 include(includedirectories.cmake)
 include(subdirectories.cmake)
 
+find_package(Geant4 REQUIRED)
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES})
 include(libraries.cmake)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
