@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
-project (Mine)
+project (cosmic_shower)
 
 set(PROJECT_BASE_DIR ../)
 set(PROJECT_SOURCE_DIR "${PROJECT_BASE_DIR}src")
@@ -12,7 +12,7 @@ include(options.cmake)
 
 configure_file (
     "${PROJECT_CONFIG_DIR}/global.h.in"
-    "${PROJECT_INCLUDE_DIR}/global.h"
+    "${PROJECT_BASE_DIR}source/include/global.h"
 )
 find_package(Geant4 REQUIRED ui_all vis_all)
 

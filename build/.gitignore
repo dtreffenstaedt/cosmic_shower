@@ -3,3 +3,6 @@
 !.gitignore
 !build
 !clean
+!run
+!init_vis.mac
+!vis.mac

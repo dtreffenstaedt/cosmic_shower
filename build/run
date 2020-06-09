@@ -1,0 +1,9 @@
+#!/bin/bash
+
+location=$( pwd )
+
+cd /usr/local/bin && . geant4.sh # this file needs to be sourced before execution
+
+cd $location
+
+./cosmic_shower $1
