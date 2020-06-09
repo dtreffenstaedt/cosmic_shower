@@ -16,7 +16,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction() :
     m_particle_gun = new G4ParticleGun(n_of_particles);
 
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition* particle = particle_table->FindParticle("anti_proton");
+    G4ParticleDefinition* particle = particle_table->FindParticle("proton");
     m_particle_gun->SetParticleDefinition(particle);
     m_particle_gun->SetParticleEnergy(1*GeV);
     m_particle_gun->SetParticlePosition(G4ThreeVector(-2*m,0,0));
