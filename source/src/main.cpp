@@ -15,6 +15,8 @@
 
 #include <Randomize.hh>
 
+#include "configmanager.h"
+
 int main(int argc, char* argv[])
 {
     /*
@@ -29,6 +31,8 @@ int main(int argc, char* argv[])
 #else
     G4RunManager* runManager = new G4RunManager;
 #endif
+
+    SHOWER::ConfigManager configManager{"cosmic_config.cfg"};
 
     runManager->SetUserInitialization(new SHOWER::DetectorConstruction());
 
