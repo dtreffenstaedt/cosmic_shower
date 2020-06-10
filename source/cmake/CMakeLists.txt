@@ -14,15 +14,19 @@ configure_file (
     "${PROJECT_BASE_DIR}source/include/global.h"
 )
 find_package(Geant4 REQUIRED ui_all vis_all)
+find_package(libconfig++ REQUIRED)
 
 include(files.cmake)
 
 include(${Geant4_USE_FILE})
 include_directories("${PROJECT_INCLUDE_DIR}")
+include_directories(${LIBCONFIG++_INCLUDE_DIRS})
 
 find_package(Geant4 REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} config++)
+add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES})
+
+add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
