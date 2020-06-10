@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
     SHOWER::ConfigManager configManager{"cosmic_config.cfg"};
 
-    runManager->SetUserInitialization(new SHOWER::DetectorConstruction());
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors()));
 
 
     G4VModularPhysicsList* physicsList = new QGSP_BERT;

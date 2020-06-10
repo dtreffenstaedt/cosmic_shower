@@ -12,8 +12,7 @@ START_NAMESPACE
 {
 SteppingAction::SteppingAction(EventAction* eventAction) :
     G4UserSteppingAction(),
-    m_eventAction(eventAction),
-    m_scoringVolume(0)
+    m_eventAction(eventAction)
 {}
 
 SteppingAction::~SteppingAction()
@@ -21,6 +20,7 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* s)
 {
+    /*
     if (!m_scoringVolume)
     {
         const DetectorConstruction* detector = static_cast<const DetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
@@ -33,7 +33,7 @@ void SteppingAction::UserSteppingAction(const G4Step* s)
     {
         return;
     }
-
+      */
     G4double edep_step = s->GetTotalEnergyDeposit();
     m_eventAction->AddEdep(edep_step);
 }

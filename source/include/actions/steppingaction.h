@@ -21,7 +21,6 @@ public:
     virtual void UserSteppingAction(const G4Step* s);
 private:
     EventAction* m_eventAction;
-    G4LogicalVolume *m_scoringVolume;
 };
 }
 

@@ -9,9 +9,9 @@
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction() :
-    G4VUserDetectorConstruction(),
-    m_scoring_volume(0)
+DetectorConstruction::DetectorConstruction(const std::vector<DetectorSettings>& detectors) :
+    G4VUserDetectorConstruction{},
+    m_detectors{detectors}
 {}
 
 DetectorConstruction::~DetectorConstruction()
@@ -102,10 +102,5 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
     return physical_world;
-}
-
-G4LogicalVolume* DetectorConstruction::GetScoringVolume() const
-{
-    return m_scoring_volume;
 }
 }
