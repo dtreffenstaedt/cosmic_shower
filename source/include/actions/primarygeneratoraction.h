@@ -24,7 +24,6 @@ public:
 
 private:
     G4ParticleGun* m_particle_gun;
-    G4ParticleGun* m_particle_gun2;
     G4Box* m_envelope_box;
 };
 }

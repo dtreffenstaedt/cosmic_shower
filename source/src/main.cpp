@@ -8,7 +8,7 @@
 #endif
 
 #include <G4UImanager.hh>
-#include <QBBC.hh>
+#include <QGSP_BERT.hh>
 
 #include <G4VisExecutive.hh>
 #include <G4UIExecutive.hh>
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     runManager->SetUserInitialization(new SHOWER::DetectorConstruction());
 
 
-    G4VModularPhysicsList* physicsList = new QBBC;
+    G4VModularPhysicsList* physicsList = new QGSP_BERT;
     physicsList->SetVerboseLevel(1);
 
     runManager->SetUserInitialization(physicsList);
