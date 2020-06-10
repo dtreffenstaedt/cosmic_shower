@@ -31,6 +31,8 @@ h_max:		upper bound of simulated region
 
 ρ(h):		density by altitude
 
+N:		number of layers
+
 The program takes the following arguments:
 ```
 possible parameters:
