@@ -43,7 +43,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
     man->OpenFile("histogram");
 }
 
-void RunAction::EndOfRunAction(const G4Run* run)
+void RunAction::EndOfRunAction(const G4Run*)
 {
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     if (man->GetH1(0))

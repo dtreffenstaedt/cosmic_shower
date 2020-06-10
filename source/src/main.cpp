@@ -17,7 +17,7 @@
 
 #include "configmanager.h"
 
-int main(int argc, char* argv[])
+int main()
 {
     /*
     G4UIExecutive *ui = 0;

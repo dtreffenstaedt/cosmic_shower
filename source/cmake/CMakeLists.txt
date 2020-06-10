@@ -13,6 +13,7 @@ configure_file (
     "${PROJECT_CONFIG_DIR}/global.h.in"
     "${PROJECT_BASE_DIR}source/include/global.h"
 )
+add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
 find_package(Geant4 REQUIRED ui_all vis_all)
 find_package(libconfig++ REQUIRED)
 

@@ -13,7 +13,6 @@ ConfigManager* ConfigManager::singleton()
 ConfigManager::ConfigManager(const std::string& fileName)
 {
     m_config.readFile(fileName.c_str());
-
     if (!m_config.getRoot().exists("detectors"))
     {
         throw NoDetectorsDefined();
