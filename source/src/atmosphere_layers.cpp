@@ -186,25 +186,21 @@ public:
 
     bool optimise(const size_t& j = 0, const size_t& i = 1)
     {
-        if (j >= (total_n()/2) + 1)
+        if (j >= (total_n())) // limit the number of tries for lower level layers
         {
             return false;
         }
 
-        bool finished = fit_to_area(average_area());
+        bool finished = fit_to_area(average_area()); // try and adjust the layer thickness to the average area of all following layers
         if (m_next)
         {
             m_next->optimise(0, i +1);
-        }
-        else
-        {
-            return finished;
         }
         if (std::abs(average_area() - area()) > Consts::epsilon)
         {
             return optimise(j + 1, i);
         }
-        return true;
+        return finished;
     }
 
     void print()
@@ -321,7 +317,7 @@ int main(int argc, char* argv[])
     }
     if (!csv)
     {
-        std::cout<<"Calculating layers for parameters:\n\tupper limit: "<<upper<<"m.\n\tlower limit: "<<lower<<"\n\tn = "<<std::to_string(n)<<'\n';
+        std::cout<<"Calculating layers for parameters:\n\th_min = "<<lower<<"m\n\th_max = "<<upper<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
     // lower bound, upper bound, layers
     Layer* layers = Layer::create(lower, upper, n);            
