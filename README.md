@@ -6,7 +6,7 @@ Dependencies are:
 - Geant4 >= 10.6
 - libconfig(++) >= 1.7.2
 
-To build, execute the generate script from the build directory and run make.
+To build, execute the `generate` script from the build directory and run `make`.
 
 
 ### cosmic_shower
