@@ -1,7 +1,7 @@
-# cosmic_shower
+# Cosmic Shower
 Cosmic shower simulation in Geant4
 
-# building
+### building
 Dependencies are: 
 - Geant4 >= 10.6
 - libconfig(++) >= 1.7.2
@@ -9,7 +9,7 @@ Dependencies are:
 To build, execute the generate script from the build directory and run make.
 
 
-# atmospheric_layers
+### atmospheric_layers
 
 To minimise the error caused by a discrete number of layers in the atmospheric simulation, the layer thickness is non-uniform.
 
@@ -30,13 +30,13 @@ possible parameters:
 ```
 execution may take a while depending on number of layers and total thickness.
 
-# cosmic_shower
+### cosmic_shower
 
 This is the simulation software, it reads the configuration file `shower.cfg` from the directory it is executed from.
 
 It does not produce usable output as of yet.
 
-# configuration
+### configuration
 
 The configuration file is in the syntax of [libconfig](http://hyperrealm.com/libconfig/libconfig_manual.html#Configuration-Files).
 
