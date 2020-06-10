@@ -14,10 +14,19 @@ To build, execute the generate script from the build directory and run make.
 To minimise the error caused by a discrete number of layers in the atmospheric simulation, the layer thickness is non-uniform.
 
 The atmospheric_layers program calculates the individual layer thickness. To do that, it iteratively adjusts the thicknesses until 
-```
-int(ρ(h), h, h_min_i, h_max_i) - 1/N * int(ρ(h), h, h_min, h_max)
-```
-is within a certain margin for every layer.
+![eqn](https://latex.codecogs.com/gif.latex?%5Cint_%7Bh_%7Bmin_i%7D%7D%5E%7Bh_%7Bmax_i%7D%7D%7B%5Crho%28h%29dh%7D%20-%20%5Cfrac%7B1%7D%7BN%7D%5Cint_%7Bh_%7Bmin%7D%7D%5E%7Bh_%7Bmax%7D%7D%7B%5Crho%28h%29dh%7D%20%3D%200)
+
+where
+
+h_max_i:	lower bound of layer
+
+h_min_i:	upper bound of layer
+
+h_min:		lower bound of simulated region
+
+h_max:		upper bound of simulated region
+
+ρ(h):		density by altitude
 
 The program takes the following arguments:
 ```
