@@ -9,6 +9,18 @@ Dependencies are:
 To build, execute the generate script from the build directory and run make.
 
 
+### cosmic_shower
+
+This is the simulation software, it reads the configuration file `shower.cfg` from the directory it is executed from.
+
+It does not produce usable output as of yet.
+
+### configuration
+
+The configuration file is in the syntax of [libconfig](http://hyperrealm.com/libconfig/libconfig_manual.html#Configuration-Files).
+
+More to come. 
+
 ### atmospheric_layers
 
 To minimise the error caused by a discrete number of layers in the atmospheric simulation, the layer thickness is non-uniform.
@@ -43,16 +55,3 @@ possible parameters:
 	--csv		generate csv formatted output`
 ```
 execution may take a while depending on number of layers and total thickness.
-
-### cosmic_shower
-
-This is the simulation software, it reads the configuration file `shower.cfg` from the directory it is executed from.
-
-It does not produce usable output as of yet.
-
-### configuration
-
-The configuration file is in the syntax of [libconfig](http://hyperrealm.com/libconfig/libconfig_manual.html#Configuration-Files).
-
-More to come. 
-
