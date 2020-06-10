@@ -24,9 +24,14 @@ long double func(const long double& h)
     return std::exp(h*factor());
 }
 
-long double integral(const long double& lower, const long double& upper, const long double& offset, const long double& fact)
+long double integral(const long double& lower, const long double& upper, const long double& offset)
 {
-    return std::abs(fact/factor() * (func(upper) - func(lower)) - offset*(upper - lower));
+    return std::abs(1/factor() * (func(upper) - func(lower)) - offset*(upper - lower));
+}
+
+long double integral(const long double& lower, const long double& upper)
+{
+    return (1/factor() * (func(upper) - func(lower)));
 }
 
 
@@ -56,28 +61,7 @@ public:
     }
 
     virtual ~Layer() {}
-
-    long double area() const
-    {
-        long double h = (m_upper + m_lower)/2;
-        long double middle = func(h);
-        return middle * thickness();
-    }
-
-    long double total_area() const
-    {
-        if (m_next)
-        {
-            return m_next->total_area() + area();
-        }
-        return area();
-    }
-
-    long double average_area() const
-    {
-        return total_area() / total_n();
-    }
-
+    
     long double total_upper() const
     {
         if (m_next)
@@ -113,7 +97,7 @@ public:
     {
         long double h = (m_upper - m_lower)/2 + m_lower;
         long double middle = func(h);
-        return (integral(m_lower, h, middle, 1) + integral(h, m_upper, middle, 1))/std::abs(m_upper - m_lower);
+        return (integral(m_lower, h, middle) + integral(h, m_upper, middle))/std::abs(m_upper - m_lower);
     }
 
     long double smallest_error() const
@@ -129,6 +113,26 @@ public:
             return c;
         }
         return error();
+    }
+
+    long double total_lower() const
+    {
+        if (m_prev)
+        {
+            return m_prev->total_lower();
+        }
+        return m_lower;
+    }
+
+
+    long double total_integral() const
+    {
+        return integral(m_lower, total_upper());
+    }
+
+    long double average_integral() const
+    {
+        return 1/total_n() * total_integral();
     }
 
     long double biggest_error() const
@@ -166,7 +170,7 @@ public:
 
     bool fit_to_area(const long double& target)
     {
-        if (std::abs(area() - target) < Consts::epsilon)
+        if (std::abs(integral(m_lower, m_upper) - target) < Consts::epsilon)
         {
             return true;
         }
@@ -175,7 +179,7 @@ public:
         {
             resize(target / func((m_upper + m_lower) / 2));
             i++;
-        } while ((std::abs(area()-target) > Consts::epsilon) && (i < 10));
+        } while ((std::abs(integral(m_lower, m_upper)-target) > Consts::epsilon) && (i < 10));
         return false;
     }
 
@@ -191,12 +195,12 @@ public:
             return false;
         }
 
-        bool finished = fit_to_area(average_area()); // try and adjust the layer thickness to the average area of all following layers
+        bool finished = fit_to_area(average_integral()); // try and adjust the layer thickness to the average area of all following layers
         if (m_next)
         {
             m_next->optimise(0, i +1);
         }
-        if (std::abs(average_area() - area()) > Consts::epsilon)
+        if (std::abs(average_integral() - integral(m_lower, m_upper)) > Consts::epsilon)
         {
             return optimise(j + 1, i);
         }
