@@ -62,6 +62,15 @@ public:
 
     virtual ~Layer() {}
     
+    long double total_lower() const
+    {
+        if (m_prev)
+        {
+            return m_prev->total_lower();
+        }
+        return m_lower;
+    }
+
     long double total_upper() const
     {
         if (m_next)
@@ -115,24 +124,15 @@ public:
         return error();
     }
 
-    long double total_lower() const
-    {
-        if (m_prev)
-        {
-            return m_prev->total_lower();
-        }
-        return m_lower;
-    }
-
 
     long double total_integral() const
     {
-        return integral(m_lower, total_upper());
+        return integral(total_lower(), total_upper());
     }
 
     long double average_integral() const
     {
-        return 1/total_n() * total_integral();
+        return 1/total_n(true) * total_integral();
     }
 
     long double biggest_error() const
@@ -159,8 +159,16 @@ public:
         return error();
     }
 
-    long double total_n() const
+    long double total_n(const bool& all = false) const
     {
+        if (all)
+        {
+            if (!m_prev)
+            {
+                return m_next->total_n() + 1;
+            }
+            return m_prev->total_n(true);
+        }
         if (m_next)
         {
             return m_next->total_n() + 1;
