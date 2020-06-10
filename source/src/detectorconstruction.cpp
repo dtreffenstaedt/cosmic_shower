@@ -9,7 +9,7 @@
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction(const std::vector<DetectorSettings>& detectors) :
+DetectorConstruction::DetectorConstruction(const std::variant<std::vector<DetectorSettings>, size_t>& detectors) :
     G4VUserDetectorConstruction{},
     m_detectors{detectors}
 {}

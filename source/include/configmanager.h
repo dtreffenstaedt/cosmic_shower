@@ -5,6 +5,7 @@
 #include <libconfig.h++>
 #include <string>
 #include <vector>
+#include <variant>
 
 START_NAMESPACE
 {
@@ -45,7 +46,9 @@ public:
 
     static ConfigManager* singleton();
 
-    std::vector<DetectorSettings> get_detectors() const;
+    std::variant<std::vector<DetectorSettings>, size_t> get_detectors() const;
+    
+    std::vector<std::string> get_particles() const;
 private:
 
     libconfig::Config m_config;
