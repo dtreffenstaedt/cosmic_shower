@@ -11,7 +11,6 @@ namespace Consts
     constexpr long double r_0 = 1.225;
     constexpr long double p_0 = 101325;
     constexpr long double T_0 = 273.15+15;
-    constexpr long double epsilon = 0.000000000001;
 }
 
 constexpr long double factor()
@@ -105,8 +104,8 @@ public:
     long double error() const
     {
         long double h = (m_upper - m_lower)/2 + m_lower;
-        long double middle = func(h);
-        return (integral(m_lower, h, middle) + integral(h, m_upper, middle))/std::abs(m_upper - m_lower);
+        long double middle = integral(m_lower, m_upper)/thickness();
+        return (integral(m_lower, h, middle) + integral(h, m_upper, middle))/thickness();
     }
 
     long double smallest_error() const
@@ -178,16 +177,16 @@ public:
 
     bool fit_to_area(const long double& target)
     {
-        if (std::abs(integral(m_lower, m_upper) - target) < Consts::epsilon)
+        if (std::abs(integral(m_lower, m_upper) - target) < std::numeric_limits<long double>::epsilon())
         {
             return true;
         }
         size_t i = 0;
         do
         {
-            resize(target / func((m_upper + m_lower) / 2));
+            resize(target / (integral(m_lower, m_upper)/thickness()));
             i++;
-        } while ((std::abs(integral(m_lower, m_upper)-target) > Consts::epsilon) && (i < 10));
+        } while ((std::abs(integral(m_lower, m_upper)-target) > std::numeric_limits<long double>::epsilon()) && (i < 10));
         return false;
     }
 
@@ -208,7 +207,7 @@ public:
         {
             m_next->optimise(0, i +1);
         }
-        if (std::abs(average_integral() - integral(m_lower, m_upper)) > Consts::epsilon)
+        if (std::abs(average_integral() - integral(m_lower, m_upper)) > std::numeric_limits<long double>::epsilon())
         {
             return optimise(j + 1, i);
         }
@@ -235,7 +234,7 @@ public:
     void print_detailed(const size_t& n = 1)
     {
         std::cout<<"\nlayer "<<std::to_string(n)<<":\n lower bound: "<<m_lower<<"m\n upper bound: "<<m_upper<<"m\n t = "<<m_upper - m_lower<<'m';
-        std::cout<<"\n ρ = "<<func((m_upper + m_lower)/2)*Consts::r_0<<"kg/m^3\n p = "<<func((m_upper + m_lower)/2)*Consts::p_0<<"Pa\n f = "<<func((m_upper + m_lower)/2);
+        std::cout<<"\n ρ = "<<(integral(m_lower, m_upper)/thickness())*Consts::r_0<<"kg/m^3\n p = "<<(integral(m_lower, m_upper)/thickness())*Consts::p_0<<"Pa\n f = "<<(integral(m_lower, m_upper)/thickness());
         std::cout<<"\n ε = "<<error()<<'\n';
         if (m_next)
         {
@@ -249,7 +248,7 @@ public:
         {
             std::cout<<"n,lower,upper,average,f\n";
         }
-        std::cout<<std::to_string(n)<<','<<m_lower<<','<<m_upper<<','<<(m_lower + m_upper)/2<<','<<func((m_upper + m_lower)/2)<<'\n';
+        std::cout<<std::to_string(n)<<','<<m_lower<<','<<m_upper<<','<<(m_lower + m_upper)/2<<','<<(integral(m_lower, m_upper)/thickness())<<'\n';
         if (m_next)
         {
             m_next->print_csv(n + 1);
