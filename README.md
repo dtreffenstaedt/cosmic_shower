@@ -14,7 +14,10 @@ To build, execute the generate script from the build directory and run make.
 To minimise the error caused by a discrete number of layers in the atmospheric simulation, the layer thickness is non-uniform.
 
 The atmospheric_layers program calculates the individual layer thickness. To do that, it iteratively adjusts the thicknesses until 
+
 ![eqn](https://latex.codecogs.com/gif.latex?%5Cint_%7Bh_%7Bmin_i%7D%7D%5E%7Bh_%7Bmax_i%7D%7D%7B%5Crho%28h%29dh%7D%20-%20%5Cfrac%7B1%7D%7BN%7D%5Cint_%7Bh_%7Bmin%7D%7D%5E%7Bh_%7Bmax%7D%7D%7B%5Crho%28h%29dh%7D%20%3D%200)
+
+for every layer
 
 where
 
