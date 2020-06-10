@@ -1,6 +1,6 @@
 FROM fedora:30
 
-RUN dnf install gcc g++ make cmake wget expat-devel gdb qt5-devel libX11-devel freeglut-devel libXmu-devel -y
+RUN dnf install gcc g++ make cmake wget expat-devel gdb qt5-devel libX11-devel freeglut-devel libXmu-devel libconfig libconfig-devel -y
 
 RUN mkdir -p /builddir/geant4/
 

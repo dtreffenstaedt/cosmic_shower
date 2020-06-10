@@ -1,1 +1,0 @@
-#cmakedefine USE_$%GUARD%$
