@@ -24,13 +24,13 @@ int main(int argc, char* argv[])
         ui = new G4UIExecutive(argc, argv, "qt");
     }
 */
-#ifdef G$MULTITHREADED
+#ifdef G4MULTITHREADED
     G4MTRunManager* runManager = new G4MTRunManager;
 #else
     G4RunManager* runManager = new G4RunManager;
 #endif
 
-    runManager->SetUserInitialization(new Mine::DetectorConstruction());
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction());
 
 
     G4VModularPhysicsList* physicsList = new QBBC;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     runManager->SetUserInitialization(physicsList);
 
-    runManager->SetUserInitialization(new Mine::ActionInitialization());
+    runManager->SetUserInitialization(new SHOWER::ActionInitialization());
     
     runManager->Initialize();
 /*

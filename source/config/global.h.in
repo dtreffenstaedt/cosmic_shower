@@ -1,7 +1,7 @@
 #ifndef @PROJECT_NAME@_GLOBAL_H
 #define @PROJECT_NAME@_GLOBAL_H
 
-#define START_NAMESPACE namespace @PROJECT_NAME@
+#define START_NAMESPACE namespace SHOWER
 
 START_NAMESPACE
 {

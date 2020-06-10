@@ -1,7 +1,7 @@
 #ifndef cosmic_shower_GLOBAL_H
 #define cosmic_shower_GLOBAL_H
 
-#define START_NAMESPACE namespace cosmic_shower
+#define START_NAMESPACE namespace SHOWER
 
 START_NAMESPACE
 {
