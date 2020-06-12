@@ -23,35 +23,15 @@ More to come.
 
 ### atmospheric_layers
 
-To minimise the error caused by a discrete number of layers in the atmospheric simulation, the layer thickness is non-uniform.
+This program iteratively calculates the individual layer thickness so the mass of all layers is the same. 
 
-The atmospheric_layers program calculates the individual layer thickness. To do that, it iteratively adjusts the thicknesses until 
-
-![eqn](https://latex.codecogs.com/gif.latex?%5Cint_%7Bh_%7Bmin_i%7D%7D%5E%7Bh_%7Bmax_i%7D%7D%7B%5Crho%28h%29dh%7D%20-%20%5Cfrac%7B1%7D%7BN%7D%5Cint_%7Bh_%7Bmin%7D%7D%5E%7Bh_%7Bmax%7D%7D%7B%5Crho%28h%29dh%7D%20%3D%200)
-
-for every layer
-
-where
-
-h_max_i:	lower bound of layer
-
-h_min_i:	upper bound of layer
-
-h_min:		lower bound of simulated region
-
-h_max:		upper bound of simulated region
-
-ρ(h):		density by altitude
-
-N:		number of layers
-
-The program takes the following arguments:
+It takes the following arguments:
 ```
 possible parameters:
 	-h		print this help
 	-u <double>	set upper limit
 	-l <double>	set lower limit
 	-n <int>	set number of layers
-	--csv		generate csv formatted output`
+	--csv		generate csv formatted output
 ```
 execution may take a while depending on number of layers and total thickness.
