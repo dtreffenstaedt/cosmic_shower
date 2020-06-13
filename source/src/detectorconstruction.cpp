@@ -147,7 +147,7 @@ void DetectorConstruction::construct_detectors()
                 for (size_t j = 0; j < row; j++)
                 {
                     pos_y += distance;
-                    place_detector("detector" + std::to_string(i*j), pos_x, pos_y);
+                    place_detector("detector" + std::to_string(i*j), pos_x, pos_y, - m_atmosphere_upper * 0.5);
                 }
             }
         }
@@ -159,7 +159,7 @@ void DetectorConstruction::construct_detectors()
             {
                 G4double x = std::cos(angle * static_cast<double>(i)) * r + m_world_size * 0.5;
                 G4double y = std::sin(angle * static_cast<double>(i)) * r + m_world_size * 0.5;
-                place_detector("detector" + std::to_string(i), x, y);
+                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_upper * 0.5);
             }
         }
     }
@@ -169,7 +169,7 @@ void DetectorConstruction::construct_detectors()
         for (size_t i = 0; i < detectors.size(); i++)
         {
             Config::DetectorPlacement placement = detectors[i];
-            place_detector(placement.name, (placement.x * m) + m_world_size * 0.5, (placement.y * m) + m_world_size * 0.5, placement.z * m);
+            place_detector(placement.name, (placement.x * m), (placement.y * m), (placement.z * m) - (m_atmosphere_upper * 0.5));
         }
     }
 }

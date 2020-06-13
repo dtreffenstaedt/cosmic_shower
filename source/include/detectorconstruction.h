@@ -42,7 +42,7 @@ protected:
     void construct_magnetic_field();
     void construct_detectors();
 
-    void place_detector(const std::string &name, const G4double& x, const G4double& y, const G4double &z = 0 * m);
+    void place_detector(const std::string &name, const G4double& x, const G4double& y, const G4double &z);
 };
 }
 
