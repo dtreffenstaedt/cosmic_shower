@@ -20,17 +20,23 @@ struct DetectorPlacement
 
 struct InitialParticle
 {
-    double x;   // X position
-    double y;   // Y position
-    double z;   // Z position
+    struct
+    {
+        double x;   // X position
+        double y;   // Y position
+        double z;   // Z position
+    } origin;
 
-    double m_x; // x momentum
-    double m_y; // y momentum
-    double m_z; // z momentum
+    struct
+    {
+        double x; // x momentum
+        double y; // y momentum
+        double z; // z momentum
 
-    double m;   // momentum magnitude
+        double m;   // momentum magnitude
+    } momentum;
 
-    std::string type;   // type of initial particle
+    int particle;   // type of initial particle
 };
 
 struct AtmosphereLayer
@@ -83,7 +89,7 @@ public:
     /**
      * List of particles to be simulated
      */
-    std::vector<std::string> get_particles() const;
+    std::vector<int> get_particles() const;
     
     /**
      * List of atmospheric layers to be created

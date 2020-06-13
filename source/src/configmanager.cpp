@@ -74,14 +74,14 @@ std::vector<AtmosphereLayer> ConfigManager::get_atmosphere_layers() const
     return layers;
 }
 
-std::vector<std::string> ConfigManager::get_particles() const
+std::vector<int> ConfigManager::get_particles() const
 {
     const libconfig::Setting& particles_setting = (m_config.getRoot())["particles"];
-    std::vector<std::string> particles;
+    std::vector<int> particles;
     size_t len = particles_setting.getLength();
     for (size_t i = 0; i < len; i++)
     {
-        particles.push_back(static_cast<std::string>(particles_setting[i]));
+        particles.push_back(static_cast<int>(particles_setting[i]));
     }
     return particles;
 }
