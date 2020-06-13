@@ -186,4 +186,9 @@ It takes the following arguments:
 	-csv		generate csv formatted output
 	-config		generate libconfig formatted output
 ```
-execution may take a while depending on number of layers and total thickness.
+The parameter `-k` is the heat capacit ratio. it is dependent on the temperature gradient of the atmosphere and can be calculated with the formula
+```
+κ = (M * g) / (M * g - R * dT/dh)
+```
+Due to the default temperature gradient being linear, there is a cutoff altitude which cannot be crossed.
+With the current default values this cutoff altitude is roughly 44300 m.
