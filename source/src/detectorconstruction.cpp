@@ -22,28 +22,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 
     G4NistManager* nist = G4NistManager::Instance();
-    G4double world_side = 40*km; // cube shaped world, side length
+    G4double world_side = 40 * km; // cube shaped world, side length
     G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
-    G4double rho_0 = 1.225 * kg / m3; // density of air, standard atmosphere
 
     // +++ Construct the world
 
     G4Box* world_box = new G4Box("World", world_side * 0.5, world_side * 0.5, world_side * 0.5);
 
-    G4double atomicNumber = 1.;
-    G4double massOfMole = 1.008*g/mole;
-    G4double density = 1.e-25*g/cm3;
-    G4double temperature = 2.73*kelvin;
-    G4double pressure = 3.e-18*pascal;
-
     G4Material* vacuum = new G4Material(
             "interGalactic",
-            atomicNumber,
-            massOfMole,
-            density,
+            1.,
+            1.008 * g / mole,
+            1.e-25 * g / cm3,
             kStateGas,
-            temperature,
-            pressure);
+            2.73 * kelvin,
+            3.e-18 * pascal);
 
 
     G4LogicalVolume* logical_world = new G4LogicalVolume(world_box, vacuum, "World");
