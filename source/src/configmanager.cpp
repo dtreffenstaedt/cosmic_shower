@@ -37,8 +37,8 @@ std::variant<std::vector<DetectorPlacement>, size_t> ConfigManager::get_detector
             const libconfig::Setting& detector = detectors_setting[i];
             DetectorPlacement settings;
             if (!(detector.lookupValue("x", settings.x) &&
-                detector.lookupValue("y", settings.x) &&
-                detector.lookupValue("z", settings.x) &&
+                detector.lookupValue("y", settings.y) &&
+                detector.lookupValue("z", settings.z) &&
                 detector.lookupValue("name", settings.name))
                 )
             {
