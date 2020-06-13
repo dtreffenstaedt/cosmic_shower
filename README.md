@@ -28,10 +28,14 @@ This program iteratively calculates the individual layer thickness so the mass o
 It takes the following arguments:
 ```
 possible parameters:
-	-h		print this help
-	-u <double>	set upper limit
-	-l <double>	set lower limit
-	-n <int>	set number of layers
-	--csv		generate csv formatted output
+    -h      print this help
+    -u <double> set upper limit
+    -T <double> Set temperature at sealevel
+    -p <double> Set pressure at sealevel
+    -rho <double>   Set density at sealevel
+    -k <double> Set heat capacity ratio
+    -n <int>    set number of layers
+    -csv        generate csv formatted output
+    -config     generate libconfig formatted output
 ```
 execution may take a while depending on number of layers and total thickness.
