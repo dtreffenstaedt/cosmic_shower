@@ -8,58 +8,90 @@ namespace Consts
     constexpr long double R = 8.31446261815324;
     constexpr long double M = 28.96/1000;
     constexpr long double g = 9.81;
-    constexpr long double r_0 = 1.225;
-    constexpr long double p_0 = 101325;
-    constexpr long double T_0 = 273.15+15;
+    long double rho_0 = 1.225;
+    long double p_0 = 101325;
+    long double T_0 = 273.15+15;
+    long double kappa = 1.235;
+    long double a()
+    {
+        return (Consts::kappa - 1)/Consts::kappa * Consts::M*Consts::g/Consts::R;
+    }
 }
 
-constexpr long double factor()
+class OptimisationTarget
 {
-    return - (Consts::M * Consts::g / (Consts::R * Consts::T_0));
-        
-}
-long double func(const long double& h)
-{
-    return std::exp(h*factor());
-}
+public:
+    virtual long double func(const long double& h) = 0;
+    virtual long double integral(const long double& lower, const long double& upper) = 0;
+};
 
-long double integral(const long double& lower, const long double& upper, const long double& offset)
+class Pressure : public OptimisationTarget
 {
-    return std::abs(1/factor() * (func(upper) - func(lower)) - offset*(upper - lower));
-}
+public:
+    virtual long double func(const long double& h)
+    {
+        return Consts::p_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::kappa/(Consts::kappa - 1));
+    }
 
-long double integral(const long double& lower, const long double& upper)
+    virtual long double integral(const long double& lower, const long double& upper)
+    {
+        return Consts::p_0*(func(lower)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*lower))/(Consts::a()*(2 * Consts::kappa - 1)) - Consts::p_0*(func(upper)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a() * upper))/(Consts::a()*(2 * Consts::kappa - 1));
+    }
+};
+
+class Density : public OptimisationTarget
 {
-    return (1/factor() * (func(upper) - func(lower)));
-}
+public:
+    virtual long double func(const long double& h)
+    {
+        return Consts::rho_0 * std::pow((1 - Consts::a() * h/Consts::T_0), 1/(Consts::kappa - 1));
+    }
 
+    virtual long double integral(const long double& lower, const long double& upper)
+    {
+        return Consts::rho_0*(func(lower)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*lower))/(Consts::a()*Consts::kappa) - Consts::rho_0*(func(upper)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a() * upper))/(Consts::a()*Consts::kappa);
+    }
+};
+
+class Temperature : public OptimisationTarget
+{
+public:
+    virtual long double func(const long double& h)
+    {
+        return Consts::T_0 * (1 - Consts::a() * h/Consts::T_0);
+    }
+
+    virtual long double integral(const long double& lower, const long double& upper)
+    {
+        return Consts::T_0 * (upper - lower) - Consts::a()*(std::pow(upper, 2) - std::pow(lower,2))/2;
+    }
+};
 
 class Layer
 {
 public:
-    Layer(const long double& lower, const long double& upper, Layer* parent = 0) :
+    Layer(const long double& lower, const long double& upper, OptimisationTarget* target, Layer* parent = 0) :
         m_lower{lower},
         m_upper{upper},
-        m_prev{parent}
+        m_prev{parent},
+        m_target{target}
     {
     }
 
-    static Layer* create(const long double& lower, const long double& upper, const size_t& n)
+    static Layer* create(const long double& lower, const long double& upper, OptimisationTarget* target, const size_t& n)
     {
         long double thickness = (upper - lower)/static_cast<long double>(n);
         long double h = lower + thickness;
-        Layer* first = new Layer(lower, h);
+        Layer* first = new Layer(lower, h, target);
         Layer* last = first;
         for (size_t i = 1; i < n; i++)
         {
-            last->m_next = new Layer(h, h+thickness, last);
+            last->m_next = new Layer(h, h+thickness, target, last);
             h += thickness;
             last = last->m_next;
         }
         return first;
     }
-
-    virtual ~Layer() {}
     
     long double total_lower() const
     {
@@ -101,28 +133,10 @@ public:
         m_next->move(m_upper);
     }
 
-    long double error() const
+    long double integral(const long double& lower, const long double& upper) const
     {
-        long double h = (m_upper - m_lower)/2 + m_lower;
-        long double middle = integral(m_lower, m_upper)/thickness();
-        return (integral(m_lower, h, middle) + integral(h, m_upper, middle))/thickness();
+        return m_target->integral(lower, upper);
     }
-
-    long double smallest_error() const
-    {
-        if (m_next)
-        {
-            long double c = m_next->smallest_error();
-            long double e = error();
-            if (e < c)
-            {
-                return e;
-            }
-            return c;
-        }
-        return error();
-    }
-
 
     long double total_integral() const
     {
@@ -132,30 +146,6 @@ public:
     long double average_integral() const
     {
         return 1/total_n(true) * total_integral();
-    }
-
-    long double biggest_error() const
-    {
-        if (m_next)
-        {
-            long double c = m_next->biggest_error();
-            long double e = error();
-            if (e < c)
-            {
-                return c;
-            }
-            return e;
-        }
-        return error();
-    }
-
-    long double total_error() const
-    {
-        if (m_next)
-        {
-            return m_next->total_error() + error();
-        }
-        return error();
     }
 
     long double total_n(const bool& all = false) const
@@ -233,9 +223,11 @@ public:
 
     void print_detailed(const size_t& n = 1)
     {
+        Density rho;
+        Pressure p;
+        Temperature t;
         std::cout<<"\nlayer "<<std::to_string(n)<<":\n lower bound: "<<m_lower<<"m\n upper bound: "<<m_upper<<"m\n t = "<<m_upper - m_lower<<'m';
-        std::cout<<"\n ρ = "<<(integral(m_lower, m_upper)/thickness())*Consts::r_0<<"kg/m^3\n p = "<<(integral(m_lower, m_upper)/thickness())*Consts::p_0<<"Pa\n f = "<<(integral(m_lower, m_upper)/thickness());
-        std::cout<<"\n ε = "<<error()<<'\n';
+        std::cout<<"\n ρ = "<<(rho.integral(m_lower, m_upper)/thickness())<<" kg/m^3\n p = "<<(p.integral(m_lower, m_upper)/thickness())<<" Pa\n T = "<<(t.integral(m_lower, m_upper)/thickness())<<" K\n";
         if (m_next)
         {
             m_next->print_detailed(n + 1);
@@ -246,9 +238,12 @@ public:
     {    
         if (!m_prev)
         {
-            std::cout<<"n,lower,upper,average,f\n";
+            std::cout<<"n,lower,upper,density,pressure,termperature\n";
         }
-        std::cout<<std::to_string(n)<<','<<m_lower<<','<<m_upper<<','<<(m_lower + m_upper)/2<<','<<(integral(m_lower, m_upper)/thickness())<<'\n';
+        Density rho;
+        Pressure p;
+        Temperature t;
+        std::cout<<std::to_string(n)<<','<<m_lower<<','<<m_upper<<','<<rho.integral(m_lower, m_upper)/thickness()<<','<<p.integral(m_lower, m_upper)/thickness()<<','<<t.integral(m_lower, m_upper)/thickness()<<'\n';
         if (m_next)
         {
             m_next->print_csv(n + 1);
@@ -261,6 +256,8 @@ private:
 
     Layer* m_next;
     Layer* m_prev;
+
+    OptimisationTarget* m_target;
 };
 
 void print_help()
@@ -279,7 +276,7 @@ int main(int argc, char* argv[])
         for (int i = 1; i < argc; i++)
         {
             std::string arg(argv[i]);
-            if (arg.compare("--csv") == 0)
+            if (arg.compare("-csv") == 0)
             {
                 csv = true;
             }
@@ -297,6 +294,46 @@ int main(int argc, char* argv[])
                     return 1;
                 }
                 upper = std::atof(argv[i]);
+            }
+            else if (arg.compare("-T") == 0)
+            {
+                if (++i >= argc)
+                {
+                    std::cout<<"expected double after -T\n";
+                    print_help();
+                    return 1;
+                }
+                Consts::T_0 = std::atof(argv[i]);
+            }
+            else if (arg.compare("-rho") == 0)
+            {
+                if (++i >= argc)
+                {
+                    std::cout<<"expected double after -rho\n";
+                    print_help();
+                    return 1;
+                }
+                Consts::rho_0 = std::atof(argv[i]);
+            }
+            else if (arg.compare("-p") == 0)
+            {
+                if (++i >= argc)
+                {
+                    std::cout<<"expected double after -p\n";
+                    print_help();
+                    return 1;
+                }
+                Consts::p_0 = std::atof(argv[i]);
+            }
+            else if (arg.compare("-k") == 0)
+            {
+                if (++i >= argc)
+                {
+                    std::cout<<"expected double after -k\n";
+                    print_help();
+                    return 1;
+                }
+                Consts::kappa = std::atof(argv[i]);
             }
             else if (arg.compare("-l") == 0)
             {
@@ -331,7 +368,8 @@ int main(int argc, char* argv[])
         std::cout<<"Calculating layers for parameters:\n\th_min = "<<lower<<"m\n\th_max = "<<upper<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
     // lower bound, upper bound, layers
-    Layer* layers = Layer::create(lower, upper, n);            
+    Density rho;
+    Layer* layers = Layer::create(lower, upper, &rho, n);            
     layers->optimise();                             
     if (csv)
     {
@@ -340,11 +378,8 @@ int main(int argc, char* argv[])
     else
     {
         layers->print_detailed();
-
-        std::cout<<"\nε_t = "<<layers->total_error()<<'\n';
-        std::cout<<"ε_max = "<<layers->biggest_error()<<'\n';
-        std::cout<<"ε_min = "<<layers->smallest_error()<<'\n';
     }
+    delete layers;
 
     return 0;
 }
