@@ -1,5 +1,7 @@
 #include "detectorconstruction.h"
 
+#include "detector/sensitivedetector.h"
+
 #include <G4RunManager.hh>
 #include <G4NistManager.hh>
 #include <G4Box.hh>
@@ -186,8 +188,10 @@ void DetectorConstruction::construct_detectors()
     }
 }
 
-void DetectorConstruction::place_detector(const std::string&, const G4double&, const G4double&, const G4double&)
+void DetectorConstruction::place_detector(const std::string& name, const G4double& x, const G4double& y, const G4double& z)
 {
+    SensitiveDetector* detector = new SensitiveDetector(name);
 
+    detector->construct(m_world_logical, x, y, z);
 }
 }
