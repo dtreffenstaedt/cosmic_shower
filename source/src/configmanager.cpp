@@ -83,12 +83,31 @@ std::vector<Config::SecondaryParticle> ConfigManager::get_particles() const
     {
         const libconfig::Setting& particle = particles_setting[i];
         Config::SecondaryParticle settings;
-        if (!(particle.lookupValue("pdg", settings.pdg) &&
-              particle.lookupValue("cut_range", settings.cut_range) &&
-              particle.lookupValue("cut_energy", settings.cut_energy))
-            )
+        if (!(particle.lookupValue("pdg", settings.pdg)))
         {
             throw FaultySecondaryDefinition();
+        }
+        if (particle.exists("cut_range"))
+        {
+            if (!particle.lookupValue("cut_range", settings.cut_range))
+            {
+                throw FaultySecondaryDefinition();
+            }
+        }
+        else
+        {
+            settings.cut_range = 0;
+        }
+        if (particle.exists("cut_range"))
+        {
+            if (!particle.lookupValue("cut_energy", settings.cut_energy))
+            {
+                throw FaultySecondaryDefinition();
+            }
+        }
+        else
+        {
+            settings.cut_energy = 0;
         }
         particles.push_back(settings);
     }

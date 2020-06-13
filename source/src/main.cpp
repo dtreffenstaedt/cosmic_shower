@@ -53,6 +53,9 @@ int main(int argc, char* argv[])
             }
         }
     }
+
+    SHOWER::ConfigManager configManager{config_file};
+
     /*
     G4UIExecutive *ui = 0;
     if (argc == 1)
@@ -66,7 +69,6 @@ int main(int argc, char* argv[])
     G4RunManager* runManager = new G4RunManager;
 #endif
 
-    SHOWER::ConfigManager configManager{config_file};
 
     std::vector<SHOWER::Config::AtmosphereLayer> atmosphere_layers = configManager.get_atmosphere_layers();
 
