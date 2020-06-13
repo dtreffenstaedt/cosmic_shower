@@ -13,6 +13,7 @@ namespace Consts
     long double p_0 = 101325;
     long double T_0 = 273.15+15;
     long double kappa = 1.235;
+
     long double a()
     {
         return (Consts::kappa - 1)/Consts::kappa * Consts::M*Consts::g/Consts::R;
@@ -307,7 +308,7 @@ private:
 
 void print_help()
 {
-    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit\n\t-T <double>\tSet temperature at sealevel\n\t-p <double>\tSet pressure at sealevel\n\t-rho <double>\tSet density at sealevel\n\t-k <double>\tSet heat capacity ratio\n\t-n <int>\tset number of layers\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
+    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit unit: m\n\t\tdefault: 40000 m\n\t-T <double>\tSet temperature at sealevel unit: K\n\t\tdefault: 288.15 K\n\t-p <double>\tSet pressure at sealevel unit: Pa\n\t\tdefault: 101325 Pa\n\t-rho <double>\tSet density at sealevel unit: kg/m^3\n\t\tdefault: 1.225 kg/m^3\n\t-k <double>\tSet heat capacity ratio\n\t\tdefault: 1.235\n\t-n <int>\tset number of layers\n\t\tdefault: 10\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
 }
 
 int main(int argc, char* argv[])
@@ -316,7 +317,7 @@ int main(int argc, char* argv[])
     bool config = false;
     long double lower = 0;
     long double upper = 40000;
-    size_t n = 12;
+    size_t n = 10;
     if (argc >= 2)
     {
         for (int i = 1; i < argc; i++)
