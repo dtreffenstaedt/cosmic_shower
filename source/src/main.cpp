@@ -32,7 +32,7 @@ int main()
     G4RunManager* runManager = new G4RunManager;
 #endif
 
-    SHOWER::ConfigManager configManager{"cosmic_config.cfg"};
+    SHOWER::ConfigManager configManager{"shower.cfg"};
 
     runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors()));
 

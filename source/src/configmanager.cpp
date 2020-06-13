@@ -39,9 +39,6 @@ std::variant<std::vector<DetectorSettings>, size_t> ConfigManager::get_detectors
             if (!(detector.lookupValue("x", settings.x) &&
                 detector.lookupValue("y", settings.x) &&
                 detector.lookupValue("z", settings.x) &&
-                detector.lookupValue("pitch", settings.pitch) &&
-                detector.lookupValue("yaw", settings.yaw) &&
-                detector.lookupValue("roll", settings.roll) &&
                 detector.lookupValue("name", settings.name))
                 )
             {

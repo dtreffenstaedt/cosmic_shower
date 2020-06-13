@@ -9,17 +9,38 @@
 
 START_NAMESPACE
 {
-struct DetectorSettings
+struct DetectorPlacement
 {
     double x;
     double y;
     double z;
-    double pitch;
-    double yaw;
-    double roll;
 
     std::string name;
 };
+
+struct InitialParticle
+{
+    double x;   // X position
+    double y;   // Y position
+    double z;   // Z position
+
+    double m_x; // x momentum
+    double m_y; // y momentum
+    double m_z; // z momentum
+
+    double m;   // momentum magnitude
+
+    std::string type;   // type of initial particle
+};
+
+struct AtmosphereLayer
+{
+    double lower;   // lower bound of layer
+    double upper;   // upper bound of layer
+    double density; // average density of layer
+    double pressure;    // average pressure of layer
+    double temperature; // average temperature of layer
+}:
 
 
 class NoDetectorsDefined : public std::exception
@@ -46,9 +67,20 @@ public:
 
     static ConfigManager* singleton();
 
-    std::variant<std::vector<DetectorSettings>, size_t> get_detectors() const;
+    /**
+     * Returns either a list of Detectors or the number of detectors to generate.
+     */
+    std::variant<std::vector<DetectorPlacement>, size_t> get_detectors() const;
     
+    /**
+     * List of particles to be simulated
+     */
     std::vector<std::string> get_particles() const;
+    
+    /**
+     * Initial particle definition
+     */
+    InitialParticle get_initial_particle() const;
 private:
 
     libconfig::Config m_config;
