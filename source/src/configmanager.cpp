@@ -51,6 +51,29 @@ std::variant<std::vector<DetectorPlacement>, size_t> ConfigManager::get_detector
     return static_cast<size_t>(number);
 }
 
+std::vector<AtmosphereLayer> ConfigManager::get_atmosphere_layers() const
+{
+    const libconfig::Setting& layers_setting = (m_config.getRoot())["layers"];
+    std::vector<AtmosphereLayer> layers;
+    size_t len = layers_setting.getLength();
+    for (size_t i = 0; i < len; i++)
+    {
+        const libconfig::Setting& layer = layers_setting[i];
+        AtmosphereLayer settings;
+        if (!(layer.lookupValue("lower", settings.lower) &&
+              layer.lookupValue("upper", settings.upper) &&
+              layer.lookupValue("density", settings.density) &&
+              layer.lookupValue("pressure", settings.pressure) &&
+              layer.lookupValue("temperature", settings.temperature))
+            )
+        {
+            throw FaultyAtmosphereLayerDefinition();
+        }
+        layers.push_back(settings);
+    }
+    return layers;
+}
+
 std::vector<std::string> ConfigManager::get_particles() const
 {
     const libconfig::Setting& particles_setting = (m_config.getRoot())["particles"];

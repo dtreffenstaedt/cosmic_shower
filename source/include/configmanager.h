@@ -59,6 +59,14 @@ class FaultyDetectorDefinition : public std::exception
     }
 };
 
+class FaultyAtmosphereLayerDefinition : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Config error: Faulty atmosphere layer definition.";
+    }
+};
+
 class ConfigManager
 {
 public:
@@ -77,6 +85,11 @@ public:
      */
     std::vector<std::string> get_particles() const;
     
+    /**
+     * List of atmospheric layers to be created
+     */
+    std::vector<AtmosphereLayer> get_atmosphere_layers() const;
+
     /**
      * Initial particle definition
      */

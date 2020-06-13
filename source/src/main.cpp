@@ -34,7 +34,7 @@ int main()
 
     SHOWER::ConfigManager configManager{"shower.cfg"};
 
-    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors()));
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), configManager.get_atmosphere_layers()));
 
 
     G4VModularPhysicsList* physicsList = new QGSP_BERT;
