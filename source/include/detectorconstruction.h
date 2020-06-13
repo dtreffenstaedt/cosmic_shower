@@ -22,6 +22,7 @@ public:
     DetectorConstruction(
                 const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors,
                 const std::vector<Config::AtmosphereLayer>& atmosphere_layers,
+                const Config::MagneticField& magnetic_field,
                 const double& atmosphere_upper,
                 const double& world_size = 40000);
 

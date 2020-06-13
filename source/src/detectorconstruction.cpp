@@ -12,13 +12,13 @@
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers, const double &atmosphere_upper, const double& world_size) :
+DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers, const Config::MagneticField &magnetic_field, const double &atmosphere_upper, const double& world_size) :
     G4VUserDetectorConstruction{},
     m_detectors{detectors},
     m_atmosphere_layers{atmosphere_layers},
     m_world_size{world_size * m},
     m_atmosphere_upper{atmosphere_upper * m},
-    m_magnetic_field{},
+    m_magnetic_field{magnetic_field},
     m_world_logical{nullptr}
 {}
 

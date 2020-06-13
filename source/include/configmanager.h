@@ -22,10 +22,11 @@ struct DetectorPlacement
 
 struct MagneticField
 {
-    double x;
-    double y;
-    double z;
+    double x; // x component in microTesla
+    double y; // y component in microTesla
+    double z; // z component in microTesla
 };
+
 struct SecondaryParticle
 {
     int pdg;    // PDG code
@@ -104,6 +105,14 @@ class FaultySecondaryDefinition : public std::exception
     }
 };
 
+class FaultyMagneticFieldDefinition : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Config error: Faulty magnetic field definition.";
+    }
+};
+
 class ConfigManager
 {
 public:
@@ -131,6 +140,13 @@ public:
      * Primary particle definition
      */
     Config::PrimaryParticle get_primary_particle() const;
+
+    /**
+     * Magnetic field definition
+     */
+    Config::MagneticField get_magnetic_field() const;
+
+    std::string get_name() const;
 private:
 
     libconfig::Config m_config;

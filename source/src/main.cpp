@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     double atmosphere_upper = atmosphere_layers[atmosphere_layers.size() - 1].upper;
 
 
-    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), atmosphere_layers, atmosphere_upper));
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), atmosphere_layers, configManager.get_magnetic_field(), atmosphere_upper));
 
 
     G4VModularPhysicsList* physicsList = new QGSP_BERT;

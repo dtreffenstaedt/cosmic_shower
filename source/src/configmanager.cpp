@@ -136,4 +136,23 @@ Config::PrimaryParticle ConfigManager::get_primary_particle() const
     return primary;
 }
 
+Config::MagneticField ConfigManager::get_magnetic_field() const
+{
+    const libconfig::Setting& field_setting = (m_config.getRoot())["magnetic_field"];
+    Config::MagneticField field;
+
+    if (!(field_setting.lookupValue("x", field.x) &&
+        field_setting.lookupValue("y", field.y) &&
+        field_setting.lookupValue("z", field.z)))
+    {
+        throw FaultyMagneticFieldDefinition();
+    }
+    return field;
+}
+
+std::string ConfigManager::get_name() const
+{
+    return m_config.lookup("name");
+}
+
 }
