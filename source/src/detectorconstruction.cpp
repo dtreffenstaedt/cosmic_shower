@@ -9,11 +9,12 @@
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers, const double& world_size) :
+DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers, const double &atmosphere_upper, const double& world_size) :
     G4VUserDetectorConstruction{},
     m_detectors{detectors},
     m_atmosphere_layers{atmosphere_layers},
     m_world_size{world_size * m},
+    m_atmosphere_upper{atmosphere_upper * m},
     m_world_logical{nullptr}
 {}
 
@@ -37,7 +38,7 @@ G4VPhysicalVolume* DetectorConstruction::construct_world()
 {
     // +++ Construct the world
 
-    G4Box* world_box = new G4Box("World", m_world_size * 0.5, m_world_size * 0.5, m_world_size * 0.5);
+    G4Box* world_box = new G4Box("World", m_world_size * 0.5, m_world_size * 0.5, m_atmosphere_upper * 0.5);
 
     G4Material* vacuum = new G4Material( // world is a vacuum
             "interGalactic",

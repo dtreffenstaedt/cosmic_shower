@@ -68,7 +68,12 @@ int main(int argc, char* argv[])
 
     SHOWER::ConfigManager configManager{config_file};
 
-    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), configManager.get_atmosphere_layers()));
+    std::vector<SHOWER::Config::AtmosphereLayer> atmosphere_layers = configManager.get_atmosphere_layers();
+
+    double atmosphere_upper = atmosphere_layers[atmosphere_layers.size() - 1].upper;
+
+
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), atmosphere_layers, atmosphere_upper));
 
 
     G4VModularPhysicsList* physicsList = new QGSP_BERT;
@@ -76,8 +81,8 @@ int main(int argc, char* argv[])
 
     runManager->SetUserInitialization(physicsList);
 
-    runManager->SetUserInitialization(new SHOWER::ActionInitialization(configManager.get_primary_particle()));
-    
+    runManager->SetUserInitialization(new SHOWER::ActionInitialization(configManager.get_primary_particle(), atmosphere_upper));
+
     runManager->Initialize();
 /*
     G4VisManager* visManager = new G4VisExecutive;

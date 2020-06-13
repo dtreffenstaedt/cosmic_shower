@@ -22,6 +22,7 @@ public:
     DetectorConstruction(
                 const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors,
                 const std::vector<Config::AtmosphereLayer>& atmosphere_layers,
+                const double& atmosphere_upper,
                 const double& world_size = 40000);
 
     virtual ~DetectorConstruction();
@@ -32,6 +33,7 @@ protected:
     std::variant<std::vector<Config::DetectorPlacement>, size_t> m_detectors;
     std::vector<Config::AtmosphereLayer> m_atmosphere_layers;
     G4double m_world_size;
+    G4double m_atmosphere_upper;
 
     G4LogicalVolume* m_world_logical;
 
