@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.5)
 project (cosmic_shower)
 
+set(CMAKE_BUILD_TYPE DEBUG)
 set(PROJECT_BASE_DIR ../)
 set(PROJECT_SOURCE_DIR "${PROJECT_BASE_DIR}src")
 set(PROJECT_INCLUDE_DIR "${PROJECT_BASE_DIR}include")
