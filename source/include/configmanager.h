@@ -23,7 +23,8 @@ struct DetectorPlacement
 struct SecondaryParticle
 {
     int pdg;    // PDG code
-    double cut;   // Range Cut in mm
+    double cut_range;   // Range Cut in mm
+    double cut_energy; // Energy Cut in MeV
 };
 
 struct PrimaryParticle
@@ -109,12 +110,12 @@ public:
      * Returns either a list of Detectors or the number of detectors to generate.
      */
     std::variant<std::vector<Config::DetectorPlacement>, size_t> get_detectors() const;
-    
+
     /**
      * List of particles to be simulated
      */
     std::vector<Config::SecondaryParticle> get_particles() const;
-    
+
     /**
      * List of atmospheric layers to be created
      */
