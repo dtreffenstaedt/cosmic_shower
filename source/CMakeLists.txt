@@ -14,6 +14,18 @@ configure_file (
     "${PROJECT_CONFIG_DIR}/global.h.in"
     "${PROJECT_BASE_DIR}source/include/global.h"
 )
+configure_file (
+    "${PROJECT_CONFIG_DIR}/shower.cfg.in"
+    "${PROJECT_BASE_DIR}shower.cfg"
+)
+configure_file (
+    "${PROJECT_CONFIG_DIR}/init_vis.mac.in"
+    "${PROJECT_BASE_DIR}init_vis.mac"
+)
+configure_file (
+    "${PROJECT_CONFIG_DIR}/vis.mac.in"
+    "${PROJECT_BASE_DIR}vis.mac"
+)
 add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
 find_package(Geant4 REQUIRED ui_all vis_all)
 find_package(libconfig++ REQUIRED)

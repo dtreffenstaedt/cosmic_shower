@@ -1,9 +1,6 @@
 *
 */
 !.gitignore
-!build
+!generate
 !clean
 !run
-!init_vis.mac
-!vis.mac
-!shower.cfg
