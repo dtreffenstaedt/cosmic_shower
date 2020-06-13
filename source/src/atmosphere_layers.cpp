@@ -25,6 +25,8 @@ class OptimisationTarget
 public:
     virtual long double func(const long double& h) = 0;
     virtual long double integral(const long double& lower, const long double& upper) = 0;
+
+    virtual ~OptimisationTarget() {}
 };
 
 class Pressure : public OptimisationTarget
@@ -94,6 +96,18 @@ public:
         m_prev{parent},
         m_target{target}
     {
+    }
+
+    virtual ~Layer()
+    {
+        if (!m_prev)
+        {
+            delete m_target;
+        }
+        if (m_next)
+        {
+            delete m_next;
+        }
     }
 
     static Layer* create(const long double& lower, const long double& upper, OptimisationTarget* target, const size_t& n)
@@ -409,8 +423,7 @@ int main(int argc, char* argv[])
         std::cout<<"Calculating layers for parameters:\n\th_max = "<<upper<<" m\n\tρ_0 = "<<Consts::rho_0<<" kg/m^3\n\tp_0 = "<<Consts::p_0<<" Pa\n\tT_0 = "<<Consts::T_0<<" K\n\tκ = "<<Consts::kappa<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
     // lower bound, upper bound, layers
-    Density rho;
-    Layer* layers = Layer::create(lower, upper, &rho, n);            
+    Layer* layers = Layer::create(lower, upper, new Density(), n);            
     layers->optimise();                             
     if (csv)
     {

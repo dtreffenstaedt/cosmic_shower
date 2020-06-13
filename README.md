@@ -159,7 +159,14 @@ layers = (
 
 ### atmospheric_layers
 
-This program iteratively calculates the individual layer thickness so the mass of all layers is the same. 
+This program iteratively calculates the individual layer thickness according to a specific metric.
+The default is set to layer mass. The change is made in the line which reads
+```
+Layer* layers = Layer::create(lower, upper, new Density(), n);
+```
+There are two more targets available, one is `Pressure` and one is `Temperature`.
+In case you need a different metric, inherit `OptimisationTarget` and pass the new child class to the create method.
+The optimisation method tries to keep the integral defined by the `integral` method of each individual layer equal to the average of all layers.
 
 It takes the following arguments:
 ```
