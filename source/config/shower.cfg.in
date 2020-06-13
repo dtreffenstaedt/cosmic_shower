@@ -1,6 +1,6 @@
 # detectors to simulate either assign a number to get a number of randomly generated detectors or use a list.
 detectors = 1; # number of detectors to generate, they will be spread uniformly across the surface of earth.
-# If a number of detectors is given and the number is a perfect square, the detectors will be arranged in a uniform pattern of `sqrt(n)*sqrt(n)` detectors. 
+# If a number of detectors is given and the number is a perfect square, the detectors will be arranged in a uniform pattern of `sqrt(n)*sqrt(n)` detectors.
 # In case that n is not a perfect square, the detectors will be arranged in a circle of radius `world_size / 4` around the center of the world.
 # example for list of detectors: the name is an arbitrary identifier. the values for x,y and z are double values in meters. x=0,y=0 is in the center of the simulated area, z=0 corresponds to the surface of earth.
 #detectors = (
@@ -45,68 +45,68 @@ primary = {
 particles = (
 {
     pdg = 11; # e^-
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -11; # e^+
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 12; # ν_e
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -12; # anti_­­ν_e
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 14; # ν_μ
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -14; # anti_ν_μ
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 22; # γ
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 13; # μ^-
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -13; # μ^+
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 2212; # p
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -2212; # anti_p
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = 2112; # n
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 },
 {
     pdg = -2112; # anti_n
-    cut_range = ;
-    cut_energy = ;
+#    cut_range = ;
+#    cut_energy = ;
 }
 );
 
