@@ -188,7 +188,7 @@ It takes the following arguments:
 ```
 The parameter `-k` is the heat capacit ratio. it is dependent on the temperature gradient of the atmosphere and can be calculated with the formula
 ```
-κ = (M * g) / (M * g - R * dT/dh)
+κ = (M * g) / (M * g + R * dT/dh)
 ```
 Due to the default temperature gradient being linear, there is a cutoff altitude which cannot be crossed.
 With the current default values this cutoff altitude is roughly 44300 m.
