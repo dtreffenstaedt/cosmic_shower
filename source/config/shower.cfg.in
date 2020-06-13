@@ -1,5 +1,7 @@
 # detectors to simulate either assign a number to get a number of randomly generated detectors or use a list.
 detectors = 1; # number of detectors to generate, they will be spread uniformly across the surface of earth.
+# If a number of detectors is given and the number is a perfect square, the detectors will be arranged in a uniform pattern of `sqrt(n)*sqrt(n)` detectors. 
+# In case that n is not a perfect square, the detectors will be arranged in a circle of radius `world_size / 4` around the center of the world.
 # example for list of detectors: the name is an arbitrary identifier. the values for x,y and z are double values in meters. x=0,y=0 is in the center of the simulated area, z=0 corresponds to the surface of earth.
 #detectors = (
 #    {
