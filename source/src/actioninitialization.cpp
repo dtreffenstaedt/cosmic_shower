@@ -5,10 +5,12 @@
 #include "actions/eventaction.h"
 #include "actions/steppingaction.h"
 
+
 START_NAMESPACE
 {
-ActionInitialization::ActionInitialization() :
-    G4VUserActionInitialization()
+ActionInitialization::ActionInitialization(const PrimaryParticle& primary) :
+    G4VUserActionInitialization{},
+    m_primary{primary}
 {}
 
 ActionInitialization::~ActionInitialization()
@@ -22,7 +24,7 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction);
+    SetUserAction(new PrimaryGeneratorAction(m_primary));
 
     RunAction* runAction = new RunAction;
     SetUserAction(runAction);

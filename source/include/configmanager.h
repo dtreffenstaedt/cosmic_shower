@@ -18,7 +18,7 @@ struct DetectorPlacement
     std::string name;
 };
 
-struct InitialParticle
+struct PrimaryParticle
 {
     struct
     {
@@ -73,6 +73,14 @@ class FaultyAtmosphereLayerDefinition : public std::exception
     }
 };
 
+class FaultyPrimaryDefinition : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Config error: Faulty primary definition.";
+    }
+};
+
 class ConfigManager
 {
 public:
@@ -97,9 +105,9 @@ public:
     std::vector<AtmosphereLayer> get_atmosphere_layers() const;
 
     /**
-     * Initial particle definition
+     * Primary particle definition
      */
-    InitialParticle get_initial_particle() const;
+    PrimaryParticle get_primary_particle() const;
 private:
 
     libconfig::Config m_config;

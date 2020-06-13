@@ -6,6 +6,7 @@
 #include <globals.hh>
 
 #include "global.h"
+#include "configmanager.h"
 
 class G4ParticleGun;
 class G4Event;
@@ -16,7 +17,7 @@ START_NAMESPACE
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-    PrimaryGeneratorAction();
+    PrimaryGeneratorAction(const PrimaryParticle& primary);
     virtual ~PrimaryGeneratorAction();
 
     virtual void GeneratePrimaries(G4Event* e);
@@ -24,6 +25,7 @@ public:
 
 private:
     G4ParticleGun* m_particle_gun;
+    PrimaryParticle m_primary;
 //    G4Box* m_envelope_box;
 };
 }

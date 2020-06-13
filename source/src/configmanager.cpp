@@ -86,4 +86,26 @@ std::vector<int> ConfigManager::get_particles() const
     return particles;
 }
 
+
+PrimaryParticle ConfigManager::get_primary_particle() const
+{
+    const libconfig::Setting& primary_setting = (m_config.getRoot())["primary"];
+    PrimaryParticle primary;
+    const libconfig::Setting& origin = primary_setting["origin"];
+    const libconfig::Setting& momentum = primary_setting["momentum"];
+
+    if (!(origin.lookupValue("x", primary.origin.x) &&
+        origin.lookupValue("y", primary.origin.y) &&
+        origin.lookupValue("z", primary.origin.z) &&
+        momentum.lookupValue("x", primary.momentum.y) &&
+        momentum.lookupValue("y", primary.momentum.y) &&
+        momentum.lookupValue("z", primary.momentum.z) &&
+        momentum.lookupValue("magnitude", primary.momentum.m) &&
+        primary_setting.lookupValue("particle", primary.particle)))
+    {
+        throw FaultyPrimaryDefinition();
+    }
+    return primary;
+}
+
 }

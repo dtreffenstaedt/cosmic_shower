@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
     runManager->SetUserInitialization(physicsList);
 
-    runManager->SetUserInitialization(new SHOWER::ActionInitialization());
+    runManager->SetUserInitialization(new SHOWER::ActionInitialization(configManager.get_primary_particle()));
     
     runManager->Initialize();
 /*

@@ -8,39 +8,30 @@
 
 START_NAMESPACE
 {
-PrimaryGeneratorAction::PrimaryGeneratorAction() :
-    G4VUserPrimaryGeneratorAction(),
-    m_particle_gun(0)
+PrimaryGeneratorAction::PrimaryGeneratorAction(const PrimaryParticle& primary) :
+    G4VUserPrimaryGeneratorAction{},
+    m_particle_gun{0},
+    m_primary{primary}
 {
     G4int n_of_particles = 1;
     m_particle_gun = new G4ParticleGun(n_of_particles);
 
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition* particle = particle_table->FindParticle("proton");
+    G4ParticleDefinition* particle = particle_table->FindParticle(primary.particle);
     m_particle_gun->SetParticleDefinition(particle);
-    m_particle_gun->SetParticleEnergy(10*GeV);
-    m_particle_gun->SetParticlePosition(G4ThreeVector(-2*m,0,0));
-    m_particle_gun->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
-   /* 
-    m_particle_gun2 = new G4ParticleGun(n_of_particles);
-
-    G4ParticleDefinition* particle2 = particle_table->FindParticle("neutron");
-    m_particle_gun2->SetParticleDefinition(particle2);
-    m_particle_gun2->SetParticleEnergy(1*MeV);
-    m_particle_gun2->SetParticlePosition(G4ThreeVector(-2*m,0,0));
-    m_particle_gun2->SetParticleMomentumDirection(G4ThreeVector(1,0,0));*/
+    m_particle_gun->SetParticleEnergy(m_primary.momentum.m * MeV);
+    m_particle_gun->SetParticlePosition(G4ThreeVector(m_primary.origin.x * m, m_primary.origin.y * m, m_primary.origin.z * m));
+    m_particle_gun->SetParticleMomentumDirection(G4ThreeVector(m_primary.momentum.x, m_primary.momentum.y, m_primary.momentum.z));
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
     delete m_particle_gun;
-//    delete m_particle_gun2;
 }
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* e)
 {
     m_particle_gun->GeneratePrimaryVertex(e);
-//    m_particle_gun2->GeneratePrimaryVertex(e);
 }
 
 }
