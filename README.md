@@ -31,7 +31,8 @@ The default configuration is as follows:
 ```
 # detectors to simulate either assign a number to get a number of randomly generated detectors or use a list.
 detectors = 1; # number of detectors to generate, they will be spread uniformly across the surface of earth.
-# example for list of detectors: the name is an arbitrary identifier. the values for x,y and z are double values in meters. x=0,y=0 is in the center of the simulated area, z=0 corresponds to the surface of earth.
+# example for list of detectors: the name is an arbitrary identifier. the values for x,y and z are double values in meters.
+# x=0,y=0 is in the center of the simulated area, z=0 corresponds to the surface of earth.
 #detectors = (
 #    {
 #        x = 0.0;
