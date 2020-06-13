@@ -40,7 +40,7 @@ struct AtmosphereLayer
     double density; // average density of layer
     double pressure;    // average pressure of layer
     double temperature; // average temperature of layer
-}:
+};
 
 
 class NoDetectorsDefined : public std::exception
