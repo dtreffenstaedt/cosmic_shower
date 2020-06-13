@@ -6,4 +6,4 @@ cd /usr/local/bin && . geant4.sh # this file needs to be sourced before executio
 
 cd $location
 
-./cosmic_shower $1
+./cosmic_shower $@
