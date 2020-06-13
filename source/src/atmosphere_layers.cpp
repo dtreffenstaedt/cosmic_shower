@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
+#include <libconfig.h++>
 
 
 namespace Consts
@@ -250,6 +251,34 @@ public:
         }
     }
 
+    void print_config(libconfig::Setting& root, const size_t& i = 0)
+    {
+        libconfig::Setting& layer = root.add(libconfig::Setting::TypeGroup);
+
+        Density rho;
+        Pressure p;
+        Temperature t;
+        layer.add("id", libconfig::Setting::TypeInt) = static_cast<int>(i);
+        layer.add("lower", libconfig::Setting::TypeFloat) = static_cast<double>(m_lower);
+        layer.add("upper", libconfig::Setting::TypeFloat) = static_cast<double>(m_upper);
+        layer.add("density", libconfig::Setting::TypeFloat) = static_cast<double>(rho.integral(m_lower, m_upper)/thickness());
+        layer.add("pressure", libconfig::Setting::TypeFloat) = static_cast<double>(p.integral(m_lower, m_upper)/thickness());
+        layer.add("temperature", libconfig::Setting::TypeFloat) = static_cast<double>(t.integral(m_lower, m_upper)/thickness());
+
+        if (m_next)
+        {
+            m_next->print_config(root, i + 1);
+        }
+    }
+
+    void print_config()
+    {    
+        libconfig::Config cfg;
+        libconfig::Setting& root = cfg.getRoot();
+        print_config(root.add("layers", libconfig::Setting::TypeList));
+        cfg.write(stdout);
+    }
+
 private:
     long double m_lower;    // lower bound of layer
     long double m_upper;    // upper bound of layer
@@ -262,12 +291,13 @@ private:
 
 void print_help()
 {
-    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit\n\t-l <double>\tset lower limit\n\t-n <int>\tset number of layers\n\t--csv\t\tgenerate csv formatted output\n";
+    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit\n\t-l <double>\tset lower limit\n\t-T <double>\tSet temperature at sealevel\n\t-p <double>\tSet pressure at sealevel\n\t-rho <double>\tSet density at sealevel\n\t-k <double>\tSet heat capacity ratio\n\t-n <int>\tset number of layers\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
 }
 
 int main(int argc, char* argv[])
 {
     bool csv = false;
+    bool config = false;
     long double lower = 0;
     long double upper = 40000;
     size_t n = 12;
@@ -279,6 +309,10 @@ int main(int argc, char* argv[])
             if (arg.compare("-csv") == 0)
             {
                 csv = true;
+            }
+            if (arg.compare("-config") == 0)
+            {
+                config = true;
             }
             else if (arg.compare("-h") == 0)
             {
@@ -363,7 +397,7 @@ int main(int argc, char* argv[])
             }
         }
     }
-    if (!csv)
+    if (!csv && !config)
     {
         std::cout<<"Calculating layers for parameters:\n\th_min = "<<lower<<"m\n\th_max = "<<upper<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
@@ -374,6 +408,10 @@ int main(int argc, char* argv[])
     if (csv)
     {
         layers->print_csv();
+    }
+    else if (config)
+    {
+        layers->print_config();
     }
     else
     {
