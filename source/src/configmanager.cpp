@@ -24,18 +24,18 @@ ConfigManager::ConfigManager(const std::string& fileName)
 ConfigManager::~ConfigManager()
 {}
 
-std::variant<std::vector<DetectorPlacement>, size_t> ConfigManager::get_detectors() const
+std::variant<std::vector<Config::DetectorPlacement>, size_t> ConfigManager::get_detectors() const
 {
     unsigned int number;
     if (!m_config.getRoot().lookupValue("detectors", number))
     {
         const libconfig::Setting& detectors_setting = (m_config.getRoot())["detectors"];
-        std::vector<DetectorPlacement> detectors;
+        std::vector<Config::DetectorPlacement> detectors;
         size_t len = detectors_setting.getLength();
         for (size_t i = 0; i < len; i++)
         {
             const libconfig::Setting& detector = detectors_setting[i];
-            DetectorPlacement settings;
+            Config::DetectorPlacement settings;
             if (!(detector.lookupValue("x", settings.x) &&
                 detector.lookupValue("y", settings.y) &&
                 detector.lookupValue("z", settings.z) &&
@@ -51,15 +51,15 @@ std::variant<std::vector<DetectorPlacement>, size_t> ConfigManager::get_detector
     return static_cast<size_t>(number);
 }
 
-std::vector<AtmosphereLayer> ConfigManager::get_atmosphere_layers() const
+std::vector<Config::AtmosphereLayer> ConfigManager::get_atmosphere_layers() const
 {
     const libconfig::Setting& layers_setting = (m_config.getRoot())["layers"];
-    std::vector<AtmosphereLayer> layers;
+    std::vector<Config::AtmosphereLayer> layers;
     size_t len = layers_setting.getLength();
     for (size_t i = 0; i < len; i++)
     {
         const libconfig::Setting& layer = layers_setting[i];
-        AtmosphereLayer settings;
+        Config::AtmosphereLayer settings;
         if (!(layer.lookupValue("lower", settings.lower) &&
               layer.lookupValue("upper", settings.upper) &&
               layer.lookupValue("density", settings.density) &&
@@ -87,10 +87,10 @@ std::vector<int> ConfigManager::get_particles() const
 }
 
 
-PrimaryParticle ConfigManager::get_primary_particle() const
+Config::PrimaryParticle ConfigManager::get_primary_particle() const
 {
     const libconfig::Setting& primary_setting = (m_config.getRoot())["primary"];
-    PrimaryParticle primary;
+    Config::PrimaryParticle primary;
     const libconfig::Setting& origin = primary_setting["origin"];
     const libconfig::Setting& momentum = primary_setting["momentum"];
 

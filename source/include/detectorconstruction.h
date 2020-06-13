@@ -17,15 +17,15 @@ START_NAMESPACE
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-    DetectorConstruction(const std::variant<std::vector<DetectorPlacement>, size_t>& detectors, const std::vector<AtmosphereLayer>& atmosphere_layers);
+    DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers);
 
     virtual ~DetectorConstruction();
 
     virtual G4VPhysicalVolume* Construct();
 
 protected:
-    std::variant<std::vector<DetectorPlacement>, size_t> m_detectors;
-    std::vector<AtmosphereLayer> m_atmosphere_layers;
+    std::variant<std::vector<Config::DetectorPlacement>, size_t> m_detectors;
+    std::vector<Config::AtmosphereLayer> m_atmosphere_layers;
 };
 }
 

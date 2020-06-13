@@ -8,7 +8,7 @@
 
 START_NAMESPACE
 {
-ActionInitialization::ActionInitialization(const PrimaryParticle& primary) :
+ActionInitialization::ActionInitialization(const Config::PrimaryParticle& primary) :
     G4VUserActionInitialization{},
     m_primary{primary}
 {}

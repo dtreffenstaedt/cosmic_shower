@@ -9,6 +9,8 @@
 
 START_NAMESPACE
 {
+namespace Config
+{
 struct DetectorPlacement
 {
     double x;
@@ -47,7 +49,7 @@ struct AtmosphereLayer
     double pressure;    // average pressure of layer
     double temperature; // average temperature of layer
 };
-
+}
 
 class NoDetectorsDefined : public std::exception
 {
@@ -92,7 +94,7 @@ public:
     /**
      * Returns either a list of Detectors or the number of detectors to generate.
      */
-    std::variant<std::vector<DetectorPlacement>, size_t> get_detectors() const;
+    std::variant<std::vector<Config::DetectorPlacement>, size_t> get_detectors() const;
     
     /**
      * List of particles to be simulated
@@ -102,12 +104,12 @@ public:
     /**
      * List of atmospheric layers to be created
      */
-    std::vector<AtmosphereLayer> get_atmosphere_layers() const;
+    std::vector<Config::AtmosphereLayer> get_atmosphere_layers() const;
 
     /**
      * Primary particle definition
      */
-    PrimaryParticle get_primary_particle() const;
+    Config::PrimaryParticle get_primary_particle() const;
 private:
 
     libconfig::Config m_config;

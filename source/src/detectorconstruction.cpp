@@ -9,7 +9,7 @@
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction(const std::variant<std::vector<DetectorPlacement>, size_t>& detectors, const std::vector<AtmosphereLayer>& atmosphere_layers) :
+DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers) :
     G4VUserDetectorConstruction{},
     m_detectors{detectors},
     m_atmosphere_layers{atmosphere_layers}
@@ -65,7 +65,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     size_t len = m_atmosphere_layers.size();
     for (size_t i = 0; i < len; i++)
     {
-        AtmosphereLayer definition = m_atmosphere_layers[i];
+        Config::AtmosphereLayer definition = m_atmosphere_layers[i];
         G4double layer_lower = ((i == 0)?(0.0*m):(definition.lower * m)); // lower end of each layer
         G4double layer_thickness = (definition.upper - definition.lower) * m; // layer thickness
         G4double density = definition.density * kg/m3;

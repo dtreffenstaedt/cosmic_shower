@@ -8,7 +8,7 @@
 
 START_NAMESPACE
 {
-PrimaryGeneratorAction::PrimaryGeneratorAction(const PrimaryParticle& primary) :
+PrimaryGeneratorAction::PrimaryGeneratorAction(const Config::PrimaryParticle& primary) :
     G4VUserPrimaryGeneratorAction{},
     m_particle_gun{0},
     m_primary{primary}

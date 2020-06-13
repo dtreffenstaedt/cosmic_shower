@@ -12,13 +12,13 @@ START_NAMESPACE
 class ActionInitialization : public G4VUserActionInitialization
 {
 public:
-    ActionInitialization(const PrimaryParticle& primary);
+    ActionInitialization(const Config::PrimaryParticle& primary);
     virtual ~ActionInitialization();
 
     virtual void BuildForMaster() const;
     virtual void Build() const;
 private:
-    PrimaryParticle m_primary;
+    Config::PrimaryParticle m_primary;
 };
 }
 
