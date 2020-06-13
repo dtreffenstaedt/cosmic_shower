@@ -12,10 +12,13 @@ ConfigManager* ConfigManager::singleton()
 
 ConfigManager::ConfigManager(const std::string& fileName)
 {
+    m_fallback.readFile("shower.cfg");
+
     m_config.readFile(fileName.c_str());
-    if (!m_config.getRoot().exists("detectors"))
+
+    if (!get_root().exists("name"))
     {
-        throw NoDetectorsDefined();
+        throw NoNameDefined();
     }
 
     c_singleton = this;
@@ -24,12 +27,19 @@ ConfigManager::ConfigManager(const std::string& fileName)
 ConfigManager::~ConfigManager()
 {}
 
-std::variant<std::vector<Config::DetectorPlacement>, size_t> ConfigManager::get_detectors() const
+std::variant<std::vector<Config::DetectorPlacement>, size_t> ConfigManager::get_detectors(const bool& fallback) const
 {
-    unsigned int number;
-    if (!m_config.getRoot().lookupValue("detectors", number))
+    if (!fallback)
     {
-        const libconfig::Setting& detectors_setting = (m_config.getRoot())["detectors"];
+        if (!get_root().exists("detectors"))
+        {
+            return get_detectors(true);
+        }
+    }
+    unsigned int number;
+    if (!get_root(fallback).lookupValue("detectors", number))
+    {
+        const libconfig::Setting& detectors_setting = get_root(fallback)["detectors"];
         std::vector<Config::DetectorPlacement> detectors;
         size_t len = detectors_setting.getLength();
         for (size_t i = 0; i < len; i++)
@@ -51,9 +61,16 @@ std::variant<std::vector<Config::DetectorPlacement>, size_t> ConfigManager::get_
     return static_cast<size_t>(number);
 }
 
-std::vector<Config::AtmosphereLayer> ConfigManager::get_atmosphere_layers() const
+std::vector<Config::AtmosphereLayer> ConfigManager::get_atmosphere_layers(const bool& fallback) const
 {
-    const libconfig::Setting& layers_setting = (m_config.getRoot())["layers"];
+    if (!fallback)
+    {
+        if (!get_root().exists("layers"))
+        {
+            return get_atmosphere_layers(true);
+        }
+    }
+    const libconfig::Setting& layers_setting = get_root(fallback)["layers"];
     std::vector<Config::AtmosphereLayer> layers;
     size_t len = layers_setting.getLength();
     for (size_t i = 0; i < len; i++)
@@ -74,9 +91,16 @@ std::vector<Config::AtmosphereLayer> ConfigManager::get_atmosphere_layers() cons
     return layers;
 }
 
-std::vector<Config::SecondaryParticle> ConfigManager::get_particles() const
+std::vector<Config::SecondaryParticle> ConfigManager::get_particles(const bool& fallback) const
 {
-    const libconfig::Setting& particles_setting = (m_config.getRoot())["particles"];
+    if (!fallback)
+    {
+        if (!get_root().exists("particles"))
+        {
+            return get_particles(true);
+        }
+    }
+    const libconfig::Setting& particles_setting = get_root(fallback)["particles"];
     std::vector<Config::SecondaryParticle> particles;
     size_t len = particles_setting.getLength();
     for (size_t i = 0; i < len; i++)
@@ -114,10 +138,16 @@ std::vector<Config::SecondaryParticle> ConfigManager::get_particles() const
     return particles;
 }
 
-
-Config::PrimaryParticle ConfigManager::get_primary_particle() const
+Config::PrimaryParticle ConfigManager::get_primary_particle(const bool& fallback) const
 {
-    const libconfig::Setting& primary_setting = (m_config.getRoot())["primary"];
+    if (!fallback)
+    {
+        if (!get_root().exists("primary"))
+        {
+            return get_primary_particle(true);
+        }
+    }
+    const libconfig::Setting& primary_setting = get_root(fallback)["primary"];
     Config::PrimaryParticle primary;
     const libconfig::Setting& origin = primary_setting["origin"];
     const libconfig::Setting& momentum = primary_setting["momentum"];
@@ -136,9 +166,16 @@ Config::PrimaryParticle ConfigManager::get_primary_particle() const
     return primary;
 }
 
-Config::MagneticField ConfigManager::get_magnetic_field() const
+Config::MagneticField ConfigManager::get_magnetic_field(const bool& fallback) const
 {
-    const libconfig::Setting& field_setting = (m_config.getRoot())["magnetic_field"];
+    if (!fallback)
+    {
+        if (!get_root().exists("magnetic_field"))
+        {
+            return get_magnetic_field(true);
+        }
+    }
+    const libconfig::Setting& field_setting = get_root(fallback)["magnetic_field"];
     Config::MagneticField field;
 
     if (!(field_setting.lookupValue("x", field.x) &&
@@ -155,4 +192,12 @@ std::string ConfigManager::get_name() const
     return m_config.lookup("name");
 }
 
+const libconfig::Setting& ConfigManager::get_root(const bool& fallback) const
+{
+    if (fallback)
+    {
+        return m_fallback.getRoot();
+    }
+    return m_config.getRoot();
+}
 }

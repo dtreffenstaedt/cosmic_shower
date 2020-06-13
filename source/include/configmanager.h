@@ -65,11 +65,11 @@ struct AtmosphereLayer
 };
 }
 
-class NoDetectorsDefined : public std::exception
+class NoNameDefined : public std::exception
 {
     virtual const char* what() const throw()
     {
-        return "Config error: No detectors defined.";
+        return "Config error: No name defined.";
     }
 };
 
@@ -124,32 +124,34 @@ public:
     /**
      * Returns either a list of Detectors or the number of detectors to generate.
      */
-    std::variant<std::vector<Config::DetectorPlacement>, size_t> get_detectors() const;
+    std::variant<std::vector<Config::DetectorPlacement>, size_t> get_detectors(const bool& fallback = false) const;
 
     /**
      * List of particles to be simulated
      */
-    std::vector<Config::SecondaryParticle> get_particles() const;
+    std::vector<Config::SecondaryParticle> get_particles(const bool& fallback = false) const;
 
     /**
      * List of atmospheric layers to be created
      */
-    std::vector<Config::AtmosphereLayer> get_atmosphere_layers() const;
+    std::vector<Config::AtmosphereLayer> get_atmosphere_layers(const bool& fallback = false) const;
 
     /**
      * Primary particle definition
      */
-    Config::PrimaryParticle get_primary_particle() const;
+    Config::PrimaryParticle get_primary_particle(const bool& fallback = false) const;
 
     /**
      * Magnetic field definition
      */
-    Config::MagneticField get_magnetic_field() const;
+    Config::MagneticField get_magnetic_field(const bool& fallback = false) const;
 
     std::string get_name() const;
 private:
+    const libconfig::Setting& get_root(const bool& fallback = false) const;
 
     libconfig::Config m_config;
+    libconfig::Config m_fallback;
 
     static ConfigManager* c_singleton;
 };
