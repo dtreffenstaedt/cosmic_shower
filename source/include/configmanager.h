@@ -20,6 +20,12 @@ struct DetectorPlacement
     std::string name;
 };
 
+struct SecondaryParticle
+{
+    int pdg;    // PDG code
+    double cut;   // Range Cut in mm
+};
+
 struct PrimaryParticle
 {
     struct
@@ -83,6 +89,14 @@ class FaultyPrimaryDefinition : public std::exception
     }
 };
 
+class FaultySecondaryDefinition : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Config error: Faulty secondary definition.";
+    }
+};
+
 class ConfigManager
 {
 public:
@@ -99,7 +113,7 @@ public:
     /**
      * List of particles to be simulated
      */
-    std::vector<int> get_particles() const;
+    std::vector<Config::SecondaryParticle> get_particles() const;
     
     /**
      * List of atmospheric layers to be created
