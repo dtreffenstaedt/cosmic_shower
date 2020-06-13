@@ -30,5 +30,6 @@ add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES})
 
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES})
+target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
