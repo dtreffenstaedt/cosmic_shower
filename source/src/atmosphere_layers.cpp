@@ -31,12 +31,17 @@ class Pressure : public OptimisationTarget
 public:
     virtual long double func(const long double& h)
     {
-        return Consts::p_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::kappa/(Consts::kappa - 1));
+        return Consts::p_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::M*Consts::g/(Consts::R*Consts::a()));
+    }
+
+    long double integ(const long double& h)
+    {
+        return -(func(h) * (Consts::kappa - 1) * (Consts::T_0 - Consts::a() * h))/(Consts::a() * (2 * Consts::kappa - 1));
     }
 
     virtual long double integral(const long double& lower, const long double& upper)
     {
-        return Consts::p_0*(func(lower)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*lower))/(Consts::a()*(2 * Consts::kappa - 1)) - Consts::p_0*(func(upper)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a() * upper))/(Consts::a()*(2 * Consts::kappa - 1));
+        return integ(upper) - integ(lower);
     }
 };
 
@@ -45,12 +50,18 @@ class Density : public OptimisationTarget
 public:
     virtual long double func(const long double& h)
     {
-        return Consts::rho_0 * std::pow((1 - Consts::a() * h/Consts::T_0), 1/(Consts::kappa - 1));
+        return Consts::rho_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::M*Consts::g/(Consts::R*Consts::a()*Consts::kappa));
+    }
+
+
+    long double integ(const long double& h)
+    {
+        return -(func(h)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*h))/(Consts::a() * Consts::kappa);
     }
 
     virtual long double integral(const long double& lower, const long double& upper)
     {
-        return Consts::rho_0*(func(lower)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*lower))/(Consts::a()*Consts::kappa) - Consts::rho_0*(func(upper)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a() * upper))/(Consts::a()*Consts::kappa);
+        return integ(upper) - integ(lower);
     }
 };
 
@@ -62,9 +73,14 @@ public:
         return Consts::T_0 * (1 - Consts::a() * h/Consts::T_0);
     }
 
+    long double integ(const long double& h)
+    {
+        return Consts::T_0 * h - (Consts::a()*std::pow(h, 2))/2;
+    }
+
     virtual long double integral(const long double& lower, const long double& upper)
     {
-        return Consts::T_0 * (upper - lower) - Consts::a()*(std::pow(upper, 2) - std::pow(lower,2))/2;
+        return integ(upper) - integ(lower);
     }
 };
 
@@ -291,7 +307,7 @@ private:
 
 void print_help()
 {
-    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit\n\t-l <double>\tset lower limit\n\t-T <double>\tSet temperature at sealevel\n\t-p <double>\tSet pressure at sealevel\n\t-rho <double>\tSet density at sealevel\n\t-k <double>\tSet heat capacity ratio\n\t-n <int>\tset number of layers\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
+    std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit\n\t-T <double>\tSet temperature at sealevel\n\t-p <double>\tSet pressure at sealevel\n\t-rho <double>\tSet density at sealevel\n\t-k <double>\tSet heat capacity ratio\n\t-n <int>\tset number of layers\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
 }
 
 int main(int argc, char* argv[])
@@ -369,16 +385,6 @@ int main(int argc, char* argv[])
                 }
                 Consts::kappa = std::atof(argv[i]);
             }
-            else if (arg.compare("-l") == 0)
-            {
-                if (++i >= argc)
-                {
-                    std::cout<<"expected double after -l\n";
-                    print_help();
-                    return 1;
-                }
-                lower = std::atof(argv[i]);
-            }
             else if (arg.compare("-n") == 0)
             {
                 if (++i >= argc)
@@ -399,7 +405,7 @@ int main(int argc, char* argv[])
     }
     if (!csv && !config)
     {
-        std::cout<<"Calculating layers for parameters:\n\th_min = "<<lower<<"m\n\th_max = "<<upper<<"\n\tn = "<<std::to_string(n)<<'\n';
+        std::cout<<"Calculating layers for parameters:\n\th_max = "<<upper<<" m\n\tρ_0 = "<<Consts::rho_0<<" kg/m^3\n\tp_0 = "<<Consts::p_0<<" Pa\n\tT_0 = "<<Consts::T_0<<" K\n\tκ = "<<Consts::kappa<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
     // lower bound, upper bound, layers
     Density rho;
