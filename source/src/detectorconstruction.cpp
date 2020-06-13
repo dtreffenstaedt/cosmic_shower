@@ -6,6 +6,9 @@
 #include <G4LogicalVolume.hh>
 #include <G4PVPlacement.hh>
 #include <G4SystemOfUnits.hh>
+#include <G4UniformMagField.hh>
+#include <G4TransportationManager.hh>
+#include <G4FieldManager.hh>
 
 START_NAMESPACE
 {
@@ -15,6 +18,7 @@ DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config
     m_atmosphere_layers{atmosphere_layers},
     m_world_size{world_size * m},
     m_atmosphere_upper{atmosphere_upper * m},
+    m_magnetic_field{},
     m_world_logical{nullptr}
 {}
 
@@ -122,6 +126,14 @@ void DetectorConstruction::construct_magnetic_field()
     {
         return;
     }
+
+    G4double microTesla = tesla / 1000000.0;
+
+    G4UniformMagField *magnetic_field = new G4UniformMagField(G4ThreeVector(m_magnetic_field.x * microTesla, m_magnetic_field.y * microTesla, m_magnetic_field.z * microTesla));
+
+    G4FieldManager *field_manager = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+    field_manager->SetDetectorField(magnetic_field);
+    field_manager->CreateChordFinder(magnetic_field);
 }
 
 void DetectorConstruction::construct_detectors()

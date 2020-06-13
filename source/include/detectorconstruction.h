@@ -34,6 +34,7 @@ protected:
     std::vector<Config::AtmosphereLayer> m_atmosphere_layers;
     G4double m_world_size;
     G4double m_atmosphere_upper;
+    Config::MagneticField m_magnetic_field;
 
     G4LogicalVolume* m_world_logical;
 

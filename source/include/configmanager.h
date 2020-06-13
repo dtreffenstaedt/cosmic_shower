@@ -20,6 +20,12 @@ struct DetectorPlacement
     std::string name;
 };
 
+struct MagneticField
+{
+    double x;
+    double y;
+    double z;
+};
 struct SecondaryParticle
 {
     int pdg;    // PDG code
