@@ -24,18 +24,18 @@ ConfigManager::ConfigManager(const std::string& fileName)
 ConfigManager::~ConfigManager()
 {}
 
-std::variant<std::vector<DetectorSettings>, size_t> ConfigManager::get_detectors() const
+std::variant<std::vector<DetectorPlacement>, size_t> ConfigManager::get_detectors() const
 {
     unsigned int number;
     if (!m_config.getRoot().lookupValue("detectors", number))
     {
         const libconfig::Setting& detectors_setting = (m_config.getRoot())["detectors"];
-        std::vector<DetectorSettings> detectors;
+        std::vector<DetectorPlacement> detectors;
         size_t len = detectors_setting.getLength();
         for (size_t i = 0; i < len; i++)
         {
             const libconfig::Setting& detector = detectors_setting[i];
-            DetectorSettings settings;
+            DetectorPlacement settings;
             if (!(detector.lookupValue("x", settings.x) &&
                 detector.lookupValue("y", settings.x) &&
                 detector.lookupValue("z", settings.x) &&
