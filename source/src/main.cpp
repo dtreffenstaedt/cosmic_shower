@@ -17,8 +17,42 @@
 
 #include "configmanager.h"
 
-int main()
+void print_help()
 {
+    std::cout<<"Possible parameters:\n\t-h\t\tprint this help\n\t-c <filename>\tuse the config file <filename>\n\t\tdefault: shower.cfg\n";
+}
+
+int main(int argc, char* argv[])
+{
+    std::string config_file = "shower.cfg";
+    if (argc >= 2)
+    {
+        for (int i = 1; i < argc; i++)
+        {
+            std::string arg(argv[i]);
+            if (arg.compare("-c") == 0)
+            {
+                if (++i >= argc)
+                {
+                    std::cout<<"expected name after -c\n";
+                    print_help();
+                    return 1;
+                }
+                config_file = std::string(argv[i]);
+            }
+            else if (arg.compare("-h") == 0)
+            {
+                print_help();
+                return 0;
+            }
+            else
+            {
+                std::cout<<"Invalid parameter "<<arg<<"\n\n";
+                print_help();
+                return 1;
+            }
+        }
+    }
     /*
     G4UIExecutive *ui = 0;
     if (argc == 1)
@@ -32,7 +66,7 @@ int main()
     G4RunManager* runManager = new G4RunManager;
 #endif
 
-    SHOWER::ConfigManager configManager{"shower.cfg"};
+    SHOWER::ConfigManager configManager{config_file};
 
     runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), configManager.get_atmosphere_layers()));
 
