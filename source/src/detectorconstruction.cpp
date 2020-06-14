@@ -33,22 +33,30 @@ DetectorConstruction::~DetectorConstruction()
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
+    std::cout<<"Setting up world:\n";
+    std::cout<<'\t'<<G4BestUnit(m_world_size, "Length")<<'\n';
+    std::cout<<'\t'<<G4BestUnit(m_atmosphere_height, "Length")<<'\n';
     G4VPhysicalVolume* physical_world = construct_world();
 
     construct_atmosphere();
 
-    construct_magnetic_field();
 
     construct_detectors();
 
     return physical_world;
 }
 
+void DetectorConstruction::ConstructSDandField()
+{
+
+    define_detectors();
+
+    construct_magnetic_field();
+}
+
 G4VPhysicalVolume* DetectorConstruction::construct_world()
 {
-    // +++ Construct the world
-
-    G4Box* world_box = new G4Box("World", m_world_size * 0.5, m_world_size * 0.5, m_atmosphere_upper * 0.5);
+    G4Box* world_box = new G4Box("World", m_world_size * 0.5 + 100 * m, m_world_size * 0.5 + 100 * m, m_atmosphere_height * 0.5 + 100 * m);
 
     G4Material* vacuum = new G4Material( // world is a vacuum
             "interGalactic",
@@ -84,35 +92,27 @@ void DetectorConstruction::construct_atmosphere()
     G4NistManager* nist = G4NistManager::Instance();
     G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
 
-    // +++ construct the atmostphere
-    // It consists of 12 layers of varying thickness.
-    // The specific thickness of each layer has been numerically calculated.
-
-    std::vector<G4VPhysicalVolume*> physical_layers; // physical volumes for each layer
-
-
-
     size_t len = m_atmosphere_layers.size();
     for (size_t i = 0; i < len; i++)
     {
         Config::AtmosphereLayer definition = m_atmosphere_layers[i];
-        G4double layer_lower = ((i == 0)?(0.0*m):(definition.lower * m)); // lower end of each layer
+        G4double layer_lower = definition.lower * m; // lower end of each layer
         G4double layer_thickness = (definition.upper - definition.lower) * m; // layer thickness
         G4double density = definition.density * kg/m3;
         G4double pressure = definition.pressure * pascal;
         G4double temperature = definition.temperature * kelvin;
 
-        G4Material* layer_material = new G4Material("material_layer" + std::to_string(i), density, air, kStateUndefined, temperature, pressure);
-        G4Box* layer_box = new G4Box("box_layer" + std::to_string(i), m_world_size * 0.5, m_world_size * 0.5, layer_thickness * 0.5);
-        G4LogicalVolume* layer_logical = new G4LogicalVolume(layer_box, layer_material, std::to_string(i));
-        physical_layers.push_back(new G4PVPlacement(
+        G4Material* layer_material = new G4Material("atmosphere" + std::to_string(i), density, air, kStateGas, temperature, pressure);
+        m_box_layers.push_back(new G4Box("atmosphere" + std::to_string(i), m_world_size * 0.5, m_world_size * 0.5, layer_thickness * 0.5));
+        m_logical_volumes.push_back(new G4LogicalVolume(m_box_layers[i], layer_material, "atmosphere" + std::to_string(i)));
+        m_physical_layers.push_back(new G4PVPlacement(
                 0,
                 G4ThreeVector(
                     0.0 * m,
                     0.0 * m,
-                    - m_world_size * 0.5 + (layer_lower + layer_thickness * 0.5) // center point of each layer
+                    - m_atmosphere_height * 0.5 + (layer_lower + layer_thickness * 0.5) // center point of each layer
                     ),
-                layer_logical,
+                m_logical_volumes[i],
                 "phys_layer" + std::to_string(i),
                 m_world_logical,
                 false,
@@ -146,54 +146,114 @@ void DetectorConstruction::construct_detectors()
     {
         return;
     }
+    std::cout<<"\tDetectors: ";
     std::vector<Config::DetectorPlacement> detectors;
     if (std::holds_alternative<size_t>(m_detectors))
     {
         size_t n = std::get<size_t>(m_detectors);
+        std::cout<<"\n\t\tn = "<<std::to_string(n)<<'\n';
         double root = std::sqrt(static_cast<double>(n));
+        size_t k = 0;
         if (std::abs(root - std::floor(root)) <= std::numeric_limits<double>::epsilon()) // perfect square, create a uniform pattern.
         {
+            std::cout<<"n is a perfect scare, arranging in regular pattern.\n";
             G4double distance = m_world_size / G4double((root + 1));
             size_t row = std::sqrt(n);
-            G4double pos_x = 0 * m;
-            for (size_t i = 0; i < row; i++)
+            G4double pos_x = - m_world_size * 0.5;
+            for (size_t i = 1; i <= row; i++)
             {
                 pos_x += distance;
-                G4double pos_y = 0 * m;
-                for (size_t j = 0; j < row; j++)
+                G4double pos_y = - m_world_size * 0.5;
+                for (size_t j = 1; j <= row; j++)
                 {
                     pos_y += distance;
-                    place_detector("detector" + std::to_string(i*j), pos_x, pos_y, - m_atmosphere_upper * 0.5);
+                    place_detector("detector" + std::to_string(k), pos_x, pos_y, - m_atmosphere_height * 0.5);
+                    k++;
                 }
             }
         }
         else // not a square, place detectors on circle
         {
-            double angle = std::atan(1.0)*8/static_cast<double>(n);
-            G4double r = m_world_size * 0.25;
-            for (size_t i = 1; i <= n; i++)
+            std::cout<<"n not a perfect scare, arranging in circular pattern.\n";
+            size_t max = (n%2 == 0)?n:(n-1);
+            double angle = std::atan(1.0)*8/static_cast<double>(max/2);
+            G4double r = m_world_size * 1/6;
+            for (size_t i = 1 - (n - max); i <= max/2; i++)
             {
-                G4double x = std::cos(angle * static_cast<double>(i)) * r + m_world_size * 0.5;
-                G4double y = std::sin(angle * static_cast<double>(i)) * r + m_world_size * 0.5;
-                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_upper * 0.5);
+                if (i == 0)
+                {
+                    place_detector("detector" + std::to_string(i), 0, 0, - m_atmosphere_height * 0.5);
+                }
+                G4double x = std::cos(angle * static_cast<double>(i)) * r;
+                G4double y = std::sin(angle * static_cast<double>(i)) * r;
+                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_height * 0.5);
+            }
+            r = m_world_size * 2/6;
+            for (size_t i = max/2; i <= max; i++)
+            {
+                G4double x = -std::cos(angle * static_cast<double>(i - max/2 + 1)) * r;
+                G4double y = std::sin(angle * static_cast<double>(i - max/2 + 1)) * r;
+                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_height * 0.5);
             }
         }
     }
     else
     {
         detectors = std::get<std::vector<Config::DetectorPlacement>>(m_detectors);
+        std::cout<<"\n\t\tn = "<<std::to_string(detectors.size())<<'\n';
         for (size_t i = 0; i < detectors.size(); i++)
         {
             Config::DetectorPlacement placement = detectors[i];
-            place_detector(placement.name, (placement.x * m), (placement.y * m), (placement.z * m) - (m_atmosphere_upper * 0.5));
+            place_detector(placement.name, (placement.x * m), (placement.y * m), (placement.z * m) - m_atmosphere_height * 0.5);
         }
     }
 }
 
 void DetectorConstruction::place_detector(const std::string& name, const G4double& x, const G4double& y, const G4double& z)
 {
-    SensitiveDetector* detector = new SensitiveDetector(name);
+    G4NistManager* nist = G4NistManager::Instance();
 
-    detector->construct(m_world_logical, x, y, z);
+
+    if (!m_detector_geometry)
+    {
+        m_detector_geometry = new G4Box("detector", 1000 * m, 1000 * m, 3 * m);
+    }
+    if (!m_detector_material)
+    {
+        m_detector_material = nist->FindOrBuildMaterial("G4_Fe");
+    }
+
+    G4LogicalVolume* logical = new G4LogicalVolume(m_detector_geometry, m_detector_material, name);
+
+    new G4PVPlacement(
+                0,
+                G4ThreeVector(
+                    x,
+                    y,
+                    z),
+                logical,
+                name,
+                m_world_logical,
+                false,
+                0,
+                true
+                );
+
+    m_detector_logicals.push_back(logical);
+}
+
+void DetectorConstruction::define_detectors()
+{
+    G4SDManager* sd_manager = G4SDManager::GetSDMpointer();
+    for (size_t i = 0; i < m_detector_logicals.size(); i++)
+    {
+
+        SensitiveDetector* detector = new SensitiveDetector(m_detector_logicals[i]->GetName());
+
+        sd_manager->AddNewDetector(detector);
+        m_detector_logicals[i]->SetSensitiveDetector(detector);
+
+    }
+
 }
 }
