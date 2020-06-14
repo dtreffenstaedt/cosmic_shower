@@ -184,13 +184,14 @@ void DetectorConstruction::construct_detectors()
                 if (i == 0)
                 {
                     place_detector("detector" + std::to_string(i), 0, 0, - m_atmosphere_height * 0.5);
+                    continue;
                 }
                 G4double x = std::cos(angle * static_cast<double>(i)) * r;
                 G4double y = std::sin(angle * static_cast<double>(i)) * r;
                 place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_height * 0.5);
             }
             r = m_world_size * 2/6;
-            for (size_t i = max/2; i <= max; i++)
+            for (size_t i = max/2 + 1; i <= max; i++)
             {
                 G4double x = -std::cos(angle * static_cast<double>(i - max/2 + 1)) * r;
                 G4double y = std::sin(angle * static_cast<double>(i - max/2 + 1)) * r;
