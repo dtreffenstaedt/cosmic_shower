@@ -19,12 +19,13 @@
 
 void print_help()
 {
-    std::cout<<"Possible parameters:\n\t-h\t\tprint this help\n\t-c <filename>\tuse the config file <filename>\n\t\tdefault: shower.cfg\n";
+    std::cout<<"Possible parameters:\n\t-h\t\tprint this help\n\t-c <filename>\tuse the config file <filename>\n\t\tdefault: shower.cfg\n\t-ui\t\tshow the graphical user interface\n";
 }
 
 int main(int argc, char* argv[])
 {
     std::string config_file = "shower.cfg";
+    bool use_ui = false;
     if (argc >= 2)
     {
         for (int i = 1; i < argc; i++)

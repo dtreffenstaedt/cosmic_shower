@@ -11,17 +11,21 @@
 #include <G4UniformMagField.hh>
 #include <G4TransportationManager.hh>
 #include <G4FieldManager.hh>
+#include <G4UnitsTable.hh>
+#include <G4SDManager.hh>
 
 START_NAMESPACE
 {
-DetectorConstruction::DetectorConstruction(const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors, const std::vector<Config::AtmosphereLayer>& atmosphere_layers, const Config::MagneticField &magnetic_field, const double &atmosphere_upper, const double& world_size) :
+DetectorConstruction::DetectorConstruction() :
     G4VUserDetectorConstruction{},
-    m_detectors{detectors},
-    m_atmosphere_layers{atmosphere_layers},
-    m_world_size{world_size * m},
-    m_atmosphere_upper{atmosphere_upper * m},
-    m_magnetic_field{magnetic_field},
-    m_world_logical{nullptr}
+    m_detectors{ConfigManager::singleton()->get_detectors()},
+    m_atmosphere_layers{ConfigManager::singleton()->get_atmosphere_layers()},
+    m_world_size{ConfigManager::singleton()->get_world_size() * m},
+    m_atmosphere_height{ConfigManager::singleton()->get_atmosphere_height() * m},
+    m_magnetic_field{ConfigManager::singleton()->get_magnetic_field()},
+    m_world_logical{nullptr},
+    m_detector_geometry{nullptr},
+    m_detector_material{nullptr}
 {}
 
 DetectorConstruction::~DetectorConstruction()
@@ -67,8 +71,6 @@ G4VPhysicalVolume* DetectorConstruction::construct_world()
             false,
             0,
             true);
-
-    // --- Construct the world
 
     return physical_world;
 }
@@ -118,8 +120,6 @@ void DetectorConstruction::construct_atmosphere()
                 true
                 ));
     }
-
-    // --- construct the atmostphere
 }
 
 void DetectorConstruction::construct_magnetic_field()
@@ -130,6 +130,8 @@ void DetectorConstruction::construct_magnetic_field()
     }
 
     G4double microTesla = tesla / 1000000.0;
+
+    std::cout<<"\t Magnetic field:\n\t\tB_x = "<<m_magnetic_field.x<<"\n\t\tB_y = "<<m_magnetic_field.y<<"\n\t\tB_z = "<<m_magnetic_field.z<<'\n';
 
     G4UniformMagField *magnetic_field = new G4UniformMagField(G4ThreeVector(m_magnetic_field.x * microTesla, m_magnetic_field.y * microTesla, m_magnetic_field.z * microTesla));
 

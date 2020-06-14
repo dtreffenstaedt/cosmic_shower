@@ -19,12 +19,10 @@ public:
     virtual ~SensitiveDetector();
 
     // +++ reimplemented from G4VSensitiveDetector
-    virtual void Initialise(G4HCofThisEvent* hit_collection);
+    virtual void Initialize(G4HCofThisEvent* hit_collection);
     virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory*);
     virtual void EndOfEvent(G4HCofThisEvent* hit_collection);
     // --- reimplemented from G4VSensitiveDetector
-
-    void construct(G4LogicalVolume* logical_volume, G4double x, G4double y, G4double z);
 
 private:
     G4THitsCollection<DetectorHit>* m_hits_collection;

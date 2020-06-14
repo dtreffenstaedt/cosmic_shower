@@ -19,12 +19,7 @@ START_NAMESPACE
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-    DetectorConstruction(
-                const std::variant<std::vector<Config::DetectorPlacement>, size_t>& detectors,
-                const std::vector<Config::AtmosphereLayer>& atmosphere_layers,
-                const Config::MagneticField& magnetic_field,
-                const double& atmosphere_upper,
-                const double& world_size = 40000);
+    DetectorConstruction();
 
     virtual ~DetectorConstruction();
 
@@ -34,7 +29,7 @@ protected:
     std::variant<std::vector<Config::DetectorPlacement>, size_t> m_detectors;
     std::vector<Config::AtmosphereLayer> m_atmosphere_layers;
     G4double m_world_size;
-    G4double m_atmosphere_upper;
+    G4double m_atmosphere_height;
     Config::MagneticField m_magnetic_field;
 
     G4LogicalVolume* m_world_logical;

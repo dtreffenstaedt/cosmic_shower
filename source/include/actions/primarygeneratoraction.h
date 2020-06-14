@@ -17,7 +17,7 @@ START_NAMESPACE
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-    PrimaryGeneratorAction(const Config::PrimaryParticle& primary, const G4double& atmosphere_upper);
+    PrimaryGeneratorAction();
     virtual ~PrimaryGeneratorAction();
 
     virtual void GeneratePrimaries(G4Event* e);

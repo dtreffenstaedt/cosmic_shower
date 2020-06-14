@@ -4,15 +4,14 @@
 #include "actions/runaction.h"
 #include "actions/eventaction.h"
 #include "actions/steppingaction.h"
+#include "configmanager.h"
 
 #include <G4SystemOfUnits.hh>
 
 START_NAMESPACE
 {
-ActionInitialization::ActionInitialization(const Config::PrimaryParticle& primary, const double &atmosphere_upper) :
-    G4VUserActionInitialization{},
-    m_primary{primary},
-    m_atmosphere_upper{atmosphere_upper * m}
+ActionInitialization::ActionInitialization() :
+    G4VUserActionInitialization{}
 {}
 
 ActionInitialization::~ActionInitialization()

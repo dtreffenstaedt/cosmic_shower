@@ -7,18 +7,33 @@
 #include <G4NistManager.hh>
 #include <G4SDManager.hh>
 
+#include <filesystem>
+
 START_NAMESPACE
 {
 
 SensitiveDetector::SensitiveDetector(const std::string& name) :
-    G4VSensitiveDetector{"/muonPI/" + name},
+    G4VSensitiveDetector{"/" + name},
     m_hits_collection{nullptr},
     m_collection_id{-1},
     m_name{name}
 {
-    collectionName.insert("detector_hits_" + name); // has to be filled for the hit collection to register
-    m_file_name = "./data/" + ConfigManager::singleton()->get_name() + "/" + name;
+    collectionName.push_back(name); // has to be filled for the hit collection to register
+    std::string data = ConfigManager::singleton()->get_data_directory();
+    std::string dir = data + "/" + ConfigManager::singleton()->get_name();
+    m_file_name = dir + "/" + name;
 
+    if (!std::filesystem::exists(data))
+    {
+        std::filesystem::create_directory(data);
+    }
+
+    if (!std::filesystem::exists(dir))
+    {
+        std::filesystem::create_directory(dir);
+    }
+
+    std::cout<<"setting up sensitive detector '"<<name<<"' with data file: "<<m_file_name<<"\n";
     auto particles = ConfigManager::singleton()->get_particles();
 
     for (size_t i = 0; i < particles.size(); i++)
