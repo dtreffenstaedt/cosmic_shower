@@ -27,7 +27,7 @@ configure_file (
     "${PROJECT_BASE_DIR}vis.mac"
 )
 add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
-find_package(Geant4 REQUIRED)
+find_package(Geant4 REQUIRED ui_all vis_all)
 find_package(libconfig++ REQUIRED)
 
 include(cmake/files.cmake)

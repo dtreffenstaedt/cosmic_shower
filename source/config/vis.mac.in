@@ -1,4 +1,4 @@
-# Macro file for the visualization setting in the initialization phase 
+# Macro file for the visualization setting in the initialization phase
 # of the B1 example when running in interactive mode
 #
 
@@ -24,7 +24,7 @@
 #
 # Disable auto refresh and quieten vis messages whilst scene and
 # trajectories are established:
-/vis/viewer/set/autoRefresh false
+/vis/viewer/set/autoRefresh true
 /vis/verbose errors
 #
 # Draw geometry:
@@ -69,16 +69,6 @@
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
 #
-# Decorations
-# Name
-/vis/set/textColour green
-/vis/set/textLayout right
-/vis/scene/add/text2D 0.9 -.9 24 ! ! Proton
-# or, if your system does not support right-adjustment
-#/vis/scene/add/text2D 0 -.9 24 ! ! exampleB1
-/vis/set/textLayout    # Revert to normal (left adjusted) layout
-/vis/set/textColour    # Revert to default text colour (blue)
-#
 # Axes, scale, etc.
 /vis/scene/add/scale   # Simple scale line
 #/vis/scene/add/axes    # Simple axes: x=red, y=green, z=blue.
@@ -94,17 +84,32 @@
 /vis/set/colour        # Revert to default colour (white)
 /vis/set/lineWidth     # Revert to default line width (1.)
 #
-# Attach text to one edge of Shape1, with a small, fixed offset
-/vis/scene/add/text 0 6 -4 cm 18 4 4 Shape1
-# Attach text to one corner of Shape2, with a small, fixed offset
-/vis/scene/add/text 6 7 10 cm 18 4 4 Shape2
-#
 # To get nice view
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 true
+/vis/geometry/set/visibility atmosphere0 0 true
+/vis/geometry/set/visibility atmosphere1 0 true
+/vis/geometry/set/visibility atmosphere2 0 true
+/vis/geometry/set/visibility atmosphere3 0 true
+/vis/geometry/set/visibility atmosphere4 0 true
+/vis/geometry/set/visibility atmosphere5 0 true
+/vis/geometry/set/visibility atmosphere6 0 true
+/vis/geometry/set/visibility atmosphere7 0 true
+/vis/geometry/set/visibility atmosphere8 0 true
+/vis/geometry/set/visibility atmosphere9 0 true
 # "Envelope" is transparent blue to represent water
-/vis/geometry/set/colour Detector 0 1 1 1 1
 /vis/geometry/set/colour World 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere0 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere1 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere2 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere3 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere4 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere5 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere6 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere7 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere8 0 1 1 1 .1
+/vis/geometry/set/colour atmosphere9 0 1 1 1 .1
+/vis/geometry/set/colour detector0 0 1 1 1 1
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 /vis/viewer/set/viewpointThetaPhi 120 150

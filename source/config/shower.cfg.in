@@ -39,6 +39,8 @@ primary = {
         magnitude = 1000.0;
     };
 
+    n_particles = 30;
+
     particle = 2212;
 };
 
@@ -118,7 +120,9 @@ magnetic_field = {
     x = 0.0;
     y = 0.0;
     z = 0.0;
-}
+};
+
+world_size = 40000.0;
 # default atmospheric layer configuration. Do not edit unless you know what you're doing.
 # If you want to change atmospheric parameters, use the atmosphere_layer executable to generate a new configuration.
 layers = (
