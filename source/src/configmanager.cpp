@@ -280,8 +280,12 @@ void ConfigManager::config_dump(const std::string& filename)
     libconfig::Config save;
     libconfig::Setting& root = save.getRoot();
 
-    root.add("name", libconfig::Setting::TypeString) = get_name();
-    root.add("data_directory", libconfig::Setting::TypeString) = get_data_directory();
+    {
+        root.add("name", libconfig::Setting::TypeString) = get_name();
+    }
+    {
+        root.add("data_directory", libconfig::Setting::TypeString) = get_data_directory();
+    }
     {
         libconfig::Setting& dets = root.add("detectors", libconfig::Setting::TypeList);
         for (size_t i = 0; i < m_detectors.size(); i++)
@@ -341,6 +345,9 @@ void ConfigManager::config_dump(const std::string& filename)
         group.add("x", libconfig::Setting::TypeFloat) = field.x;
         group.add("y", libconfig::Setting::TypeFloat) = field.y;
         group.add("z", libconfig::Setting::TypeFloat) = field.z;
+    }
+    {
+        root.add("world_size", libconfig::Setting::TypeFloat) = get_world_size();
     }
     {
         libconfig::Setting& list = root.add("layers", libconfig::Setting::TypeList);
