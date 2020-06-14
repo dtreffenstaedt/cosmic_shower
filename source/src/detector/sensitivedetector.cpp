@@ -38,6 +38,12 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
         std::filesystem::create_directory(dir);
     }
 
+    std::ofstream file(m_file_name, std::ofstream::app);
+
+    DetectorHit hit;
+    hit.write_header(file);
+
+    file.close();
 
 
     std::cout<<"setting up sensitive detector '"<<name<<"' with data file: "<<m_file_name<<"\n";
@@ -93,22 +99,23 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4double e_tot = track->GetTotalEnergy();
 
     G4double global_time = track->GetGlobalTime();
+    G4double local_time = track->GetLocalTime();
+    G4double proper_time = track->GetProperTime();
 
 
-    if (m_hits_collection)
-    {
-        std::cout<<m_name<<" got a hit!\n";
-        DetectorHit* hit = new DetectorHit{
-                                    particle,
-                                    e_tot,
-                                    volume,
-                                    position,
-                                    momentum_direction,
-                                    global_time
-                                    };
+    std::cout<<m_name<<" got a hit!\n";
+    DetectorHit* hit = new DetectorHit{
+                                particle,
+                                e_tot,
+                                volume,
+                                position,
+                                momentum_direction,
+                                global_time,
+                                local_time,
+                                proper_time
+                                };
 
-        m_hits_collection->insert(hit);
-    }
+    m_hits_collection->insert(hit);
 
 
     return true;
@@ -117,10 +124,6 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
 void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
 {
     std::cout<<m_name<<" ending event\n";
-    if (!m_hits_collection)
-    {
-        return;
-    }
     std::ofstream stream;
     size_t size = m_hits_collection->GetSize();
     std::cout<<m_name<<" had "<<std::to_string(size)<<" hits\n";
@@ -139,6 +142,7 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
         if (!stream.is_open())
         {
             stream.open(m_file_name, std::ofstream::app);
+            stream<<"# Event "<<std::to_string(m_event_no)<<'\n';
         }
 
         hit->write_to_file(stream);
@@ -147,5 +151,6 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
     {
         stream.close();
     }
+    m_event_no++;
 }
 }

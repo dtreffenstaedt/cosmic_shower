@@ -20,8 +20,12 @@ public:
                 G4VPhysicalVolume* physical_volume,
                 G4ThreeVector position,
                 G4ThreeVector momentum,
-                G4double global_time
+                G4double global_time,
+                G4double local_time,
+                G4double proper_time
                 );
+
+    DetectorHit();
 
     virtual ~DetectorHit();
 
@@ -30,6 +34,8 @@ public:
     // --- reimplemented from G4VHit
 
     void write_to_file(std::ofstream& file);
+
+    void write_header(std::ofstream& file);
 
     int get_pdg();
 
@@ -40,6 +46,8 @@ private:
     G4ThreeVector m_position;
     G4ThreeVector m_momentum;
     G4double m_global_time;
+    G4double m_local_time;
+    G4double m_proper_time;
 };
 
 }
