@@ -19,20 +19,20 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-    RunAction* runAction = new RunAction;
-    SetUserAction(runAction);
+//    RunAction* runAction = new RunAction;
+//    SetUserAction(runAction);
 }
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction(m_primary, m_atmosphere_upper));
+    SetUserAction(new PrimaryGeneratorAction);
 
-    RunAction* runAction = new RunAction;
-    SetUserAction(runAction);
+//    RunAction* runAction = new RunAction;
+//    SetUserAction(runAction);
 
-    EventAction* eventAction = new EventAction(runAction);
-    SetUserAction(eventAction);
+//    EventAction* eventAction = new EventAction(runAction);
+//    SetUserAction(eventAction);
 
-    SetUserAction(new SteppingAction(eventAction));
+//    SetUserAction(new SteppingAction(eventAction));
 }
 }

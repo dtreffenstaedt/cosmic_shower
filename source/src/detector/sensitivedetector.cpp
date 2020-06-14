@@ -64,7 +64,6 @@ void SensitiveDetector::Initialize(G4HCofThisEvent* hit_collection)
 
 G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
-    std::cout<<m_name<<" got a hit!\n";
     G4TouchableHandle touchable = step->GetPreStepPoint()->GetTouchableHandle();
     G4ThreeVector position = step->GetPreStepPoint()->GetPosition();
     G4ThreeVector momentum_direction = step->GetPreStepPoint()->GetMomentumDirection();
@@ -85,6 +84,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     if (m_hits_collection)
     {
+        std::cout<<m_name<<" got a hit!\n";
         DetectorHit* hit = new DetectorHit{
                                     particle,
                                     e_tot,
