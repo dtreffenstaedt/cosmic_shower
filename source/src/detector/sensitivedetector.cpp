@@ -21,7 +21,6 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
     collectionName.push_back(name); // has to be filled for the hit collection to register
     std::string data = ConfigManager::singleton()->get_data_directory();
     std::string dir = data + "/" + ConfigManager::singleton()->get_name();
-    m_file_name = dir + "/" + name;
 
     if (!std::filesystem::exists(data))
     {
@@ -32,6 +31,12 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
     {
         std::filesystem::create_directory(dir);
     }
+    else
+    {
+        throw DataDirectoryExists();
+    }
+
+    m_file_name = dir + "/" + name;
 
     std::cout<<"setting up sensitive detector '"<<name<<"' with data file: "<<m_file_name<<"\n";
     auto particles = ConfigManager::singleton()->get_particles();

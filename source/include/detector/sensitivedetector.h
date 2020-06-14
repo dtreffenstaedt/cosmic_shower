@@ -11,6 +11,14 @@
 START_NAMESPACE
 {
 
+class DataDirectoryExists : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Data error: Output directory already exists. Exiting to preserve previous data.";
+    }
+};
+
 class SensitiveDetector : public G4VSensitiveDetector
 {
 public:
