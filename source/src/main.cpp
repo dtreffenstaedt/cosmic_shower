@@ -41,6 +41,10 @@ int main(int argc, char* argv[])
                 }
                 config_file = std::string(argv[i]);
             }
+            else if (arg.compare("-ui") == 0)
+            {
+                use_ui = true;
+            }
             else if (arg.compare("-h") == 0)
             {
                 print_help();
@@ -57,63 +61,63 @@ int main(int argc, char* argv[])
 
     SHOWER::ConfigManager configManager{config_file};
 
-    /*
+    std::cout<<"Starting simulation for '"<<configManager.get_name()<<"'\n";
     G4UIExecutive *ui = 0;
-    if (argc == 1)
+    if (use_ui)
     {
         ui = new G4UIExecutive(argc, argv, "qt");
     }
-*/
+
 #ifdef G4MULTITHREADED
     G4MTRunManager* runManager = new G4MTRunManager;
 #else
     G4RunManager* runManager = new G4RunManager;
 #endif
+    runManager->SetVerboseLevel(0);
 
 
-    std::vector<SHOWER::Config::AtmosphereLayer> atmosphere_layers = configManager.get_atmosphere_layers();
-
-    double atmosphere_upper = atmosphere_layers[atmosphere_layers.size() - 1].upper;
-
-
-    runManager->SetUserInitialization(new SHOWER::DetectorConstruction(configManager.get_detectors(), atmosphere_layers, configManager.get_magnetic_field(), atmosphere_upper));
+    runManager->SetUserInitialization(new SHOWER::DetectorConstruction);
 
 
     G4VModularPhysicsList* physicsList = new QGSP_BERT;
-    physicsList->SetVerboseLevel(1);
+    physicsList->SetVerboseLevel(0);
 
     runManager->SetUserInitialization(physicsList);
 
-    runManager->SetUserInitialization(new SHOWER::ActionInitialization(configManager.get_primary_particle(), atmosphere_upper));
+    runManager->SetUserInitialization(new SHOWER::ActionInitialization);
 
     runManager->Initialize();
-/*
+
     G4VisManager* visManager = new G4VisExecutive;
+
+    visManager->SetVerboseLevel(0);
 
     visManager->Initialize();
 
-
-    if (!ui)
+    if (use_ui)
     {
-        G4String command = "/control/execute";
-        G4String fileName = argv[1];
-        uiManager->ApplyCommand(command + fileName);
+        G4UImanager* uiManager = G4UImanager::GetUIpointer();
+
+        if (!ui)
+        {
+            int numberOfEvent = 1;
+            runManager->BeamOn(numberOfEvent);
+        }
+        else
+        {
+            uiManager->ApplyCommand("/run/initialize");
+            uiManager->ApplyCommand("/control/execute vis.mac");
+            ui->SessionStart();
+            delete ui;
+        }
+
     }
     else
     {
-        uiManager->ApplyCommand("/control/execute init_vis.mac");
-        ui->SessionStart();
-        delete ui;
+        int numberOfEvent = 1;
+        runManager->BeamOn(numberOfEvent);
     }
     delete visManager;
-    G4UImanager* uiManager = G4UImanager::GetUIpointer();
-    uiManager->ApplyCommand("/run/verbose 1");
-    uiManager->ApplyCommand("/event/verbose 1");
-    uiManager->ApplyCommand("/tracking/verbose 1");
-*/
-    int numberOfEvent = 2000;
-    runManager->BeamOn(numberOfEvent);
-
     delete runManager;
     return 0;
 }
