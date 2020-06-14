@@ -11,6 +11,15 @@ START_NAMESPACE
 {
 namespace Config
 {
+struct DetectorProperties
+{
+    struct
+    {
+        double x;
+        double y;
+        double z;
+    } geometry;
+};
 struct DetectorPlacement
 {
     double x;
@@ -141,6 +150,8 @@ public:
      * Primary particle definition
      */
     Config::PrimaryParticle get_primary_particle(const bool& fallback = false) const;
+
+    Config::DetectorProperties get_detector_properties(const bool& fallback = false) const;
 
     /**
      * Magnetic field definition

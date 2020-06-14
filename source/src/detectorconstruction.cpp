@@ -23,6 +23,7 @@ DetectorConstruction::DetectorConstruction() :
     m_world_size{ConfigManager::singleton()->get_world_size() * m},
     m_atmosphere_height{ConfigManager::singleton()->get_atmosphere_height() * m},
     m_magnetic_field{ConfigManager::singleton()->get_magnetic_field()},
+    m_detector_properties{ConfigManager::singleton()->get_detector_properties()},
     m_world_logical{nullptr},
     m_detector_geometry{nullptr},
     m_detector_material{nullptr}
@@ -216,7 +217,7 @@ void DetectorConstruction::place_detector(const std::string& name, const G4doubl
 
     if (!m_detector_geometry)
     {
-        m_detector_geometry = new G4Box("detector", 1000 * m, 1000 * m, 3 * m);
+        m_detector_geometry = new G4Box("detector", m_detector_properties.geometry.x * 0.5 * mm, m_detector_properties.geometry.y * 0.5 * mm, m_detector_properties.geometry.z * 0.5 * mm);
     }
     if (!m_detector_material)
     {

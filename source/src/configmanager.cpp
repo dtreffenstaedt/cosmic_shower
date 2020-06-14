@@ -168,6 +168,28 @@ Config::PrimaryParticle ConfigManager::get_primary_particle(const bool& fallback
     return primary;
 }
 
+Config::DetectorProperties ConfigManager::get_detector_properties(const bool &fallback) const
+{
+    if (!fallback)
+    {
+        if (!get_root().exists("detector_properties"))
+        {
+            return get_detector_properties(true);
+        }
+    }
+    const libconfig::Setting& detector_setting = get_root(fallback)["detector_properties"];
+    Config::DetectorProperties detector;
+    const libconfig::Setting& geometry = detector_setting["geometry"];
+
+    if (!(geometry.lookupValue("x", detector.geometry.x) &&
+        geometry.lookupValue("y", detector.geometry.y) &&
+        geometry.lookupValue("z", detector.geometry.z)))
+    {
+        throw FaultyDetectorDefinition();
+    }
+    return detector;
+}
+
 Config::MagneticField ConfigManager::get_magnetic_field(const bool& fallback) const
 {
     if (!fallback)

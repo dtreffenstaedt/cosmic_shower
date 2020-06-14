@@ -20,6 +20,14 @@ detectors = 16; # number of detectors to generate, they will be spread uniformly
 #        name = "detector2";
 #    });
 
+# The properties of the detector. The values in the geometry setting are the outside measurements of the detector in mm.
+detector_properties ={
+    geometry = {
+        x = 1000.0;
+        y = 1000.0;
+        z = 1000.0;
+    };
+};
 # options for the primary particle.
 # origin refers to the position where the particle is generated.
 # x=0,y=0 refers to the middle of the simulated area, z = 0 corresponds to the top of the atmosphere. The values are doubles in meters.

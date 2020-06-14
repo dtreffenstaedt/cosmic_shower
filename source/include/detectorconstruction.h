@@ -34,6 +34,7 @@ protected:
     G4double m_world_size;
     G4double m_atmosphere_height;
     Config::MagneticField m_magnetic_field;
+    Config::DetectorProperties m_detector_properties;
 
     G4LogicalVolume* m_world_logical;
     G4LogicalVolume* m_air_logical;
