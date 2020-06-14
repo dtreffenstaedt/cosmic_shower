@@ -38,6 +38,8 @@ private:
     std::string m_file_name;
     std::string m_name;
     std::vector<int> m_pdg_codes;
+    size_t m_event_no;
+    static std::atomic<bool> c_dumped;
 };
 
 }

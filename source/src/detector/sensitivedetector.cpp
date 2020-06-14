@@ -12,11 +12,14 @@
 START_NAMESPACE
 {
 
+std::atomic<bool> SensitiveDetector::c_dumped = false;
+
 SensitiveDetector::SensitiveDetector(const std::string& name) :
     G4VSensitiveDetector{"/" + name},
     m_hits_collection{nullptr},
     m_collection_id{-1},
-    m_name{name}
+    m_name{name},
+    m_event_no{0}
 {
     collectionName.push_back(name); // has to be filled for the hit collection to register
     std::string data = ConfigManager::singleton()->get_data_directory();
