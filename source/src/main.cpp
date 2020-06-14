@@ -100,8 +100,7 @@ int main(int argc, char* argv[])
 
         if (!ui)
         {
-            int numberOfEvent = 1;
-            runManager->BeamOn(numberOfEvent);
+            runManager->BeamOn(configManager.get_events());
         }
         else
         {
@@ -114,8 +113,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        int numberOfEvent = 1;
-        runManager->BeamOn(numberOfEvent);
+        runManager->BeamOn(configManager.get_events());
     }
     delete visManager;
     delete runManager;

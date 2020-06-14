@@ -3,6 +3,9 @@ name = "fallback"
 # The directory where the output data is written to.
 data_directory = "data"
 
+# number of events to simulate
+events = 1;
+
 # detectors to simulate either assign a number to get a number of randomly generated detectors or use a list.
 # If a number of detectors is given and the number is a perfect square, the detectors will be arranged in a uniform pattern of `sqrt(n)*sqrt(n)` detectors.
 # In case that n is not a perfect square, the detectors will be arranged in a circle of radius `world_size / 4` around the center of the world.

@@ -162,6 +162,8 @@ public:
 
     std::string get_data_directory(const bool& fallback = false) const;
 
+    int get_events(const bool& fallback = false) const;
+
     double get_world_size(const bool& fallback = false) const;
     double get_atmosphere_height(const bool& fallback = false) const;
 

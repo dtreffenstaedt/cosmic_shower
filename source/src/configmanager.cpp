@@ -216,6 +216,18 @@ std::string ConfigManager::get_name() const
     return m_config.lookup("name");
 }
 
+int ConfigManager::get_events(const bool &fallback) const
+{
+    if (!fallback)
+    {
+        if (!get_root().exists("events"))
+        {
+            return get_events(true);
+        }
+    }
+    return get_root(fallback).lookup("events");
+}
+
 std::string ConfigManager::get_data_directory(const bool &fallback) const
 {
     if (fallback || !m_config.exists("data_directory"))
@@ -285,6 +297,9 @@ void ConfigManager::config_dump(const std::string& filename)
     }
     {
         root.add("data_directory", libconfig::Setting::TypeString) = get_data_directory();
+    }
+    {
+        root.add("events", libconfig::Setting::TypeInt) = get_events();
     }
     {
         libconfig::Setting& dets = root.add("detectors", libconfig::Setting::TypeList);
