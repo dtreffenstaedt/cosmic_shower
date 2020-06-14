@@ -20,6 +20,7 @@ Following arguments are possible:
 	-h		print this help
 	-c <filename>	use the config file <filename>
 		default: shower.cfg
+	-ui		show the graphical user interface
 ```
 
 ### configuration
