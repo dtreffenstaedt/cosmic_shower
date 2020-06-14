@@ -164,11 +164,18 @@ public:
 
     double get_world_size(const bool& fallback = false) const;
     double get_atmosphere_height(const bool& fallback = false) const;
+
+    void config_dump(const std::string &filename);
+
+    void add_detector(Config::DetectorPlacement detector);
+
 private:
     const libconfig::Setting& get_root(const bool& fallback = false) const;
 
     libconfig::Config m_config;
     libconfig::Config m_fallback;
+
+    std::vector<Config::DetectorPlacement> m_detectors;
 
     static ConfigManager* c_singleton;
 };

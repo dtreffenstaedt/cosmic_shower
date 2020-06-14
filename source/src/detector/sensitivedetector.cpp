@@ -47,6 +47,12 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
     {
         m_pdg_codes.push_back(particles[i].pdg);
     }
+
+    if (!c_dumped)
+    {
+        ConfigManager::singleton()->config_dump(dir + "/config_dump.cfg");
+        c_dumped = true;
+    }
 }
 
 SensitiveDetector::~SensitiveDetector()

@@ -269,4 +269,95 @@ double ConfigManager::get_atmosphere_height(const bool &fallback) const
     }
     return upper;
 }
+
+void ConfigManager::add_detector(Config::DetectorPlacement detector)
+{
+    m_detectors.push_back(detector);
+}
+
+void ConfigManager::config_dump(const std::string& filename)
+{
+    libconfig::Config save;
+    libconfig::Setting& root = save.getRoot();
+
+    root.add("name", libconfig::Setting::TypeString) = get_name();
+    root.add("data_directory", libconfig::Setting::TypeString) = get_data_directory();
+    {
+        libconfig::Setting& dets = root.add("detectors", libconfig::Setting::TypeList);
+        for (size_t i = 0; i < m_detectors.size(); i++)
+        {
+            libconfig::Setting& group = dets.add(libconfig::Setting::TypeGroup);
+            group.add("x", libconfig::Setting::TypeFloat) = m_detectors[i].x;
+            group.add("y", libconfig::Setting::TypeFloat) = m_detectors[i].y;
+            group.add("z", libconfig::Setting::TypeFloat) = m_detectors[i].z;
+            group.add("name", libconfig::Setting::TypeString) = m_detectors[i].name;
+        }
+    }
+    {
+        libconfig::Setting& detector_props = root.add("detector_properties", libconfig::Setting::TypeGroup);
+        libconfig::Setting& geometry =  detector_props.add("geometry", libconfig::Setting::TypeGroup);
+        auto det_prop = get_detector_properties();
+        geometry.add("x", libconfig::Setting::TypeFloat) = det_prop.geometry.x;
+        geometry.add("y", libconfig::Setting::TypeFloat) = det_prop.geometry.y;
+        geometry.add("z", libconfig::Setting::TypeFloat) = det_prop.geometry.z;
+    }
+    {
+        libconfig::Setting& primary = root.add("primary", libconfig::Setting::TypeGroup);
+        libconfig::Setting& origin =  primary.add("origin", libconfig::Setting::TypeGroup);
+        libconfig::Setting& momentum =  primary.add("momentum", libconfig::Setting::TypeGroup);
+        auto prim = get_primary_particle();
+        origin.add("x", libconfig::Setting::TypeFloat) = prim.origin.x;
+        origin.add("y", libconfig::Setting::TypeFloat) = prim.origin.y;
+        origin.add("z", libconfig::Setting::TypeFloat) = prim.origin.z;
+
+        momentum.add("x", libconfig::Setting::TypeFloat) = prim.momentum.x;
+        momentum.add("y", libconfig::Setting::TypeFloat) = prim.momentum.y;
+        momentum.add("z", libconfig::Setting::TypeFloat) = prim.momentum.z;
+        momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.momentum.m;
+
+        primary.add("n_particles", libconfig::Setting::TypeInt) = prim.n_particles;
+        primary.add("particle", libconfig::Setting::TypeInt) = prim.particle;
+    }
+    {
+        auto list = get_particles();
+        libconfig::Setting& part = root.add("particles", libconfig::Setting::TypeList);
+        for (size_t i = 0; i < list.size(); i++)
+        {
+            libconfig::Setting& group = part.add(libconfig::Setting::TypeGroup);
+            group.add("pdg", libconfig::Setting::TypeInt) = list[i].pdg;
+            if (list[i].cut_range > std::numeric_limits<double>::epsilon())
+            {
+                group.add("cut_range", libconfig::Setting::TypeFloat) = list[i].cut_range;
+            }
+            if (list[i].cut_energy > std::numeric_limits<double>::epsilon())
+            {
+                group.add("cut_energy", libconfig::Setting::TypeFloat) = list[i].cut_energy;
+            }
+        }
+    }
+    {
+        libconfig::Setting& group = root.add("magnetic_field", libconfig::Setting::TypeGroup);
+        auto field = get_magnetic_field();
+        group.add("x", libconfig::Setting::TypeFloat) = field.x;
+        group.add("y", libconfig::Setting::TypeFloat) = field.y;
+        group.add("z", libconfig::Setting::TypeFloat) = field.z;
+    }
+    {
+        libconfig::Setting& list = root.add("layers", libconfig::Setting::TypeList);
+        auto layers = get_atmosphere_layers();
+        for (size_t i = 0; i < layers.size(); i++)
+        {
+            libconfig::Setting& group = list.add(libconfig::Setting::TypeGroup);
+            group.add("id", libconfig::Setting::TypeInt) = static_cast<int>(i);
+            group.add("lower", libconfig::Setting::TypeFloat) = layers[i].lower;
+            group.add("upper", libconfig::Setting::TypeFloat) = layers[i].upper;
+            group.add("density", libconfig::Setting::TypeFloat) = layers[i].density;
+            group.add("pressure", libconfig::Setting::TypeFloat) = layers[i].pressure;
+            group.add("temperature", libconfig::Setting::TypeFloat) = layers[i].temperature;
+        }
+    }
+
+    save.writeFile(filename.c_str());
+
+}
 }

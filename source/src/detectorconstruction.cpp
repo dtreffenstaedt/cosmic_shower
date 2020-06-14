@@ -212,6 +212,13 @@ void DetectorConstruction::construct_detectors()
 
 void DetectorConstruction::place_detector(const std::string& name, const G4double& x, const G4double& y, const G4double& z)
 {
+    Config::DetectorPlacement det;
+    det.x = x;
+    det.y = y;
+    det.z = z;
+    det.name = name;
+
+    ConfigManager::singleton()->add_detector(det);
     G4NistManager* nist = G4NistManager::Instance();
 
 
