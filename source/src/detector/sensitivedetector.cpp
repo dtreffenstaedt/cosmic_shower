@@ -46,21 +46,25 @@ SensitiveDetector::~SensitiveDetector()
 {
 }
 
-void SensitiveDetector::Initialise(G4HCofThisEvent* hit_collection)
+void SensitiveDetector::Initialize(G4HCofThisEvent* hit_collection)
 {
-    m_hits_collection = new G4THitsCollection<DetectorHit>(GetName(), collectionName[0]);
+    std::cout<<m_name<<" initialising event\n";
+
+    m_hits_collection = new G4THitsCollection<DetectorHit>(GetName(), m_name);
 
 
     if (m_collection_id < 0)
     {
-        m_collection_id = GetCollectionID(0);
+        m_collection_id = G4SDManager::GetSDMpointer()->GetCollectionID(m_hits_collection);
     }
+
 
     hit_collection->AddHitsCollection(m_collection_id, m_hits_collection);
 }
 
 G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
+    std::cout<<m_name<<" got a hit!\n";
     G4TouchableHandle touchable = step->GetPreStepPoint()->GetTouchableHandle();
     G4ThreeVector position = step->GetPreStepPoint()->GetPosition();
     G4ThreeVector momentum_direction = step->GetPreStepPoint()->GetMomentumDirection();
@@ -79,33 +83,46 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4double global_time = track->GetGlobalTime();
 
 
-    DetectorHit* hit = new DetectorHit{
-                                particle,
-                                e_tot,
-                                volume,
-                                position,
-                                momentum_direction,
-                                global_time
-                                };
+    if (m_hits_collection)
+    {
+        DetectorHit* hit = new DetectorHit{
+                                    particle,
+                                    e_tot,
+                                    volume,
+                                    position,
+                                    momentum_direction,
+                                    global_time
+                                    };
 
-    m_hits_collection->insert(hit);
+        m_hits_collection->insert(hit);
+    }
+
 
     return true;
 }
 
 void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
 {
+    std::cout<<m_name<<" ending event\n";
+    if (!m_hits_collection)
+    {
+        return;
+    }
     std::ofstream stream;
     size_t size = m_hits_collection->GetSize();
+    std::cout<<m_name<<" had "<<std::to_string(size)<<" hits\n";
     for (size_t i = 0; i < size; i++)
     {
         DetectorHit* hit = static_cast<DetectorHit*>(m_hits_collection->GetHit(i));
 
         if (std::find(std::begin(m_pdg_codes), std::end(m_pdg_codes), hit->get_pdg()) == std::end(m_pdg_codes))
         {
+            std::cout<<"Hit not in particle list. discarding ("<<std::to_string(hit->get_pdg())<<")\n";
             continue;
         }
 
+
+        std::cout<<m_name<<" saving hit. ("<<std::to_string(hit->get_pdg())<<")\n";
         if (!stream.is_open())
         {
             stream.open(m_file_name, std::ofstream::app);
@@ -118,35 +135,4 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
         stream.close();
     }
 }
-
-void SensitiveDetector::construct(G4LogicalVolume* logical_volume, G4double x, G4double y, G4double z)
-{
-    G4VSolid* solid = new G4Box("detector_solid" + m_name, 0.1 * m, 0.1 * m, 0.1 * m);
-
-
-    G4NistManager* nist = G4NistManager::Instance();
-    G4Material* material = nist->FindOrBuildMaterial("G4_Pb");
-
-    G4LogicalVolume* logical = new G4LogicalVolume(solid, material, "detector_logial" + m_name);
-
-    G4SDManager* sd_manager = G4SDManager::GetSDMpointer();
-
-    sd_manager->AddNewDetector(this);
-    logical->SetSensitiveDetector(this);
-
-    new G4PVPlacement(
-                0,
-                G4ThreeVector(
-                    x,
-                    y,
-                    z),
-                logical,
-                m_name,
-                logical_volume,
-                false,
-                0,
-                true
-                );
-}
-
 }

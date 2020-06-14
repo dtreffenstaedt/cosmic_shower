@@ -1,7 +1,7 @@
 #include "detector/detectorhit.h"
 
 #include <fstream>
-
+#include <G4UnitsTable.hh>
 START_NAMESPACE
 {
 
@@ -37,6 +37,9 @@ int DetectorHit::get_pdg()
 
 void DetectorHit::write_to_file(std::ofstream &file)
 {
-    file<<m_particle->GetPDGEncoding()<<','<<m_physical_volume->GetName()<<','<<m_position<<','<<m_momentum<<','<<m_energy<<','<<m_global_time<<'\n';
+    file<<m_particle->GetPDGEncoding()<<','
+       <<'('<<G4BestUnit(m_position.x(), "Length")<<','<<G4BestUnit(m_position.y(), "Length")<<','<<G4BestUnit(m_position.z(), "Length")<<')'<<','
+       <<'('<<G4BestUnit(m_momentum.x(), "Energy")<<','<<G4BestUnit(m_momentum.y(), "Energy")<<','<<G4BestUnit(m_momentum.z(), "Energy")<<')'<<','
+       <<G4BestUnit(m_energy, "Energy")<<','<<G4BestUnit(m_global_time, "Time")<<'\n';
 }
 }
