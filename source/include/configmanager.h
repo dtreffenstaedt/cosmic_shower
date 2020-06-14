@@ -52,6 +52,7 @@ struct PrimaryParticle
         double m;   // momentum magnitude
     } momentum;
 
+    int n_particles;
     int particle;   // type of initial particle
 };
 
@@ -147,6 +148,11 @@ public:
     Config::MagneticField get_magnetic_field(const bool& fallback = false) const;
 
     std::string get_name() const;
+
+    std::string get_data_directory(const bool& fallback = false) const;
+
+    double get_world_size(const bool& fallback = false) const;
+    double get_atmosphere_height(const bool& fallback = false) const;
 private:
     const libconfig::Setting& get_root(const bool& fallback = false) const;
 

@@ -1,5 +1,6 @@
 #include "configmanager.h"
 
+#include <iostream>
 
 START_NAMESPACE
 {
@@ -159,6 +160,7 @@ Config::PrimaryParticle ConfigManager::get_primary_particle(const bool& fallback
         momentum.lookupValue("y", primary.momentum.y) &&
         momentum.lookupValue("z", primary.momentum.z) &&
         momentum.lookupValue("magnitude", primary.momentum.m) &&
+        primary_setting.lookupValue("n_particles", primary.n_particles) &&
         primary_setting.lookupValue("particle", primary.particle)))
     {
         throw FaultyPrimaryDefinition();
@@ -192,6 +194,15 @@ std::string ConfigManager::get_name() const
     return m_config.lookup("name");
 }
 
+std::string ConfigManager::get_data_directory(const bool &fallback) const
+{
+    if (fallback || !m_config.exists("data_directory"))
+    {
+        return m_fallback.lookup("data_directory");
+    }
+    return m_config.lookup("data_directory");
+}
+
 const libconfig::Setting& ConfigManager::get_root(const bool& fallback) const
 {
     if (fallback)
@@ -199,5 +210,41 @@ const libconfig::Setting& ConfigManager::get_root(const bool& fallback) const
         return m_fallback.getRoot();
     }
     return m_config.getRoot();
+}
+
+double ConfigManager::get_world_size(const bool& fallback) const
+{
+    double size = 0;
+    if (!fallback)
+    {
+        if (!get_root().exists("world_size"))
+        {
+            return get_world_size(true);
+        }
+    }
+    if (!get_root(fallback).lookupValue("world_size", size))
+    {
+        throw FaultyAtmosphereLayerDefinition();
+    }
+    return size;
+}
+
+double ConfigManager::get_atmosphere_height(const bool &fallback) const
+{
+    if (!fallback)
+    {
+        if (!get_root().exists("layers"))
+        {
+            return get_atmosphere_height(true);
+        }
+    }
+    const libconfig::Setting& layers_setting = get_root(fallback)["layers"];
+    double upper;
+    size_t len = layers_setting.getLength();
+    if (!(layers_setting[len - 1].lookupValue("upper", upper)))
+    {
+        throw FaultyAtmosphereLayerDefinition();
+    }
+    return upper;
 }
 }
