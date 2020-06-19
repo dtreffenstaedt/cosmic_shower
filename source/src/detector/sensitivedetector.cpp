@@ -102,6 +102,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4double e_tot = track->GetTotalEnergy();
 
     G4double global_time = track->GetGlobalTime();
+    G4double proper_time = track->GetProperTime();
 
 
     std::cout<<m_name<<" got a hit!\n";
@@ -111,7 +112,8 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
                                 volume,
                                 position,
                                 momentum_direction,
-                                global_time
+                                global_time,
+                                proper_time
                                 };
 
     m_hits_collection->insert(hit);
