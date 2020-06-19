@@ -32,9 +32,9 @@ detector_properties :
 {
     geometry :
     {
-        x = 2000000.0;
-        y = 2000000.0;
-        z = 200000.0;
+        x = 323.0;
+        y = 125.0;
+        z = 10.0;
     };
 };
 # options for the primary particle.
@@ -57,10 +57,10 @@ primary :
         x = 0.0;
         y = 0.0;
         z = -1.0;
-        magnitude = 5000.0;
+        magnitude = 30000.0;
     };
 
-    n_particles = 30;
+    n_particles = 1;
 
     particle = 2212;
 };
