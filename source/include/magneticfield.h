@@ -15,7 +15,7 @@ public:
     MagneticField();
     virtual ~MagneticField();
 
-    virtual void GetFieldValue(const G4double point[4], double* field) const;
+//    virtual void GetFieldValue(const G4double point[4], double* field) const;
 };
 }
 
