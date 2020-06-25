@@ -5,7 +5,6 @@
 #include <globals.hh>
 
 #include "global.h"
-#include "configmanager.h"
 
 START_NAMESPACE
 {
