@@ -1,4 +1,4 @@
-#include "magneticfield.h"
+#include "physics/magneticfield.h"
 
 START_NAMESPACE
 {

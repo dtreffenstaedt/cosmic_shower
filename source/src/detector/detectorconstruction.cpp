@@ -1,4 +1,4 @@
-#include "detectorconstruction.h"
+#include "detector/detectorconstruction.h"
 
 #include "detector/sensitivedetector.h"
 

@@ -1,4 +1,4 @@
-#include "actioninitialization.h"
+#include "actions/actioninitialization.h"
 
 #include "actions/primarygeneratoraction.h"
 #include "actions/runaction.h"
