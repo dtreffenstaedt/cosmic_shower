@@ -2,10 +2,22 @@
 #define DECAYCONSTRUCTOR_H
 
 
-class DecayConstructor
+#include "global.h"
+
+#include <G4DecayPhysics.hh>
+
+START_NAMESPACE
+{
+class DecayConstructor : public G4DecayPhysics
 {
 public:
-    DecayConstructor();
-};
+    DecayConstructor(G4int ver = 1);
+    DecayConstructor(const G4String& name, G4int ver = 1);
 
+    virtual ~DecayConstructor();
+
+    virtual void ConstructParticle();
+
+};
+}
 #endif // DECAYCONSTRUCTOR_H

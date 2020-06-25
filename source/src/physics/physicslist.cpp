@@ -1,81 +1,52 @@
-#include "physicslist.h"
+#include "physics/physicslist.h"
 
-#include <G4DecayPhysics.hh>
 #include <G4EmStandardPhysics.hh>
-#include <G4RadioactiveDecayPhysics.hh>
+#include <G4EmExtraPhysics.hh>
+#include <G4HadronElasticPhysics.hh>
+#include <G4HadronPhysicsQGSP_BERT.hh>
+#include <G4IonPhysics.hh>
+#include <G4NeutronTrackingCut.hh>
 
-#include <G4Geantino.hh>
-#include <G4ChargedGeantino.hh>
-#include <G4Gamma.hh>
-#include <G4Electron.hh>
-#include <G4Positron.hh>
-#include <G4Proton.hh>
-#include <G4AntiProton.hh>
-#include <G4Neutron.hh>
-#include <G4AntiNeutron.hh>
-#include <G4MuonMinus.hh>
-#include <G4MuonPlus.hh>
-#include <G4PionPlus.hh>
-#include <G4PionMinus.hh>
+#include "physics/decayconstructor.h"
+#include "physics/stoppingconstructor.h"
+
 
 START_NAMESPACE
 {
-PhysicsList::PhysicsList() :
-    G4VUserPhysicsList{}
-{}
+PhysicsList::PhysicsList(G4int ver) :
+    G4VModularPhysicsList{}
+{
+  // EM Physics
+  RegisterPhysics( new G4EmStandardPhysics(ver) );
+
+  // Synchroton Radiation & GN Physics
+  RegisterPhysics( new G4EmExtraPhysics(ver) );
+
+  // Decays
+  RegisterPhysics( new DecayConstructor(ver) );
+
+   // Hadron Elastic scattering
+  RegisterPhysics( new G4HadronElasticPhysics(ver) );
+
+  // Hadron Physics
+  RegisterPhysics( new G4HadronPhysicsQGSP_BERT(ver));
+
+  // Stopping Physics
+  RegisterPhysics( new StoppingConstructor(ver) );
+
+  // Ion Physics
+  RegisterPhysics( new G4IonPhysics(ver));
+
+  // Neutron tracking cut
+  RegisterPhysics( new G4NeutronTrackingCut(ver));
+}
 
 PhysicsList::~PhysicsList()
 {
 }
 
-void PhysicsList::ConstructParticle()
-{
-
-
-}
-
-void PhysicsList::ConstructProcess()
-{
-    AddTransportation();
-}
-
 void PhysicsList::SetCuts()
 {
-    G4VUserPhysicsList::SetCuts();
-}
-
-void PhysicsList::construct_bosons()
-{
-    // +++ pseudo-particle used by Geant4 internally
-    G4Geantino::GeantinoDefinition();
-    G4ChargedGeantino::ChargedGeantinoDefinition();
-    // --- pseudo-particle used by Geant4 internally
-
-
-    G4Gamma::GammaDefinition();
-}
-
-void PhysicsList::construct_leptons()
-{
-
-    G4Electron::ElectronDefinition();
-    G4Positron::PositronDefinition();
-
-    G4MuonMinus::MuonMinusDefinition();
-    G4MuonPlus::MuonPlusDefinition();
-
-}
-
-void PhysicsList::construct_mesons()
-{
-
-}
-
-void PhysicsList::construct_baryons()
-{
-    G4Proton::ProtonDefinition();
-    G4AntiProton::AntiProtonDefinition();
-    G4Neutron::NeutronDefinition();
-    G4AntiNeutron::AntiNeutronDefinition();
+    SetCutsWithDefault();
 }
 }

@@ -3,29 +3,17 @@
 
 #include "global.h"
 
-#include <G4VUserPhysicsList.hh>
-
+#include <G4VModularPhysicsList.hh>
 
 START_NAMESPACE
 {
-class PhysicsList : public G4VUserPhysicsList
+class PhysicsList : public G4VModularPhysicsList
 {
 public:
-    PhysicsList();
+    PhysicsList(G4int ver = 1);
     virtual ~PhysicsList();
 
-    virtual void ConstructParticle();
-    virtual void ConstructProcess();
-
     virtual void SetCuts();
-
-private:
-    // +++ inidividual construction methods
-    void construct_bosons();
-    void construct_leptons();
-    void construct_mesons();
-    void construct_baryons();
-    // --- inidividual construction methods
 };
 }
 

@@ -1,11 +1,22 @@
 #ifndef STOPPINGCONSTRUCTOR_H
 #define STOPPINGCONSTRUCTOR_H
 
+#include "global.h"
 
-class StoppingConstructor
+#include <G4StoppingPhysics.hh>
+
+START_NAMESPACE
+{
+class StoppingConstructor : public G4StoppingPhysics
 {
 public:
-    StoppingConstructor();
-};
+    StoppingConstructor(G4int ver = 1);
+    StoppingConstructor(const G4String& name, G4int ver = 1);
 
+    virtual ~StoppingConstructor();
+
+    virtual void ConstructParticle();
+
+};
+}
 #endif // STOPPINGCONSTRUCTOR_H
