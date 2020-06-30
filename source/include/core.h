@@ -29,15 +29,12 @@ public:
     int execute();
 
 private:
-    bool parse_arguments(int argc, char *argv[]);
     void setup(int argc, char *argv[]);
     void print_help() const;
 
     int execute_ui();
     int execute_cli();
 
-    bool m_use_ui;
-    std::string m_config_file;
 
 #ifdef G4MULTITHREADED
     G4MTRunManager* m_run_manager;

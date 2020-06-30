@@ -11,22 +11,135 @@ ConfigManager* ConfigManager::singleton()
     return c_singleton;
 }
 
-ConfigManager::ConfigManager(const std::string& fileName)
+ConfigManager::ConfigManager()
 {
+    add_argument("c", "config", "Use the configuration file specified in the value", true);
+    add_argument("h", "help", "Print this help");
+    c_singleton = this;
+}
+
+bool ConfigManager::start(int argc, char* argv[])
+{
+    if (!parse_arguments(argc, argv))
+    {
+        return false;
+    }
+    if (argument_set("h"))
+    {
+        print_help();
+        return false;
+    }
     m_fallback.readFile("shower.cfg");
 
-    m_config.readFile(fileName.c_str());
+    if (argument_set("c"))
+    {
+        m_config.readFile(argument_value("c").c_str());
+    }
+    else
+    {
+        m_config.readFile("shower.cfg");
+    }
 
     if (!get_root().exists("name"))
     {
         throw NoNameDefined();
     }
-
-    c_singleton = this;
+    return true;
 }
 
 ConfigManager::~ConfigManager()
 {}
+
+bool ConfigManager::argument_set(const std::string& name)
+{
+    size_t len = m_arguments.size();
+    for (size_t i = 0; i < len; i++)
+    {
+        if (name.compare(m_arguments[i].abbr) * name.compare(m_arguments[i].full) == 0)
+        {
+            return m_arguments[i].is_set;
+        }
+    }
+    return false;
+}
+
+std::string ConfigManager::argument_value(const std::string& name)
+{
+    size_t len = m_arguments.size();
+    for (size_t i = 0; i < len; i++)
+    {
+        if (name.compare(m_arguments[i].abbr) * name.compare(m_arguments[i].full) == 0)
+        {
+            return m_arguments[i].value;
+        }
+    }
+    return std::string{};
+}
+
+void ConfigManager::add_argument(const std::string& abbreviation, const std::string& full, const std::string &description, const bool& value)
+{
+    Commandline cmd;
+    cmd.abbr = abbreviation;
+    cmd.full = full;
+    cmd.description = description;
+    cmd.has_value = value;
+
+    m_arguments.push_back(cmd);
+}
+
+bool ConfigManager::parse_arguments(int argc, char *argv[])
+{
+    if (argc < 2)
+    {
+        return true;
+    }
+    size_t len = m_arguments.size();
+    for (int j = 1; j < argc; j++)
+    {
+        std::string arg = argv[j];
+        bool found = false;
+        for (size_t i = 0; i < len; i++)
+        {
+            if (arg.compare("-" + m_arguments[i].abbr) * arg.compare("--" + m_arguments[i].full) == 0)
+            {
+                if (m_arguments[i].has_value)
+                {
+                    if (++j >= argc)
+                    {
+                        std::cout<<"expected name after "<<arg<<"\n";
+                        print_help();
+                        return false;
+                    }
+                    m_arguments[i].value = argv[j];
+                }
+                std::cout<<"Found argument "<<arg<<'\n';
+                m_arguments[i].is_set = true;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            std::cout<<"Invalid argument "<<arg<<'\n';
+        }
+    }
+    return true;
+}
+
+void ConfigManager::print_help()
+{
+    std::cout<<"Possible arguments:\n";
+    size_t len = m_arguments.size();
+    for (size_t i = 0; i < len; i++)
+    {
+        std::cout<<"\t-"<<m_arguments[i].abbr<<"\t--"<<m_arguments[i].full;
+        if (m_arguments[i].has_value)
+        {
+            std::cout<<" (value)";
+        }
+        std::cout<<"\n\t\t\t"<<m_arguments[i].description<<'\n';
+    }
+}
 
 std::variant<std::vector<Config::DetectorPlacement>, size_t> ConfigManager::get_detectors(const bool& fallback) const
 {

@@ -26,9 +26,12 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
     std::string dir = data + "/" + ConfigManager::singleton()->get_name();
 
     m_file_name = dir + "/" + name;
-    if (std::filesystem::exists(m_file_name))
+    if (!ConfigManager::singleton()->argument_set("o"))
     {
-        throw DataDirectoryExists();
+        if (std::filesystem::exists(m_file_name))
+        {
+            throw DataDirectoryExists();
+        }
     }
 
     if (!std::filesystem::exists(data))

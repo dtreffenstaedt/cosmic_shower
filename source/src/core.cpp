@@ -10,15 +10,15 @@
 START_NAMESPACE
 {
 Core::Core(int argc, char *argv[]) :
-    m_use_ui{false},
-    m_config_file{"shower.cfg"},
     m_run_manager{nullptr},
     m_vis_manager{nullptr},
     m_ui_executive{nullptr},
     m_ui_manager{nullptr},
-    m_config_manager{nullptr}
+    m_config_manager{new ConfigManager{}}
 {
-    if (!parse_arguments(argc, argv))
+    m_config_manager->add_argument("ui", "user-interface", "Show the user interface");
+    m_config_manager->add_argument("o", "overwrite", "Overwrite existing simulation data");
+    if (!m_config_manager->start(argc, argv))
     {
         exit(0);
     }
@@ -51,7 +51,7 @@ Core::~Core()
 
 int Core::execute()
 {
-    if (m_use_ui)
+    if (m_config_manager->argument_set("ui"))
     {
         m_ui_manager = G4UImanager::GetUIpointer();
 
@@ -77,49 +77,11 @@ int Core::execute_cli()
     return 0;
 }
 
-bool Core::parse_arguments(int argc, char *argv[])
-{
-    if (argc >= 2)
-    {
-        for (int i = 1; i < argc; i++)
-        {
-            std::string arg(argv[i]);
-            if (arg.compare("-c") == 0)
-            {
-                if (++i >= argc)
-                {
-                    std::cout<<"expected name after -c\n";
-                    print_help();
-                    return false;
-                }
-                m_config_file = std::string(argv[i]);
-            }
-            else if (arg.compare("-ui") == 0)
-            {
-                m_use_ui = true;
-            }
-            else if (arg.compare("-h") == 0)
-            {
-                print_help();
-                return false;
-            }
-            else
-            {
-                std::cout<<"Invalid parameter "<<arg<<"\n\n";
-                print_help();
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 void Core::setup(int argc, char *argv[])
 {
-    m_config_manager = new ConfigManager{m_config_file};
 
     std::cout<<"Starting simulation for '"<<m_config_manager->get_name()<<"'\n";
-    if (m_use_ui)
+    if (m_config_manager->argument_set("ui"))
     {
         m_ui_executive = new G4UIExecutive(argc, argv, "qt");
     }
