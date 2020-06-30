@@ -35,13 +35,23 @@ protected:
     G4double m_atmosphere_height;
     Config::MagneticField m_magnetic_field;
     Config::DetectorProperties m_detector_properties;
+    Config::PrimaryParticle m_primary_particle;
+    G4double m_theta;
+    G4double m_phi;
+
+    struct
+    {
+        G4double x;
+        G4double y;
+        G4double z;
+    } m_offset_bottom;
 
     G4LogicalVolume* m_world_logical;
     G4LogicalVolume* m_air_logical;
 
     std::vector<G4LogicalVolume*> m_logical_volumes;
     std::vector<G4VPhysicalVolume*> m_physical_layers;
-    std::vector<G4Box*> m_box_layers;
+    std::vector<G4VSolid*> m_solid_layers;
 
     G4VSolid* m_detector_geometry;
     G4Material* m_detector_material;

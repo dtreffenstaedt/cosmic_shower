@@ -26,7 +26,13 @@ public:
 private:
     G4ParticleGun* m_particle_gun;
     Config::PrimaryParticle m_primary;
-    G4double m_atmosphere_upper;
+    G4double m_atmosphere_height;
+    struct
+    {
+        G4double x;
+        G4double y;
+        G4double z;
+    } m_offset_top;
 //    G4Box* m_envelope_box;
 };
 }

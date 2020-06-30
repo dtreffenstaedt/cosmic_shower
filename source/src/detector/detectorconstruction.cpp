@@ -13,6 +13,7 @@
 #include <G4FieldManager.hh>
 #include <G4UnitsTable.hh>
 #include <G4SDManager.hh>
+#include <G4Para.hh>
 
 START_NAMESPACE
 {
@@ -24,10 +25,19 @@ DetectorConstruction::DetectorConstruction() :
     m_atmosphere_height{ConfigManager::singleton()->get_atmosphere_height() * m},
     m_magnetic_field{ConfigManager::singleton()->get_magnetic_field()},
     m_detector_properties{ConfigManager::singleton()->get_detector_properties()},
+    m_primary_particle{ConfigManager::singleton()->get_primary_particle()},
+    m_theta{std::atan(std::sqrt(std::pow(m_primary_particle.momentum.x, 2) + std::pow(m_primary_particle.momentum.y, 2)) / m_primary_particle.momentum.z) * radian},
+    m_phi{std::atan2(m_primary_particle.momentum.y, m_primary_particle.momentum.x) * radian},
+    m_offset_bottom{
+        m_atmosphere_height * m_primary_particle.momentum.x/(-m_primary_particle.momentum.z) / 2,
+        m_atmosphere_height * m_primary_particle.momentum.y/(-m_primary_particle.momentum.z) / 2,
+        - m_atmosphere_height / 2},
     m_world_logical{nullptr},
     m_detector_geometry{nullptr},
     m_detector_material{nullptr}
-{}
+{
+    std::cout<<"θ: "<<m_theta<<"\nφ: "<<m_phi<<"\n";
+}
 
 DetectorConstruction::~DetectorConstruction()
 {}
@@ -41,7 +51,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     construct_atmosphere();
 
-
     construct_detectors();
 
     return physical_world;
@@ -49,7 +58,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 void DetectorConstruction::ConstructSDandField()
 {
-
     define_detectors();
 
     construct_magnetic_field();
@@ -57,7 +65,7 @@ void DetectorConstruction::ConstructSDandField()
 
 G4VPhysicalVolume* DetectorConstruction::construct_world()
 {
-    G4Box* world_box = new G4Box("World", m_world_size * 0.5 + 100 * m, m_world_size * 0.5 + 100 * m, m_atmosphere_height * 0.5 + 100 * m);
+    G4VSolid* world_solid = new G4Para("World", m_world_size * 0.5 + 100 * m, m_world_size * 0.5 + 100 * m, m_atmosphere_height * 0.5 + 100 * m, 0 * radian, m_theta, m_phi);
 
     G4Material* vacuum = new G4Material( // world is a vacuum
             "interGalactic",
@@ -69,7 +77,7 @@ G4VPhysicalVolume* DetectorConstruction::construct_world()
             3.e-18 * pascal);
 
 
-    m_world_logical = new G4LogicalVolume(world_box, vacuum, "World");
+    m_world_logical = new G4LogicalVolume(world_solid, vacuum, "World");
 
     G4VPhysicalVolume* physical_world = new G4PVPlacement(
             0,
@@ -93,6 +101,7 @@ void DetectorConstruction::construct_atmosphere()
     G4NistManager* nist = G4NistManager::Instance();
     G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
 
+
     size_t len = m_atmosphere_layers.size();
     for (size_t i = 0; i < len; i++)
     {
@@ -103,15 +112,18 @@ void DetectorConstruction::construct_atmosphere()
         G4double pressure = definition.pressure * pascal;
         G4double temperature = definition.temperature * kelvin;
 
+        G4double offset_x = m_offset_bottom.x - ((definition.lower * m + definition.upper * m) / 2) * m_primary_particle.momentum.x/(- m_primary_particle.momentum.z);
+        G4double offset_y = m_offset_bottom.y - ((definition.lower * m + definition.upper * m) / 2) * m_primary_particle.momentum.y/(- m_primary_particle.momentum.z);
+
         G4Material* layer_material = new G4Material("atmosphere" + std::to_string(i), density, air, kStateGas, temperature, pressure);
-        m_box_layers.push_back(new G4Box("atmosphere" + std::to_string(i), m_world_size * 0.5, m_world_size * 0.5, layer_thickness * 0.5));
-        m_logical_volumes.push_back(new G4LogicalVolume(m_box_layers[i], layer_material, "atmosphere" + std::to_string(i)));
+        m_solid_layers.push_back(new G4Para("atmosphere" + std::to_string(i), m_world_size * 0.5, m_world_size * 0.5, layer_thickness * 0.5, 0*radian, m_theta, m_phi));
+        m_logical_volumes.push_back(new G4LogicalVolume(m_solid_layers[i], layer_material, "atmosphere" + std::to_string(i)));
         m_physical_layers.push_back(new G4PVPlacement(
                 0,
                 G4ThreeVector(
-                    0.0 * m,
-                    0.0 * m,
-                    - m_atmosphere_height * 0.5 + (layer_lower + layer_thickness * 0.5) // center point of each layer
+                    offset_x,
+                    offset_y,
+                    (layer_lower + layer_thickness * 0.5) + m_offset_bottom.z // center point of each layer
                     ),
                 m_logical_volumes[i],
                 "phys_layer" + std::to_string(i),
@@ -168,7 +180,7 @@ void DetectorConstruction::construct_detectors()
                 for (size_t j = 1; j <= row; j++)
                 {
                     pos_y += distance;
-                    place_detector("detector" + std::to_string(k), pos_x, pos_y, - m_atmosphere_height * 0.5);
+                    place_detector("detector" + std::to_string(k), pos_x + m_offset_bottom.x, pos_y + m_offset_bottom.y, m_offset_bottom.z);
                     k++;
                 }
             }
@@ -184,19 +196,19 @@ void DetectorConstruction::construct_detectors()
             {
                 if (i == 0)
                 {
-                    place_detector("detector" + std::to_string(i), 0, 0, - m_atmosphere_height * 0.5);
+                    place_detector("detector" + std::to_string(i), m_offset_bottom.x, m_offset_bottom.y, m_offset_bottom.z);
                     continue;
                 }
                 G4double x = std::cos(angle * static_cast<double>(i)) * r;
                 G4double y = std::sin(angle * static_cast<double>(i)) * r;
-                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_height * 0.5);
+                place_detector("detector" + std::to_string(i), x + m_offset_bottom.x, y + m_offset_bottom.y, m_offset_bottom.z);
             }
             r = m_world_size * 2/6;
             for (size_t i = m + 1; i <= max; i++)
             {
                 G4double x = std::cos(angle * static_cast<double>(i - max/2 + 1)) * r;
                 G4double y = std::sin(angle * static_cast<double>(i - max/2 + 1)) * r;
-                place_detector("detector" + std::to_string(i), x, y, - m_atmosphere_height * 0.5);
+                place_detector("detector" + std::to_string(i), x + m_offset_bottom.x, y + m_offset_bottom.y, m_offset_bottom.z);
             }
         }
     }
@@ -207,7 +219,7 @@ void DetectorConstruction::construct_detectors()
         for (size_t i = 0; i < detectors.size(); i++)
         {
             Config::DetectorPlacement placement = detectors[i];
-            place_detector(placement.name, (placement.x * m), (placement.y * m), (placement.z * m) - m_atmosphere_height * 0.5);
+            place_detector(placement.name, (placement.x * m) + m_offset_bottom.x, (placement.y * m) + m_offset_bottom.y, (placement.z * m) + m_offset_bottom.z);
         }
     }
 }
@@ -257,7 +269,6 @@ void DetectorConstruction::define_detectors()
     G4SDManager* sd_manager = G4SDManager::GetSDMpointer();
     for (size_t i = 0; i < m_detector_logicals.size(); i++)
     {
-
         SensitiveDetector* detector = new SensitiveDetector(m_detector_logicals[i]->GetName());
 
         sd_manager->AddNewDetector(detector);
