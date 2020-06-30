@@ -20,6 +20,12 @@ struct DetectorProperties
         double z;
     } geometry;
 };
+struct TrackingCuts
+{
+    double energy;
+    double range;
+};
+
 struct DetectorPlacement
 {
     double x;
@@ -39,8 +45,6 @@ struct MagneticField
 struct SecondaryParticle
 {
     int pdg;    // PDG code
-    double cut_range;   // Range Cut in mm
-    double cut_energy; // Energy Cut in MeV
 };
 
 struct PrimaryParticle
@@ -151,6 +155,7 @@ public:
      */
     std::vector<Config::SecondaryParticle> get_particles(const bool& fallback = false) const;
 
+
     /**
      * List of atmospheric layers to be created
      */
@@ -167,6 +172,8 @@ public:
      * Magnetic field definition
      */
     Config::MagneticField get_magnetic_field(const bool& fallback = false) const;
+
+    Config::TrackingCuts get_tracking_cut(const bool& fallback = false) const;
 
     std::string get_name() const;
 

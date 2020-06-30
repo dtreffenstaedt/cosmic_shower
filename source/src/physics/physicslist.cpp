@@ -6,6 +6,7 @@
 #include <G4HadronPhysicsQGSP_BERT.hh>
 #include <G4IonPhysics.hh>
 #include <G4NeutronTrackingCut.hh>
+#include <G4StepLimiterPhysics.hh>
 
 #include "physics/decayconstructor.h"
 #include "physics/stoppingconstructor.h"
@@ -39,6 +40,8 @@ PhysicsList::PhysicsList(G4int ver) :
 
   // Neutron tracking cut
   RegisterPhysics( new G4NeutronTrackingCut(ver));
+
+  RegisterPhysics(new G4StepLimiterPhysics);
 }
 
 PhysicsList::~PhysicsList()

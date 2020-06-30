@@ -14,6 +14,7 @@
 #include <G4UnitsTable.hh>
 #include <G4SDManager.hh>
 #include <G4Para.hh>
+#include <G4UserLimits.hh>
 
 START_NAMESPACE
 {
@@ -89,6 +90,10 @@ G4VPhysicalVolume* DetectorConstruction::construct_world()
             0,
             true);
 
+
+    Config::TrackingCuts cuts = ConfigManager::singleton()->get_tracking_cut();
+    G4UserLimits* limits = new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX, cuts.energy * MeV, cuts.range * mm);
+    m_world_logical->SetUserLimits(limits);
     return physical_world;
 }
 

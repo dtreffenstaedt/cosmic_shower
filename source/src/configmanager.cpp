@@ -225,28 +225,6 @@ std::vector<Config::SecondaryParticle> ConfigManager::get_particles(const bool& 
         {
             throw FaultySecondaryDefinition();
         }
-        if (particle.exists("cut_range"))
-        {
-            if (!particle.lookupValue("cut_range", settings.cut_range))
-            {
-                throw FaultySecondaryDefinition();
-            }
-        }
-        else
-        {
-            settings.cut_range = 0;
-        }
-        if (particle.exists("cut_range"))
-        {
-            if (!particle.lookupValue("cut_energy", settings.cut_energy))
-            {
-                throw FaultySecondaryDefinition();
-            }
-        }
-        else
-        {
-            settings.cut_energy = 0;
-        }
         particles.push_back(settings);
     }
     return particles;
@@ -322,6 +300,27 @@ Config::MagneticField ConfigManager::get_magnetic_field(const bool& fallback) co
         throw FaultyMagneticFieldDefinition();
     }
     return field;
+}
+
+
+Config::TrackingCuts ConfigManager::get_tracking_cut(const bool &fallback) const
+{
+    if (!fallback)
+    {
+        if (!get_root().exists("cuts"))
+        {
+            return get_tracking_cut(true);
+        }
+    }
+    const libconfig::Setting& cuts_setting = get_root(fallback)["cuts"];
+    Config::TrackingCuts cuts;
+
+    if (!(cuts_setting.lookupValue("energy", cuts.energy) &&
+        cuts_setting.lookupValue("range", cuts.range)))
+    {
+        throw FaultyMagneticFieldDefinition();
+    }
+    return cuts;
 }
 
 std::string ConfigManager::get_name() const
@@ -457,15 +456,13 @@ void ConfigManager::config_dump(const std::string& filename)
         {
             libconfig::Setting& group = part.add(libconfig::Setting::TypeGroup);
             group.add("pdg", libconfig::Setting::TypeInt) = list[i].pdg;
-            if (list[i].cut_range > std::numeric_limits<double>::epsilon())
-            {
-                group.add("cut_range", libconfig::Setting::TypeFloat) = list[i].cut_range;
-            }
-            if (list[i].cut_energy > std::numeric_limits<double>::epsilon())
-            {
-                group.add("cut_energy", libconfig::Setting::TypeFloat) = list[i].cut_energy;
-            }
         }
+    }
+    {
+        libconfig::Setting& group = root.add("cuts", libconfig::Setting::TypeGroup);
+        auto cuts = get_tracking_cut();
+        group.add("energy", libconfig::Setting::TypeFloat) = cuts.energy;
+        group.add("range", libconfig::Setting::TypeFloat) = cuts.range;
     }
     {
         libconfig::Setting& group = root.add("magnetic_field", libconfig::Setting::TypeGroup);

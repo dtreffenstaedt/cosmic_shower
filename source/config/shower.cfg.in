@@ -65,74 +65,52 @@ primary :
     particle = 2212;
 };
 
-# list of secondary particles to simulate, use PDG codes.
 # cut_range is the production cut in mm
 # cut_energy is the production cut in MeV.
+cuts = {
+    range = 10;
+    energy = 10;
+};
+# list of secondary particles to track, use PDG codes.
 particles = (
 {
     pdg = 11; # e^-
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -11; # e^+
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 12; # ν_e
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -12; # anti_­­ν_e
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 14; # ν_μ
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -14; # anti_ν_μ
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 22; # γ
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 13; # μ^-
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -13; # μ^+
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 2212; # p
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -2212; # anti_p
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = 2112; # n
-#    cut_range = ;
-#    cut_energy = ;
 },
 {
     pdg = -2112; # anti_n
-#    cut_range = ;
-#    cut_energy = ;
 }
 );
 
