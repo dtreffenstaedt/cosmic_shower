@@ -41,6 +41,7 @@ PhysicsList::PhysicsList(G4int ver) :
   // Neutron tracking cut
   RegisterPhysics( new G4NeutronTrackingCut(ver));
 
+  // Introduce Tracking Cuts
   RegisterPhysics(new G4StepLimiterPhysics);
 }
 

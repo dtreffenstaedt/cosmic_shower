@@ -219,12 +219,8 @@ std::vector<Config::SecondaryParticle> ConfigManager::get_particles(const bool& 
     size_t len = particles_setting.getLength();
     for (size_t i = 0; i < len; i++)
     {
-        const libconfig::Setting& particle = particles_setting[i];
         Config::SecondaryParticle settings;
-        if (!(particle.lookupValue("pdg", settings.pdg)))
-        {
-            throw FaultySecondaryDefinition();
-        }
+        settings.pdg =  particles_setting[i];
         particles.push_back(settings);
     }
     return particles;
@@ -454,8 +450,7 @@ void ConfigManager::config_dump(const std::string& filename)
         libconfig::Setting& part = root.add("particles", libconfig::Setting::TypeList);
         for (size_t i = 0; i < list.size(); i++)
         {
-            libconfig::Setting& group = part.add(libconfig::Setting::TypeGroup);
-            group.add("pdg", libconfig::Setting::TypeInt) = list[i].pdg;
+            part.add(libconfig::Setting::TypeInt) = list[i].pdg;
         }
     }
     {
