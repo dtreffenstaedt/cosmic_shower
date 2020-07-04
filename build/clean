@@ -2,4 +2,4 @@
 
 shopt -s extglob
 
-rm -rfv !("generate"|"clean"|"build"|"run"|"plot")
+rm -rfv !("generate"|"clean"|"run")
