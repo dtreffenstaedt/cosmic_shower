@@ -1,6 +1,7 @@
 #include "detector/sensitivedetector.h"
 
 #include "configmanager.h"
+#include "parametermanager.h"
 #include <G4PVPlacement.hh>
 #include <G4Box.hh>
 #include <G4SystemOfUnits.hh>
@@ -26,7 +27,7 @@ SensitiveDetector::SensitiveDetector(const std::string& name) :
     std::string dir = data + "/" + ConfigManager::singleton()->get_name();
 
     m_file_name = dir + "/" + name;
-    if (!ConfigManager::singleton()->argument_set("o"))
+    if (!ParameterManager::singleton()->argument_set("o"))
     {
         if (std::filesystem::exists(m_file_name))
         {

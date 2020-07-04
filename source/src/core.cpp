@@ -20,13 +20,29 @@ Core::Core(int argc, char *argv[]) :
 #endif
     m_parameter_manager{new ParameterManager{}}
 {
-    m_config_manager->add_argument("ui", "user-interface", "Show the user interface");
-    m_config_manager->add_argument("o", "overwrite", "Overwrite existing simulation data");
-    if (!m_config_manager->start(argc, argv))
+#ifdef SHOWER_BUILD_UI
+    m_parameter_manager->add_argument("ui", "user-interface", "Show the user interface");
+#endif
+    m_parameter_manager->add_argument("o", "overwrite", "Overwrite existing simulation data");
+
+    ParameterManager::singleton()->add_argument("c", "config", "Use the configuration file specified in the value", true);
+    ParameterManager::singleton()->add_argument("h", "help", "Print this help");
+
+    m_parameter_manager->start(argc, argv);
+
+    if (m_parameter_manager->argument_set("c"))
     {
-        exit(0);
+        m_config_manager = new ConfigManager{m_parameter_manager->argument_value("c")};
     }
+    else
+    {
+        m_config_manager = new ConfigManager{};
+    }
+#ifdef SHOWER_BUILD_UI
     setup(argc, argv);
+#else
+    setup();
+#endif
 }
 
 Core::~Core()

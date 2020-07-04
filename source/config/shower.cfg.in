@@ -57,7 +57,7 @@ primary :
         x = 0.0;
         y = 0.0;
         z = -1.0;
-        magnitude = 30000.0;
+        magnitude = 500000.0;
     };
 
     n_particles = 1;

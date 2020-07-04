@@ -138,10 +138,8 @@ class FaultyMagneticFieldDefinition : public std::exception
 class ConfigManager
 {
 public:
-    ConfigManager();
+    ConfigManager(const std::string &file_name = "shower.cfg");
     virtual ~ConfigManager();
-
-    bool start(int argc, char* argv[]);
 
     static ConfigManager* singleton();
 
@@ -188,10 +186,6 @@ public:
 
     void add_detector(Config::DetectorPlacement detector);
 
-    bool argument_set(const std::string& name);
-    std::string argument_value(const std::string& name);
-
-    void add_argument(const std::string& abbreviation, const std::string& full, const std::string& description, const bool& value = false);
 private:
     const libconfig::Setting& get_root(const bool& fallback = false) const;
 
@@ -202,22 +196,8 @@ private:
 
     static ConfigManager* c_singleton;
 
-    bool parse_arguments(int argc, char *argv[]);
+    std::string m_file_name;
 
-    void print_help();
-
-
-    struct Commandline
-    {
-        std::string abbr = std::string{};
-        std::string full = std::string{};
-        std::string description = std::string{};
-        bool has_value = false;
-        bool is_set = false;
-        std::string value = std::string{};
-    };
-
-    std::vector<Commandline> m_arguments;
 };
 }
 
