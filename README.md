@@ -12,7 +12,7 @@ To build, run `cmake ../source/`, then `make` from the build directory.
 
 The `generate` script sets the environment to use clang and executes cmake.
 
-If you don't want a graphical user interface, run cmake with `-DSHOWER_BUILD_UI=ON`. Default is ON.
+If you don't want a graphical user interface, run cmake with `-DSHOWER_BUILD_UI=OFF`. Default is ON.
 
 If you want to measure runtime, run cmake with `-DSHOWER_BENCHMARK=ON`. Default is OFF.
 
@@ -23,6 +23,9 @@ Default compiler options are
 --std=c++17 -Wall -Werror -Wextra -Wpedantic -O3
 ```
 
+There are two executables generated, one is `cosmic_shower`, which is the simulation itself.
+
+The other is `atmospheric_layers` which calculates the optimal atmosphere layer thickness.
 
 ### cosmic_shower
 
@@ -43,7 +46,11 @@ Following commandline arguments are possible:
 	-c <filename>	use the config file <filename>
 		default: shower.cfg
 	-ui		show the graphical user interface
+	
+	-o		Overwrite old data
 ```
+
+The ´-ui´ option is only avialable if `-DSHOWER_BUILD_UI` has been set to `ON`.
 
 ### configuration
 
