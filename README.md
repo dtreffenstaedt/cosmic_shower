@@ -8,7 +8,15 @@ Dependencies are:
 - Geant4 >= 10.6
 - libconfig++ >= 1.7.2
 
-To build, execute the `generate` script from the build directory and run `make`. This script sets the compiler to clang++. If you prefer to use gcc, you can also just execute `cmake ../source` from the build directory.
+To build, run `cmake ../source/`, then `make` from the build directory.
+
+The `generate` script sets the environment to use clang and executes cmake.
+
+If you don't want a graphical user interface, run cmake with `-DSHOWER_BUILD_UI=ON`. Default is ON.
+
+If you want to measure runtime, run cmake with `-DSHOWER_BENCHMARK=ON`. Default is OFF.
+
+This causes the runtime of each event to be measured and the average time of each event to be saved to a csv file. The first column of that file is the primary energy in GeV, the second is the time for the event in ms.
 
 Default compiler options are
 ```
