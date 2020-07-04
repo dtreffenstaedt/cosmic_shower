@@ -6,7 +6,10 @@ set(PROJECT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(PROJECT_SOURCE_DIR "${PROJECT_BASE_DIR}src")
 set(PROJECT_INCLUDE_DIR "${PROJECT_BASE_DIR}include")
 set(PROJECT_CONFIG_DIR "${PROJECT_BASE_DIR}config")
-set(PROJECT_BINARY_DIR "${PROJECT_BASE_DIR}build")
+set(PROJECT_BINARY_DIR "${PROJECT_BASE_DIR}../build")
+
+set(SHOWER_BUILD_UI ON)
+set(SHOWER_BENCHMARK OFF)
 
 include(cmake/version.cmake)
 
@@ -27,7 +30,11 @@ configure_file (
     "${PROJECT_BINARY_DIR}/vis.mac"
 )
 add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
+if(${SHOWER_BUILD_UI})
 find_package(Geant4 REQUIRED ui_all vis_all)
+else(${SHOWER_BUILD_UI})
+find_package(Geant4 REQUIRED)
+endif(${SHOWER_BUILD_UI})
 find_package(libconfig++ REQUIRED)
 
 include(cmake/files.cmake)

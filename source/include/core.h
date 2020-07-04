@@ -6,9 +6,11 @@
 #include <string>
 
 
+#ifdef SHOWER_BUILD_UI
 #include <G4VisExecutive.hh>
 #include <G4UIExecutive.hh>
 #include <G4UImanager.hh>
+#endif
 
 #ifdef G4MULTITHREADED
 #include <G4MTRunManager.hh>
@@ -16,6 +18,10 @@
 #include <G4RunManager.hh>
 #endif
 #include "configmanager.h"
+#include "parametermanager.h"
+#ifdef SHOWER_BENCHMARK
+#include "timemanager.h"
+#endif
 
 START_NAMESPACE
 {
@@ -29,10 +35,16 @@ public:
     int execute();
 
 private:
+#ifdef SHOWER_BUILD_UI
     void setup(int argc, char *argv[]);
+#else
+    void setup();
+#endif
     void print_help() const;
 
+#ifdef SHOWER_BUILD_UI
     int execute_ui();
+#endif
     int execute_cli();
 
 
@@ -42,11 +54,17 @@ private:
     G4RunManager* m_run_manager;
 #endif
 
+#ifdef SHOWER_BUILD_UI
     G4VisManager* m_vis_manager;
     G4UIExecutive* m_ui_executive;
     G4UImanager* m_ui_manager;
+#endif
 
     ConfigManager* m_config_manager;
+#ifdef SHOWER_BENCHMARK
+    TimeManager* m_time_manager;
+#endif
+    ParameterManager* m_parameter_manager;
 
 };
 }

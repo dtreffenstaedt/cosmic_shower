@@ -3,6 +3,9 @@
 
 #define START_NAMESPACE namespace SHOWER
 
+#define SHOWER_BUILD_UI
+/* #undef SHOWER_BENCHMARK */
+
 START_NAMESPACE
 {
 namespace Config

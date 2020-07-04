@@ -3,6 +3,9 @@
 
 #define START_NAMESPACE namespace SHOWER
 
+#cmakedefine SHOWER_BUILD_UI
+#cmakedefine SHOWER_BENCHMARK
+
 START_NAMESPACE
 {
 namespace Config
