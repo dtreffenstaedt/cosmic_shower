@@ -29,6 +29,10 @@ configure_file (
     "${PROJECT_CONFIG_DIR}/vis.mac.in"
     "${PROJECT_BINARY_DIR}/vis.mac"
 )
+configure_file (
+    "${PROJECT_CONFIG_DIR}/plot.plt.in"
+    "${PROJECT_BINARY_DIR}/plot.plt"
+)
 add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
 if(${SHOWER_BUILD_UI})
 find_package(Geant4 REQUIRED ui_all vis_all)

@@ -1,0 +1,13 @@
+set term postscript color
+set out "data.eps" # now outputting to .eps file, which is then converted with "epstopdf"
+datendatei="data.csv"
+set datafile separator comma
+set key off
+set grid
+set xlabel "E_{prim}/GeV"
+set ylabel "t/ms" # changed y label
+set style line 1 lw 4 lc rgb '#001945' ps 1 pt 7
+f(x) = a*x*x + b*x + c
+fit f(x) datendatei via a,b,c
+
+plot datendatei, f(x) ls 1
