@@ -25,7 +25,7 @@ Default compiler options are
 
 There are two executables generated, one is `cosmic_shower`, which is the simulation itself.
 
-The other is `atmospheric_layers` which calculates the optimal atmosphere layer thickness.
+The other is `atmosphere_layers` which calculates the optimal atmosphere layer thickness.
 
 ### cosmic_shower
 
@@ -62,7 +62,7 @@ The only required field is the name property, since that will be used as a folde
 
 A default configuration file can be found in `source/config/shower.cfg.in` This file is automatically moved to the build directory by CMake. So if you need to make adjustments to the default configuation, do it in the .in file.
 
-### atmospheric_layers
+### atmosphere_layers
 
 This program iteratively calculates the individual layer thickness according to a specific metric.
 The default is set to layer mass. The change is made in the line which reads
