@@ -38,6 +38,7 @@ Core::Core(int argc, char *argv[]) :
     {
         m_config_manager = new ConfigManager{};
     }
+    m_recorder_manager = new RecorderManager{};
 #ifdef SHOWER_BUILD_UI
     setup(argc, argv);
 #else
@@ -47,6 +48,7 @@ Core::Core(int argc, char *argv[]) :
 
 Core::~Core()
 {
+    delete  m_recorder_manager;
 #ifdef SHOWER_BENCHMARK
     m_time_manager->print_all();
     m_time_manager->save_average(std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m/1000));
@@ -71,10 +73,10 @@ Core::~Core()
     }
 #endif
     delete  m_config_manager;
-    delete  m_parameter_manager;
 #ifdef SHOWER_BENCHMARK
     delete m_time_manager;
 #endif
+    delete  m_parameter_manager;
 }
 
 int Core::execute()

@@ -6,6 +6,8 @@
 #cmakedefine SHOWER_BUILD_UI
 #cmakedefine SHOWER_BENCHMARK
 
+#include <exception>
+
 START_NAMESPACE
 {
 namespace Config
@@ -17,6 +19,13 @@ namespace Version
     const int patch = @PROJECT_VERSION_PATCH@;
 }
 }
+class DataDirectoryExists : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Data error: Output directory already exists. Exiting to preserve previous data.";
+    }
+};
 }
 
 #endif // @PROJECT_NAME@_GLOBAL_H

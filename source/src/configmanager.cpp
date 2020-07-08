@@ -145,6 +145,17 @@ Config::PrimaryParticle ConfigManager::get_primary_particle(const bool& fallback
     }
     return primary;
 }
+double ConfigManager::get_initial_ratio(const bool &fallback) const
+{
+    if (!fallback)
+    {
+        if (!get_root().exists("primary"))
+        {
+            return get_initial_ratio(true);
+        }
+    }
+    return static_cast<double>(get_root(fallback)["initial_ratio"]);
+}
 
 Config::DetectorProperties ConfigManager::get_detector_properties(const bool &fallback) const
 {
@@ -310,6 +321,9 @@ void ConfigManager::config_dump(const std::string& filename)
             group.add("z", libconfig::Setting::TypeFloat) = m_detectors[i].z;
             group.add("name", libconfig::Setting::TypeString) = m_detectors[i].name;
         }
+    }
+    {
+        root.add("initial_ratio", libconfig::Setting::TypeFloat) = get_initial_ratio();
     }
     {
         libconfig::Setting& detector_props = root.add("detector_properties", libconfig::Setting::TypeGroup);

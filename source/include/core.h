@@ -19,6 +19,7 @@
 #endif
 #include "configmanager.h"
 #include "parametermanager.h"
+#include "recordermanager.h"
 #ifdef SHOWER_BENCHMARK
 #include "timemanager.h"
 #endif
@@ -65,6 +66,7 @@ private:
     TimeManager* m_time_manager;
 #endif
     ParameterManager* m_parameter_manager;
+    RecorderManager* m_recorder_manager;
 
 };
 }

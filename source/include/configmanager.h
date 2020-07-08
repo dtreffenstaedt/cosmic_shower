@@ -164,6 +164,8 @@ public:
      */
     Config::PrimaryParticle get_primary_particle(const bool& fallback = false) const;
 
+    double get_initial_ratio(const bool& fallback = false) const;
+
     Config::DetectorProperties get_detector_properties(const bool& fallback = false) const;
 
     /**

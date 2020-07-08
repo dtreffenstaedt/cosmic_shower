@@ -2,6 +2,8 @@
 
 #include "configmanager.h"
 #include "parametermanager.h"
+#include "recordermanager.h"
+
 #include <G4PVPlacement.hh>
 #include <G4Box.hh>
 #include <G4SystemOfUnits.hh>
@@ -122,6 +124,10 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     m_hits_collection->insert(hit);
 
+    if (particle->GetPDGEncoding() == 13 || particle->GetPDGEncoding() == -13)
+    {
+        RecorderManager::singleton()->store_hit(position, global_time);
+    }
 
     return true;
 }
