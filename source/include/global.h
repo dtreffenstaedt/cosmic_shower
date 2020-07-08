@@ -3,8 +3,10 @@
 
 #define START_NAMESPACE namespace SHOWER
 
-#define SHOWER_BUILD_UI
-/* #undef SHOWER_BENCHMARK */
+/* #undef SHOWER_BUILD_UI */
+#define SHOWER_BENCHMARK
+
+#include <exception>
 
 START_NAMESPACE
 {
@@ -17,6 +19,13 @@ namespace Version
     const int patch = 0;
 }
 }
+class DataDirectoryExists : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Data error: Output directory already exists. Exiting to preserve previous data.";
+    }
+};
 }
 
 #endif // cosmic_shower_GLOBAL_H

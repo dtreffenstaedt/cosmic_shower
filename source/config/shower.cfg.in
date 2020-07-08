@@ -65,6 +65,8 @@ primary :
     particle = 2212;
 };
 
+initial_ratio = 0.05;
+
 # cut_range is the production cut in mm
 # cut_energy is the production cut in MeV.
 cuts = {
