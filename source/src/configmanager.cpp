@@ -149,7 +149,7 @@ double ConfigManager::get_initial_ratio(const bool &fallback) const
 {
     if (!fallback)
     {
-        if (!get_root().exists("primary"))
+        if (!get_root().exists("initial_ratio"))
         {
             return get_initial_ratio(true);
         }
