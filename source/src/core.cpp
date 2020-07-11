@@ -1,6 +1,8 @@
 #include "core.h"
 
 #include <iostream>
+#include <random>
+
 #include "configmanager.h"
 #include "detector/detectorconstruction.h"
 #include "actions/actioninitialization.h"
@@ -125,6 +127,27 @@ void Core::setup()
         m_ui_executive = new G4UIExecutive(argc, argv, "qt");
     }
 #endif
+    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
+
+
+    std::random_device rd;
+    std::mt19937::result_type seed = rd() ^ ((std::mt19937::result_type) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
+                                             (std::mt19937::result_type) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+
+    std::mt19937 gen(seed);
+    std::uniform_int_distribution<G4long> distribution;
+
+    constexpr size_t max = 4;
+
+    G4long seeds[max];
+
+    for (size_t i = 0; i < max; i++)
+    {
+        seeds[i] = distribution(gen);
+    }
+
+    CLHEP::HepRandom::setTheSeeds(seeds);
+
 #ifdef G4MULTITHREADED
     m_run_manager = new G4MTRunManager;
 #else
