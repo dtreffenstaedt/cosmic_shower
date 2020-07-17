@@ -3,12 +3,11 @@
 #include <G4EmStandardPhysics.hh>
 #include <G4EmExtraPhysics.hh>
 #include <G4HadronElasticPhysics.hh>
-#include <G4HadronPhysicsQGSP_BERT.hh>
-#include <G4HadronPhysicsQGSP_BERT_HP.hh>
+#include <G4HadronPhysicsFTFQGSP_BERT.hh>
 #include <G4IonPhysics.hh>
 #include <G4NeutronTrackingCut.hh>
 #include <G4StepLimiterPhysics.hh>
-#include <G4HadronElasticPhysicsHP.hh>
+#include <G4HadronicParameters.hh>
 
 #include "physics/decayconstructor.h"
 #include "physics/stoppingconstructor.h"
@@ -32,7 +31,7 @@ PhysicsList::PhysicsList(G4int ver) :
     RegisterPhysics( new G4HadronElasticPhysics{ver} );
 
     // Hadron Physics
-    RegisterPhysics( new G4HadronPhysicsQGSP_BERT{ver});
+    RegisterPhysics( new G4HadronPhysicsFTFQGSP_BERT{ver});
 
     // Stopping Physics
     RegisterPhysics( new StoppingConstructor{ver} );
@@ -45,8 +44,6 @@ PhysicsList::PhysicsList(G4int ver) :
 
     // Introduce Tracking Cuts
     RegisterPhysics(new G4StepLimiterPhysics{ver});
-
-    RegisterPhysics(new G4HadronElasticPhysicsHP{ver});
 }
 
 PhysicsList::~PhysicsList()
@@ -56,5 +53,15 @@ PhysicsList::~PhysicsList()
 void PhysicsList::SetCuts()
 {
     SetCutsWithDefault();
+}
+
+void PhysicsList::ConstructProcess()
+{
+    G4VModularPhysicsList::ConstructProcess();
+}
+
+void PhysicsList::ConstructParticle()
+{
+    G4VModularPhysicsList::ConstructParticle();
 }
 }

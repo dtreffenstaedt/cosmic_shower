@@ -13,7 +13,11 @@ public:
     PhysicsList(G4int ver = 1);
     virtual ~PhysicsList();
 
-    virtual void SetCuts();
+    virtual void SetCuts() override;
+
+    virtual void ConstructProcess() override;
+
+    virtual void ConstructParticle() override;
 };
 }
 

@@ -123,7 +123,7 @@ void Core::setup()
         m_ui_executive = new G4UIExecutive(argc, argv, "qt");
     }
 #endif
-    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
+    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine{});
 
 
     std::random_device rd;
@@ -145,25 +145,25 @@ void Core::setup()
     CLHEP::HepRandom::setTheSeeds(seeds);
 
 #ifdef G4MULTITHREADED
-    m_run_manager = new G4MTRunManager;
+    m_run_manager = new G4MTRunManager{};
 #else
-    m_run_manager = new G4RunManager;
+    m_run_manager = new G4RunManager{};
 #endif
 
     m_run_manager->SetVerboseLevel(0);
 
 
-    m_run_manager->SetUserInitialization(new DetectorConstruction);
+    m_run_manager->SetUserInitialization(new DetectorConstruction{});
 
 
-    m_run_manager->SetUserInitialization(new PhysicsList(0));
+    m_run_manager->SetUserInitialization(new PhysicsList{});
 
-    m_run_manager->SetUserInitialization(new ActionInitialization);
+    m_run_manager->SetUserInitialization(new ActionInitialization{});
 
     m_run_manager->Initialize();
 
 #ifdef SHOWER_BUILD_UI
-    m_vis_manager = new G4VisExecutive;
+    m_vis_manager = new G4VisExecutive{};
 
     m_vis_manager->SetVerboseLevel(0);
 
