@@ -5,7 +5,7 @@
 #include "global.h"
 
 #ifdef SHOWER_BENCHMARK
-#include "timemanager.h"
+#include "benchmarkmanager.h"
 #endif
 
 
@@ -28,7 +28,7 @@ public:
 
 private:
 #ifdef SHOWER_BENCHMARK
-    std::unique_ptr<TimeManager::Measurement> m_measurement;
+    std::unique_ptr<BenchmarkManager::Measurement> m_measurement;
 #endif
     static size_t c_n;
 };

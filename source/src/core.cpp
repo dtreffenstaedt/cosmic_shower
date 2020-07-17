@@ -18,7 +18,7 @@ Core::Core(int argc, char *argv[]) :
     m_ui_manager{nullptr},
 #endif
 #ifdef SHOWER_BENCHMARK
-    m_time_manager{new TimeManager{}},
+    m_benchmark_manager{new BenchmarkManager{"benchmark" + std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m/1000) + "GeV-"}},
 #endif
     m_parameter_manager{new ParameterManager{}}
 {
@@ -51,10 +51,6 @@ Core::Core(int argc, char *argv[]) :
 Core::~Core()
 {
     delete  m_recorder_manager;
-#ifdef SHOWER_BENCHMARK
-    m_time_manager->print_all();
-    m_time_manager->save_average(std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m/1000));
-#endif
 
     if (m_run_manager)
     {
@@ -76,7 +72,7 @@ Core::~Core()
 #endif
     delete  m_config_manager;
 #ifdef SHOWER_BENCHMARK
-    delete m_time_manager;
+    delete m_benchmark_manager;
 #endif
     delete  m_parameter_manager;
 }

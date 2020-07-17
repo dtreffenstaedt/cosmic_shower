@@ -21,7 +21,7 @@
 #include "parametermanager.h"
 #include "recordermanager.h"
 #ifdef SHOWER_BENCHMARK
-#include "timemanager.h"
+#include "benchmarkmanager.h"
 #endif
 
 START_NAMESPACE
@@ -63,7 +63,7 @@ private:
 
     ConfigManager* m_config_manager;
 #ifdef SHOWER_BENCHMARK
-    TimeManager* m_time_manager;
+    BenchmarkManager* m_benchmark_manager;
 #endif
     ParameterManager* m_parameter_manager;
     RecorderManager* m_recorder_manager;

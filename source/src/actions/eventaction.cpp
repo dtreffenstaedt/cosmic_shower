@@ -21,7 +21,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 {
     std::cout<<"Event started\n";
 #ifdef SHOWER_BENCHMARK
-    m_measurement = TimeManager::singleton()->start("event" + std::to_string(c_n));
+    m_measurement = BenchmarkManager::singleton()->start("event" + std::to_string(c_n));
 #endif
     c_n++;
 }

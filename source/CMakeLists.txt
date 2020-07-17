@@ -50,7 +50,7 @@ include_directories(${LIBCONFIG++_INCLUDE_DIRS})
 find_package(Geant4 REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES})
-target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES} pthread)
 
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
