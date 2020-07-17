@@ -7,18 +7,19 @@
 #include "stdio.h"
 #include "string.h"
 
-START_NAMESPACE
+namespace Shower
 {
 BenchmarkManager* BenchmarkManager::c_singleton = nullptr;
 
 BenchmarkManager::Measurement::Measurement(const std::string& filename, const std::string& name)
 {
     m_stream.open(filename + name);
-    m_stream<<"virtual memory,physical memory\n";
+    m_stream<<"virtual memory[KB],physical memory[KB]\n";
 }
 
 BenchmarkManager::Measurement::~Measurement()
 {
+    m_thread->join();
     if (m_stream.is_open())
     {
         m_stop = true;
@@ -34,10 +35,10 @@ std::chrono::steady_clock::duration BenchmarkManager::Measurement::stop()
     return m_duration;
 }
 
-std::future<void> BenchmarkManager::Measurement::start()
+void BenchmarkManager::Measurement::start()
 {
     m_start = std::chrono::steady_clock::now();
-    return std::async(std::launch::async, &BenchmarkManager::Measurement::run, this);
+    m_thread = std::make_unique<std::thread>(&BenchmarkManager::Measurement::run, this);
 }
 
 void BenchmarkManager::Measurement::run()
@@ -46,10 +47,11 @@ void BenchmarkManager::Measurement::run()
     {
         int virtual_memory = get_virtual_memory();
         int physical_memory = get_physical_memory();
-        m_stream<<std::to_string(virtual_memory)<<','<<std::to_string(physical_memory)<<'\n';
+        m_stream<<std::to_string(virtual_memory)<<','<<std::to_string(physical_memory)<<'\n'<<std::flush;
         m_virtual_memory += virtual_memory;
         m_physical_memory += physical_memory;
         m_n++;
+        std::this_thread::yield();
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     end();
@@ -59,7 +61,7 @@ void BenchmarkManager::Measurement::end()
 {
     m_virtual_memory /= static_cast<double>(m_n);
     m_physical_memory /= static_cast<double>(m_n);
-    m_stream<<"stats:\nt="<<std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(m_duration).count()<<"\nv="<<m_virtual_memory<<"\np="<<m_physical_memory<<'\n';
+    m_stream<<"stats:\nt="<<std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(m_duration).count()<<"ms\nv="<<m_virtual_memory<<"KB\np="<<m_physical_memory<<"KB\n";
     m_stream.close();
 }
 

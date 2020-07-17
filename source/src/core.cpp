@@ -17,9 +17,6 @@ Core::Core(int argc, char *argv[]) :
     m_ui_executive{nullptr},
     m_ui_manager{nullptr},
 #endif
-#ifdef SHOWER_BENCHMARK
-    m_benchmark_manager{new BenchmarkManager{"benchmark" + std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m/1000) + "GeV-"}},
-#endif
     m_parameter_manager{new ParameterManager{}}
 {
 #ifdef SHOWER_BUILD_UI
@@ -40,6 +37,9 @@ Core::Core(int argc, char *argv[]) :
     {
         m_config_manager = new ConfigManager{};
     }
+#ifdef SHOWER_BENCHMARK
+    m_benchmark_manager = new BenchmarkManager{"benchmark" + std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m/1000) + "GeV-"};
+#endif
     m_recorder_manager = new RecorderManager{};
 #ifdef SHOWER_BUILD_UI
     setup(argc, argv);

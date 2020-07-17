@@ -1,6 +1,13 @@
 cmake_minimum_required (VERSION 3.5)
 project (cosmic_shower)
 
+set(SHOWER_BUILD_TIDY ON)
+if(${SHOWER_BUILD_TIDY})
+set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=.; -checks=*,-fuchsia-*;)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=.; -checks=-*,bugprone-*,performace-*;)
+endif(${SHOWER_BUILD_TIDY})
+set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_COMPILER clang)
 set(CMAKE_BUILD_TYPE Debug)
 set(PROJECT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(PROJECT_SOURCE_DIR "${PROJECT_BASE_DIR}src")
@@ -9,7 +16,7 @@ set(PROJECT_CONFIG_DIR "${PROJECT_BASE_DIR}config")
 set(PROJECT_BINARY_DIR "${PROJECT_BASE_DIR}../build")
 
 set(SHOWER_BUILD_UI OFF)
-set(SHOWER_BENCHMARK ON)
+set(SHOWER_BENCHMARK OFF)
 
 include(cmake/version.cmake)
 

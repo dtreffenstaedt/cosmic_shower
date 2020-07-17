@@ -24,7 +24,7 @@ public:
 
         std::chrono::steady_clock::duration stop();
 
-        std::future<void> start();
+        void start();
 
         void run();
 
@@ -46,6 +46,7 @@ public:
         int get_physical_memory();
 
         void end();
+        std::unique_ptr<std::thread> m_thread;
     };
 
     BenchmarkManager(const std::string& filename);
