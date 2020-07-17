@@ -1,7 +1,9 @@
-#include <iostream>
 #include <cmath>
+#include <iostream>
 #include <cstdlib>
+
 #include <libconfig.h++>
+
 
 
 namespace Consts
@@ -28,26 +30,33 @@ namespace Consts
 class OptimisationTarget
 {
 public:
-    virtual long double func(const long double& h) = 0;
-    virtual long double integral(const long double& lower, const long double& upper) = 0;
+    virtual auto func(const long double& h) -> long double = 0;
+    virtual auto integral(const long double& lower, const long double& upper) -> long double = 0;
 
-    virtual ~OptimisationTarget() {}
+    virtual ~OptimisationTarget() = default;
+
+    OptimisationTarget() = default;
+    OptimisationTarget(const OptimisationTarget&) = default;
+    OptimisationTarget(OptimisationTarget&&) = default;
+
+    auto operator=(const OptimisationTarget&) -> OptimisationTarget& = default;
+    auto operator=(OptimisationTarget&&) -> OptimisationTarget& = default;
 };
 
 class Pressure : public OptimisationTarget
 {
 public:
-    virtual long double func(const long double& h)
+    auto func(const long double& h) -> long double override
     {
         return Consts::p_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::M*Consts::g/(Consts::R*Consts::a()));
     }
 
-    long double integ(const long double& h)
+    auto integ(const long double& h) -> long double
     {
         return -(func(h) * (Consts::kappa - 1) * (Consts::T_0 - Consts::a() * h))/(Consts::a() * (2 * Consts::kappa - 1));
     }
 
-    virtual long double integral(const long double& lower, const long double& upper)
+    auto integral(const long double& lower, const long double& upper) -> long double override
     {
         return integ(upper) - integ(lower);
     }
@@ -56,18 +65,18 @@ public:
 class Density : public OptimisationTarget
 {
 public:
-    virtual long double func(const long double& h)
+    auto func(const long double& h) -> long double override
     {
         return Consts::rho_0 * std::pow((1 - Consts::a() * h/Consts::T_0), Consts::M*Consts::g/(Consts::R*Consts::a()*Consts::kappa));
     }
 
 
-    long double integ(const long double& h)
+    auto integ(const long double& h) -> long double
     {
         return -(func(h)*(Consts::kappa - 1)*(Consts::T_0 - Consts::a()*h))/(Consts::a() * Consts::kappa);
     }
 
-    virtual long double integral(const long double& lower, const long double& upper)
+    auto integral(const long double& lower, const long double& upper) -> long double override
     {
         return integ(upper) - integ(lower);
     }
@@ -76,17 +85,17 @@ public:
 class Temperature : public OptimisationTarget
 {
 public:
-    virtual long double func(const long double& h)
+    auto func(const long double& h) -> long double override
     {
         return Consts::T_0 * (1 - Consts::a() * h/Consts::T_0);
     }
 
-    long double integ(const long double& h)
+    auto integ(const long double& h) -> long double
     {
         return Consts::T_0 * h - (Consts::a()*std::pow(h, 2))/2;
     }
 
-    virtual long double integral(const long double& lower, const long double& upper)
+    auto integral(const long double& lower, const long double& upper) -> long double override
     {
         return integ(upper) - integ(lower);
     }
@@ -95,9 +104,10 @@ public:
 class Layer
 {
 public:
-    Layer(const long double& lower, const long double& upper, OptimisationTarget* target, Layer* parent = 0) :
+    Layer(const long double& lower, const long double& upper, OptimisationTarget* target, Layer* parent = nullptr) :
         m_lower{lower},
         m_upper{upper},
+        m_next{nullptr},
         m_prev{parent},
         m_target{target}
     {
@@ -105,21 +115,15 @@ public:
 
     virtual ~Layer()
     {
-        if (!m_prev)
-        {
-            delete m_target;
-        }
-        if (m_next)
-        {
-            delete m_next;
-        }
+        delete m_target;
+        delete m_next;
     }
 
-    static Layer* create(const long double& lower, const long double& upper, OptimisationTarget* target, const size_t& n)
+    static auto create(const long double& lower, const long double& upper, OptimisationTarget* target, const size_t& n) -> Layer*
     {
         long double thickness = (upper - lower)/static_cast<long double>(n);
         long double h = lower + thickness;
-        Layer* first = new Layer(lower, h, target);
+        auto first = new Layer(lower, h, target);
         Layer* last = first;
         for (size_t i = 1; i < n; i++)
         {
