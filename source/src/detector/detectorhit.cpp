@@ -2,15 +2,15 @@
 
 #include <fstream>
 #include <G4UnitsTable.hh>
-START_NAMESPACE
+namespace Shower
 {
 
 DetectorHit::DetectorHit(
             G4ParticleDefinition* particle,
             G4double energy,
             G4VPhysicalVolume* physical_volume,
-            G4ThreeVector position,
-            G4ThreeVector momentum,
+            const G4ThreeVector& position,
+            const G4ThreeVector& momentum,
             G4double global_time,
             G4double proper_time
             ) :

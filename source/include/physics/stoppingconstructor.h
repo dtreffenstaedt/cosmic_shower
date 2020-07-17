@@ -5,7 +5,7 @@
 
 #include <G4StoppingPhysics.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 class StoppingConstructor : public G4StoppingPhysics
 {

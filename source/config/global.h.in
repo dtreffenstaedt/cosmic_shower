@@ -1,14 +1,12 @@
 #ifndef @PROJECT_NAME@_GLOBAL_H
 #define @PROJECT_NAME@_GLOBAL_H
 
-#define START_NAMESPACE namespace SHOWER
-
 #cmakedefine SHOWER_BUILD_UI
 #cmakedefine SHOWER_BENCHMARK
 
 #include <exception>
 
-START_NAMESPACE
+namespace Shower
 {
 namespace Config
 {
@@ -17,8 +15,8 @@ namespace Version
     const int major = @PROJECT_VERSION_MAJOR@;
     const int minor = @PROJECT_VERSION_MINOR@;
     const int patch = @PROJECT_VERSION_PATCH@;
-}
-}
+} // namespace Version
+} // namespace Config
 class DataDirectoryExists : public std::exception
 {
     virtual const char* what() const throw()
@@ -26,6 +24,6 @@ class DataDirectoryExists : public std::exception
         return "Data error: Output directory already exists. Exiting to preserve previous data.";
     }
 };
-}
+} // namespace Shower
 
 #endif // @PROJECT_NAME@_GLOBAL_H

@@ -8,7 +8,7 @@
 
 #include <G4ThreeVector.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 
 class RecorderManager

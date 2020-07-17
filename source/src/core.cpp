@@ -8,7 +8,7 @@
 #include "actions/actioninitialization.h"
 #include "physics/physicslist.h"
 
-START_NAMESPACE
+namespace Shower
 {
 Core::Core(int argc, char *argv[]) :
     m_run_manager{nullptr},

@@ -8,7 +8,7 @@
 
 class G4Step;
 
-START_NAMESPACE
+namespace Shower
 {
 
 class SteppingAction : public G4UserSteppingAction

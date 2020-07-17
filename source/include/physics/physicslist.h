@@ -5,7 +5,7 @@
 
 #include <G4VModularPhysicsList.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 class PhysicsList : public G4VModularPhysicsList
 {

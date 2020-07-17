@@ -11,7 +11,7 @@
 #include <queue>
 #include <fstream>
 
-START_NAMESPACE
+namespace Shower
 {
 class BenchmarkManager
 {

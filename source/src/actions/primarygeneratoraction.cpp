@@ -7,7 +7,7 @@
 #include <G4SystemOfUnits.hh>
 #include <G4UnitsTable.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 PrimaryGeneratorAction::PrimaryGeneratorAction() :
     G4VUserPrimaryGeneratorAction{},

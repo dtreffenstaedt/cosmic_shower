@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-START_NAMESPACE
+namespace Shower
 {
 class ParameterManager
 {

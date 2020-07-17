@@ -8,7 +8,7 @@
 #include <G4THitsCollection.hh>
 #include <G4LogicalVolume.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 
 

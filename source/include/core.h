@@ -24,7 +24,7 @@
 #include "benchmarkmanager.h"
 #endif
 
-START_NAMESPACE
+namespace Shower
 {
 class Core
 {

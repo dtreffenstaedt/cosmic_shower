@@ -12,7 +12,7 @@
 
 #include <filesystem>
 
-START_NAMESPACE
+namespace Shower
 {
 
 std::atomic<bool> SensitiveDetector::c_dumped = false;

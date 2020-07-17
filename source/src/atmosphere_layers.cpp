@@ -9,16 +9,21 @@ namespace Consts
     constexpr long double R = 8.31446261815324;
     constexpr long double M = 28.96/1000;
     constexpr long double g = 9.81;
-    long double rho_0 = 1.225;
-    long double p_0 = 101325;
-    long double T_0 = 273.15+15;
-    long double kappa = 1.235;
+    constexpr long double i_rho_0 = 1.225;
+    constexpr long double i_p_0 = 101325;
+    constexpr long double i_T_0 = 273.15+15;
+    constexpr long double i_kappa = 1.235;
 
-    long double a()
+    long double rho_0 = i_rho_0;
+    long double p_0 = i_p_0;
+    long double T_0 = i_T_0;
+    long double kappa = i_kappa;
+
+    auto a() -> long double
     {
         return (Consts::kappa - 1)/Consts::kappa * Consts::M*Consts::g/Consts::R;
     }
-}
+} // namespace Consts
 
 class OptimisationTarget
 {
@@ -124,7 +129,7 @@ public:
         }
         return first;
     }
-    
+
     long double total_lower() const
     {
         if (m_prev)
@@ -267,7 +272,7 @@ public:
     }
 
     void print_csv(const size_t& n = 1)
-    {    
+    {
         if (!m_prev)
         {
             std::cout<<"n,lower,upper,density,pressure,termperature\n";
@@ -303,7 +308,7 @@ public:
     }
 
     void print_config()
-    {    
+    {
         libconfig::Config cfg;
         libconfig::Setting& root = cfg.getRoot();
         print_config(root.add("layers", libconfig::Setting::TypeList));
@@ -423,8 +428,8 @@ int main(int argc, char* argv[])
         std::cout<<"Calculating layers for parameters:\n\th_max = "<<upper<<" m\n\tρ_0 = "<<Consts::rho_0<<" kg/m^3\n\tp_0 = "<<Consts::p_0<<" Pa\n\tT_0 = "<<Consts::T_0<<" K\n\tκ = "<<Consts::kappa<<"\n\tn = "<<std::to_string(n)<<'\n';
     }
     // lower bound, upper bound, layers
-    Layer* layers = Layer::create(lower, upper, new Density(), n);            
-    layers->optimise();                             
+    Layer* layers = Layer::create(lower, upper, new Density(), n);
+    layers->optimise();
     if (csv)
     {
         layers->print_csv();

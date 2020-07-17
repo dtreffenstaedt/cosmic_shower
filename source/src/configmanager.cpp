@@ -4,7 +4,7 @@
 
 #include "parametermanager.h"
 
-START_NAMESPACE
+namespace Shower
 {
 ConfigManager* ConfigManager::c_singleton = 0;
 
@@ -284,7 +284,7 @@ double ConfigManager::get_atmosphere_height(const bool &fallback) const
     }
     const libconfig::Setting& layers_setting = get_root(fallback)["layers"];
     double upper;
-    size_t len = layers_setting.getLength();
+    int len = layers_setting.getLength();
     if (!(layers_setting[len - 1].lookupValue("upper", upper)))
     {
         throw FaultyAtmosphereLayerDefinition();
@@ -292,7 +292,7 @@ double ConfigManager::get_atmosphere_height(const bool &fallback) const
     return upper;
 }
 
-void ConfigManager::add_detector(Config::DetectorPlacement detector)
+void ConfigManager::add_detector(const Config::DetectorPlacement& detector)
 {
     m_detectors.push_back(detector);
 }

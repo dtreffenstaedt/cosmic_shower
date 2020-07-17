@@ -13,7 +13,7 @@
 #include "physics/stoppingconstructor.h"
 
 
-START_NAMESPACE
+namespace Shower
 {
 PhysicsList::PhysicsList(G4int ver) :
     G4VModularPhysicsList{}

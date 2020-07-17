@@ -7,7 +7,7 @@
 #include <vector>
 #include <variant>
 
-START_NAMESPACE
+namespace Shower
 {
 namespace Config
 {
@@ -186,7 +186,7 @@ public:
 
     void config_dump(const std::string &filename);
 
-    void add_detector(Config::DetectorPlacement detector);
+    void add_detector(const Config::DetectorPlacement &detector);
 
 private:
     const libconfig::Setting& get_root(const bool& fallback = false) const;

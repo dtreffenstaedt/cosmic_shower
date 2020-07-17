@@ -6,7 +6,7 @@
 
 #include "global.h"
 
-START_NAMESPACE
+namespace Shower
 {
 class ActionInitialization : public G4VUserActionInitialization
 {

@@ -12,7 +12,7 @@ class G4ParticleGun;
 class G4Event;
 class G4Box;
 
-START_NAMESPACE
+namespace Shower
 {
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {

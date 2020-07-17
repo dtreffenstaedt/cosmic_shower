@@ -13,7 +13,7 @@
 #include <G4IonConstructor.hh>
 #include <G4ShortLivedConstructor.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 StoppingConstructor::StoppingConstructor(G4int ver) :
     G4StoppingPhysics{ver}

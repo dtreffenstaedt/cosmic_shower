@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <fstream>
 
-START_NAMESPACE
+namespace Shower
 {
 RecorderManager* RecorderManager::c_singleton = nullptr;
 

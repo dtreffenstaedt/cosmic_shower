@@ -6,7 +6,7 @@
 
 #include <G4DecayPhysics.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 class DecayConstructor : public G4DecayPhysics
 {

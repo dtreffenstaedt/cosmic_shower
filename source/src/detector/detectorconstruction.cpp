@@ -16,7 +16,7 @@
 #include <G4Para.hh>
 #include <G4UserLimits.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 DetectorConstruction::DetectorConstruction() :
     G4VUserDetectorConstruction{},
@@ -194,7 +194,7 @@ void DetectorConstruction::construct_detectors()
         {
             std::cout<<"n not a perfect scare, arranging in circular pattern.\n";
             size_t max = (n%2 == 0)?n:(n-1);
-            double angle = std::atan(1.0)*8/static_cast<double>(max/2);
+            double angle = std::atan(1.0)*8/(static_cast<double>(max)/2.0);
             G4double r = m_world_size * 1/6;
             size_t m = max/2 - (((max/2)%2 == 0)?(0):(1));
             for (size_t i = 1 - (n - max); i <= m; i++)
@@ -211,8 +211,8 @@ void DetectorConstruction::construct_detectors()
             r = m_world_size * 2/6;
             for (size_t i = m + 1; i <= max; i++)
             {
-                G4double x = std::cos(angle * static_cast<double>(i - max/2 + 1)) * r;
-                G4double y = std::sin(angle * static_cast<double>(i - max/2 + 1)) * r;
+                G4double x = std::cos(angle * (static_cast<double>(i) - static_cast<double>(max)/2.0 + 1.0)) * r;
+                G4double y = std::sin(angle * (static_cast<double>(i) - static_cast<double>(max)/2.0 + 1.0)) * r;
                 place_detector("detector" + std::to_string(i), x + m_offset_bottom.x, y + m_offset_bottom.y, m_offset_bottom.z);
             }
         }

@@ -16,7 +16,7 @@
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
-START_NAMESPACE
+namespace Shower
 {
 class DetectorConstruction : public G4VUserDetectorConstruction
 {

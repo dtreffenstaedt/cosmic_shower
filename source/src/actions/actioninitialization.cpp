@@ -4,7 +4,7 @@
 #include "actions/eventaction.h"
 #include "actions/steppingaction.h"
 
-START_NAMESPACE
+namespace Shower
 {
 ActionInitialization::ActionInitialization() :
     G4VUserActionInitialization{}

@@ -13,7 +13,7 @@
 #include <G4IonConstructor.hh>
 #include <G4ShortLivedConstructor.hh>
 
-START_NAMESPACE
+namespace Shower
 {
 DecayConstructor::DecayConstructor(G4int ver) :
     G4DecayPhysics{ver}

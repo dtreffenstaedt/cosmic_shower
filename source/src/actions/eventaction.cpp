@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-START_NAMESPACE
+namespace Shower
 {
 size_t EventAction::c_n = 1;
 

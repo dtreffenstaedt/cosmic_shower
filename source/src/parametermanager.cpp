@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-START_NAMESPACE
+namespace Shower
 {
 
 ParameterManager* ParameterManager::c_singleton = nullptr;
@@ -28,6 +28,11 @@ bool ParameterManager::start(int argc, char *argv[])
         {
             if (arg.compare("-" + m_arguments[i].abbr) * arg.compare("--" + m_arguments[i].full) == 0)
             {
+                if (arg.compare("-h") * arg.compare("--help") == 0)
+                {
+                    print_help();
+                    return false;
+                }
                 if (m_arguments[i].has_value)
                 {
                     if (++j >= argc)

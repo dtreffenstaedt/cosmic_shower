@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-START_NAMESPACE
+namespace Shower
 {
 
 SteppingAction::SteppingAction() :

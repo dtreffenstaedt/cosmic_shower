@@ -15,7 +15,7 @@
 
 class G4Event;
 
-START_NAMESPACE
+namespace Shower
 {
 class EventAction : public G4UserEventAction
 {
