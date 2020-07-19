@@ -8,24 +8,22 @@
 
 #include <G4ThreeVector.hh>
 
-namespace Shower
-{
+namespace Shower {
 
-class RecorderManager
-{
+class RecorderManager {
 public:
     RecorderManager();
     virtual ~RecorderManager();
 
-    bool stored_primary() const;
+    [[nodiscard]] auto stored_primary() const -> bool;
 
     void store_primary(const G4ThreeVector& vector, const G4double& time);
     void store_hit(const G4ThreeVector& vector, const G4double& time);
 
-    static RecorderManager* singleton();
+    static auto singleton() -> RecorderManager*;
+
 private:
-    struct Hit
-    {
+    struct Hit {
         G4ThreeVector pos;
         G4double time;
     };
@@ -35,10 +33,9 @@ private:
 
     std::atomic<bool> m_stored_primary;
 
-    Hit m_primary;
+    Hit m_primary {};
 
     std::queue<Hit> m_hits;
-
 };
 }
 

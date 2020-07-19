@@ -5,11 +5,10 @@
 
 #include <string>
 
-
 #ifdef SHOWER_BUILD_UI
-#include <G4VisExecutive.hh>
 #include <G4UIExecutive.hh>
 #include <G4UImanager.hh>
+#include <G4VisExecutive.hh>
 #endif
 
 #ifdef G4MULTITHREADED
@@ -24,30 +23,27 @@
 #include "benchmarkmanager.h"
 #endif
 
-namespace Shower
-{
-class Core
-{
+namespace Shower {
+class Core {
 public:
     Core(int argc, char* argv[]);
 
     virtual ~Core();
 
-    int execute();
+    auto execute() -> int;
 
 private:
 #ifdef SHOWER_BUILD_UI
-    void setup(int argc, char *argv[]);
+    void setup(int argc, char* argv[]);
 #else
     void setup();
 #endif
     void print_help() const;
 
 #ifdef SHOWER_BUILD_UI
-    int execute_ui();
+    auto execute_ui() -> int;
 #endif
-    int execute_cli();
-
+    auto execute_cli() -> int;
 
 #ifdef G4MULTITHREADED
     G4MTRunManager* m_run_manager;
@@ -67,7 +63,6 @@ private:
 #endif
     ParameterManager* m_parameter_manager;
     RecorderManager* m_recorder_manager;
-
 };
 }
 #endif // CORE_H

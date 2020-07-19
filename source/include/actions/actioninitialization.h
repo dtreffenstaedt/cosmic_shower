@@ -6,16 +6,15 @@
 
 #include "global.h"
 
-namespace Shower
-{
-class ActionInitialization : public G4VUserActionInitialization
-{
+namespace Shower {
+class ActionInitialization : public G4VUserActionInitialization {
 public:
     ActionInitialization();
-    virtual ~ActionInitialization();
+    ~ActionInitialization() override;
 
-    virtual void BuildForMaster() const;
-    virtual void Build() const;
+    void BuildForMaster() const override;
+    void Build() const override;
+
 private:
 };
 }

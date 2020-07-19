@@ -3,28 +3,26 @@
 #include "configmanager.h"
 #include "recordermanager.h"
 
-#include <G4Track.hh>
 #include <G4Step.hh>
 #include <G4SystemOfUnits.hh>
+#include <G4Track.hh>
 
 #include <iostream>
 
-namespace Shower
-{
+namespace Shower {
 
-SteppingAction::SteppingAction() :
-    G4UserSteppingAction{},
-    m_limit{ConfigManager::singleton()->get_initial_ratio()},
-    m_primary_energy{ConfigManager::singleton()->get_primary_particle().momentum.m * MeV}
-{}
+SteppingAction::SteppingAction()
+    : G4UserSteppingAction {}
+
+{
+}
 
 SteppingAction::~SteppingAction()
-{}
+    = default;
 
-void SteppingAction::UserSteppingAction(const G4Step *step)
+void SteppingAction::UserSteppingAction(const G4Step* step)
 {
-    if (RecorderManager::singleton()->stored_primary())
-    {
+    if (RecorderManager::singleton()->stored_primary()) {
         return;
     }
     G4Track* track = step->GetTrack();
@@ -34,11 +32,10 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
         return;
     }
 
-    if (step->GetTotalEnergyDeposit() < (m_limit * m_primary_energy))
-    {
+    if (step->GetTotalEnergyDeposit() < (m_limit * m_primary_energy)) {
         return;
     }
-    std::cout<<"Storing initial interaction\n";
+    std::cout << "Storing initial interaction\n";
     RecorderManager::singleton()->store_primary(track->GetPosition(), track->GetGlobalTime());
 }
 }

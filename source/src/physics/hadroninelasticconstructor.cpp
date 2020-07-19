@@ -154,7 +154,7 @@ void HadronInelasticConstructor::ConstructProcess()
 {
     CreateModels();
 
-    G4ProcessManager* aProcMan = 0;
+    G4ProcessManager* aProcMan{nullptr};
 
     m_processes.neutron_inelastic = new G4NeutronInelasticProcess();
     m_processes.neutron_inelastic->RegisterMe(m_models.model1);

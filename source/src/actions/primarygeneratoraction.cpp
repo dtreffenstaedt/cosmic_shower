@@ -1,27 +1,20 @@
 #include "actions/primarygeneratoraction.h"
 
 #include <G4Event.hh>
+#include <G4ParticleDefinition.hh>
 #include <G4ParticleGun.hh>
 #include <G4ParticleTable.hh>
-#include <G4ParticleDefinition.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4UnitsTable.hh>
 
-namespace Shower
-{
-PrimaryGeneratorAction::PrimaryGeneratorAction() :
-    G4VUserPrimaryGeneratorAction{},
-    m_particle_gun{0},
-    m_primary{ConfigManager::singleton()->get_primary_particle()},
-    m_atmosphere_height{ConfigManager::singleton()->get_atmosphere_height() * m},
-    m_offset_top{
-        - m_atmosphere_height * m_primary.momentum.x/std::abs(m_primary.momentum.z) / 2,
-        - m_atmosphere_height * m_primary.momentum.y/std::abs(m_primary.momentum.z) / 2,
-        m_atmosphere_height / 2}
+namespace Shower {
+PrimaryGeneratorAction::PrimaryGeneratorAction()
+    : G4VUserPrimaryGeneratorAction {}
+
 {
     m_particle_gun = new G4ParticleGun(m_primary.n_particles);
 
-    std::cout<<"setting up primary generator: \n\tE_kin = "<<G4BestUnit(m_primary.momentum.m * MeV, "Energy")<<"\n\tn = "<<std::to_string(m_primary.n_particles)<<'\n';
+    std::cout << "setting up primary generator: \n\tE_kin = " << G4BestUnit(m_primary.momentum.m * MeV, "Energy") << "\n\tn = " << std::to_string(m_primary.n_particles) << '\n';
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
     G4ParticleDefinition* particle = particle_table->FindParticle(m_primary.particle);
     m_particle_gun->SetParticleDefinition(particle);

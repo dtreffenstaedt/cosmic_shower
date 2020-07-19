@@ -1,30 +1,25 @@
 #ifndef EVENTACTION_H
 #define EVENTACTION_H
 
-
 #include "global.h"
 
 #ifdef SHOWER_BENCHMARK
 #include "benchmarkmanager.h"
 #endif
 
-
-#include <cstddef>
 #include <G4UserEventAction.hh>
-
+#include <cstddef>
 
 class G4Event;
 
-namespace Shower
-{
-class EventAction : public G4UserEventAction
-{
+namespace Shower {
+class EventAction : public G4UserEventAction {
 public:
     EventAction();
-    virtual ~EventAction();
+    ~EventAction() override;
 
-    virtual void BeginOfEventAction(const G4Event*);
-    virtual void EndOfEventAction(const G4Event*);
+    void BeginOfEventAction(const G4Event*) override;
+    void EndOfEventAction(const G4Event*) override;
 
 private:
 #ifdef SHOWER_BENCHMARK

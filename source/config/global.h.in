@@ -22,7 +22,7 @@ constexpr G4double max_energy = 1.0e20 * eV;
 } // namespace Config
 class DataDirectoryExists : public std::exception
 {
-    virtual const char* what() const throw()
+    [[nodiscard]] auto what() const noexcept -> const char* override
     {
         return "Data error: Output directory already exists. Exiting to preserve previous data.";
     }

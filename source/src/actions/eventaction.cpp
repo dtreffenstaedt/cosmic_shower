@@ -4,22 +4,20 @@
 
 #include <iostream>
 
-namespace Shower
-{
+namespace Shower {
 size_t EventAction::c_n = 1;
 
-EventAction::EventAction() :
-    G4UserEventAction{}
+EventAction::EventAction()
+    : G4UserEventAction {}
 {
 }
 
 EventAction::~EventAction()
-{
-}
+    = default;
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
-    std::cout<<"Event started\n";
+    std::cout << "Event started\n";
 #ifdef SHOWER_BENCHMARK
     m_measurement = BenchmarkManager::singleton()->start("event" + std::to_string(c_n));
 #endif
@@ -28,7 +26,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
-    std::cout<<"Event ended\n";
+    std::cout << "Event ended\n";
 #ifdef SHOWER_BENCHMARK
     m_measurement->stop();
 #endif

@@ -134,7 +134,7 @@ public:
         return first;
     }
 
-    long double total_lower() const
+    [[nodiscard]] auto total_lower() const -> long double
     {
         if (m_prev)
         {
@@ -143,7 +143,7 @@ public:
         return m_lower;
     }
 
-    long double total_upper() const
+    [[nodiscard]] auto total_upper() const -> long double
     {
         if (m_next)
         {
@@ -174,28 +174,35 @@ public:
         m_next->move(m_upper);
     }
 
-    long double integral(const long double& lower, const long double& upper) const
+    [[nodiscard]] auto integral(const long double& lower, const long double& upper) const -> long double
     {
         return m_target->integral(lower, upper);
     }
 
-    long double total_integral() const
+    [[nodiscard]] auto total_integral() const -> long double
     {
         return integral(total_lower(), total_upper());
     }
 
-    long double average_integral() const
+    [[nodiscard]] auto average_integral() const -> long double
     {
         return 1/total_n(true) * total_integral();
     }
 
-    long double total_n(const bool& all = false) const
+    [[nodiscard]] auto total_n(const bool& all = false) const -> long double
     {
         if (all)
         {
             if (!m_prev)
             {
-                return m_next->total_n() + 1;
+                if (m_next)
+                {
+                    return m_next->total_n() + 1;
+                }
+                else
+                {
+                    return 1;
+                }
             }
             return m_prev->total_n(true);
         }
@@ -206,7 +213,7 @@ public:
         return 1;
     }
 
-    bool fit_to_area(const long double& target)
+    auto fit_to_area(const long double& target) -> bool
     {
         if (std::abs(integral(m_lower, m_upper) - target) < std::numeric_limits<long double>::epsilon())
         {
@@ -221,12 +228,12 @@ public:
         return false;
     }
 
-    long double thickness() const
+    [[nodiscard]] auto thickness() const -> long double
     {
         return m_upper - m_lower;
     }
 
-    bool optimise(const size_t& j = 0, const size_t& i = 1)
+    auto optimise(const size_t& j = 0, const size_t& i = 1) -> bool
     {
         if (j >= (total_n())) // limit the number of tries for lower level layers
         {
@@ -334,7 +341,7 @@ void print_help()
     std::cout<<"possible parameters:\n\t-h\t\tprint this help\n\t-u <double>\tset upper limit unit: m\n\t\tdefault: 40000 m\n\t-T <double>\tSet temperature at sealevel unit: K\n\t\tdefault: 288.15 K\n\t-p <double>\tSet pressure at sealevel unit: Pa\n\t\tdefault: 101325 Pa\n\t-rho <double>\tSet density at sealevel unit: kg/m^3\n\t\tdefault: 1.225 kg/m^3\n\t-k <double>\tSet heat capacity ratio\n\t\tdefault: 1.235\n\t-n <int>\tset number of layers\n\t\tdefault: 10\n\t-csv\t\tgenerate csv formatted output\n\t-config\t\tgenerate libconfig formatted output\n";
 }
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     bool csv = false;
     bool config = false;

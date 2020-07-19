@@ -1,10 +1,12 @@
 #ifndef cosmic_shower_GLOBAL_H
 #define cosmic_shower_GLOBAL_H
 
-/* #undef SHOWER_BUILD_UI */
+#define SHOWER_BUILD_UI
 /* #undef SHOWER_BENCHMARK */
 
 #include <exception>
+#include <G4SystemOfUnits.hh>
+#include <globals.hh>
 
 namespace Shower
 {
@@ -16,10 +18,11 @@ namespace Version
     const int minor = 1;
     const int patch = 0;
 } // namespace Version
+constexpr G4double max_energy = 1.0e20 * eV;
 } // namespace Config
 class DataDirectoryExists : public std::exception
 {
-    virtual const char* what() const throw()
+    [[nodiscard]] auto what() const noexcept -> const char* override
     {
         return "Data error: Output directory already exists. Exiting to preserve previous data.";
     }

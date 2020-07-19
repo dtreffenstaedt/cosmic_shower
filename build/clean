@@ -1,5 +1,0 @@
-#!/bin/bash
-
-shopt -s extglob
-
-rm -rfv !("generate"|"clean"|"run")

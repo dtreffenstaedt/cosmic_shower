@@ -1,28 +1,25 @@
 #ifndef SENSITIVEDETECTOR_H
 #define SENSITIVEDETECTOR_H
 
-#include "global.h"
 #include "detector/detectorhit.h"
+#include "global.h"
 
-#include <G4VSensitiveDetector.hh>
-#include <G4THitsCollection.hh>
 #include <G4LogicalVolume.hh>
+#include <G4THitsCollection.hh>
+#include <G4VSensitiveDetector.hh>
 
-namespace Shower
-{
+namespace Shower {
 
-
-class SensitiveDetector : public G4VSensitiveDetector
-{
+class SensitiveDetector : public G4VSensitiveDetector {
 public:
-    SensitiveDetector(const std::string& name);
+    explicit SensitiveDetector(const std::string& name);
 
-    virtual ~SensitiveDetector();
+    ~SensitiveDetector() override;
 
     // +++ reimplemented from G4VSensitiveDetector
-    virtual void Initialize(G4HCofThisEvent* hit_collection);
-    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory*);
-    virtual void EndOfEvent(G4HCofThisEvent* hit_collection);
+    void Initialize(G4HCofThisEvent* hit_collection) override;
+    auto ProcessHits(G4Step* step, G4TouchableHistory*) -> G4bool override;
+    void EndOfEvent(G4HCofThisEvent* hit_collection) override;
     // --- reimplemented from G4VSensitiveDetector
 
 private:

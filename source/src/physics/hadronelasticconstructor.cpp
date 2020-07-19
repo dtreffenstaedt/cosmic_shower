@@ -37,8 +37,7 @@ HadronElasticConstructor::HadronElasticConstructor(G4int ver, const G4String& na
 }
 
 HadronElasticConstructor::~HadronElasticConstructor()
-{
-}
+= default;
 
 void HadronElasticConstructor::ConstructParticle()
 {
@@ -58,18 +57,18 @@ void HadronElasticConstructor::ConstructProcess()
     constexpr G4double elim_anti_nuc = 100 * MeV;
     constexpr G4double delta = 0.1 * MeV;
 
-    G4AntiNuclElastic* anuc = new G4AntiNuclElastic();
+    auto* anuc = new G4AntiNuclElastic();
     anuc->SetMinEnergy(elim_anti_nuc);
     anuc->SetMaxEnergy(Config::max_energy);
-    G4CrossSectionElastic* anucxs = new G4CrossSectionElastic(anuc->GetComponentCrossSection());
+    auto* anucxs = new G4CrossSectionElastic(anuc->GetComponentCrossSection());
     //    anucxs->SetMinKinEnergy(elim_anti_nuc);
     anucxs->SetMaxKinEnergy(Config::max_energy);
 
-    G4HadronElastic* lhep0 = new G4HadronElastic();
+    auto* lhep0 = new G4HadronElastic();
     lhep0->SetMaxEnergy(elim_anti_nuc + delta);
     //    lhep0->SetMaxEnergy(Config::max_energy);
 
-    G4ElasticHadrNucleusHE* he = new G4ElasticHadrNucleusHE();
+    auto* he = new G4ElasticHadrNucleusHE();
     //    he->SetMinEnergy(100 * TeV);
     he->SetMaxEnergy(Config::max_energy);
 
@@ -166,10 +165,10 @@ void HadronElasticConstructor::ConstructProcess()
     }
 }
 
-G4HadronicProcess*
-HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) const
+auto
+HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) const -> G4HadronicProcess*
 {
-    G4HadronicProcess* hp = nullptr;
+    G4HadronicProcess* hp{nullptr};
     G4ProcessVector* pv = part->GetProcessManager()->GetPostStepProcessVector();
     size_t n = pv->size();
     for (size_t i = 0; i < n; ++i) {
@@ -181,10 +180,10 @@ HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) co
     return hp;
 }
 
-G4HadronElastic*
-HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) const
+auto
+HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) const -> G4HadronElastic*
 {
-    G4HadronElastic* mod = nullptr;
+    G4HadronElastic* mod{nullptr};
     G4HadronicProcess* hel = GetElasticProcess(part);
     if (hel) {
         std::vector<G4HadronicInteraction*>& hi = hel->GetHadronicInteractionList();
@@ -195,12 +194,12 @@ HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) cons
     return mod;
 }
 
-G4HadronicProcess* HadronElasticConstructor::GetNeutronProcess() const
+auto HadronElasticConstructor::GetNeutronProcess() const -> G4HadronicProcess*
 {
     return GetElasticProcess(G4Neutron::Neutron());
 }
 
-G4HadronElastic* HadronElasticConstructor::GetNeutronModel() const
+auto HadronElasticConstructor::GetNeutronModel() const -> G4HadronElastic*
 {
     return GetElasticModel(G4Neutron::Neutron());
 }
