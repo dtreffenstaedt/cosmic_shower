@@ -37,7 +37,7 @@ HadronElasticConstructor::HadronElasticConstructor(G4int ver, const G4String& na
 }
 
 HadronElasticConstructor::~HadronElasticConstructor()
-= default;
+    = default;
 
 void HadronElasticConstructor::ConstructParticle()
 {
@@ -165,10 +165,9 @@ void HadronElasticConstructor::ConstructProcess()
     }
 }
 
-auto
-HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) const -> G4HadronicProcess*
+auto HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) const -> G4HadronicProcess*
 {
-    G4HadronicProcess* hp{nullptr};
+    G4HadronicProcess* hp { nullptr };
     G4ProcessVector* pv = part->GetProcessManager()->GetPostStepProcessVector();
     size_t n = pv->size();
     for (size_t i = 0; i < n; ++i) {
@@ -180,10 +179,9 @@ HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) co
     return hp;
 }
 
-auto
-HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) const -> G4HadronElastic*
+auto HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) const -> G4HadronElastic*
 {
-    G4HadronElastic* mod{nullptr};
+    G4HadronElastic* mod { nullptr };
     G4HadronicProcess* hel = GetElasticProcess(part);
     if (hel) {
         std::vector<G4HadronicInteraction*>& hi = hel->GetHadronicInteractionList();
