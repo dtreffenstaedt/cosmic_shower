@@ -5,19 +5,17 @@
 
 #include <G4VModularPhysicsList.hh>
 
-namespace Shower
-{
-class PhysicsList : public G4VModularPhysicsList
-{
+namespace Shower {
+class PhysicsList : public G4VModularPhysicsList {
 public:
-    PhysicsList(G4int ver = 1);
-    virtual ~PhysicsList();
+    explicit PhysicsList(G4int ver = 1);
+    ~PhysicsList() override;
 
-    virtual void SetCuts() override;
+    void SetCuts() override;
 
-    virtual void ConstructProcess() override;
+    void ConstructProcess() override;
 
-    virtual void ConstructParticle() override;
+    void ConstructParticle() override;
 };
 }
 

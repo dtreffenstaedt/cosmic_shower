@@ -5,6 +5,8 @@
 #cmakedefine SHOWER_BENCHMARK
 
 #include <exception>
+#include <G4SystemOfUnits.hh>
+#include <globals.hh>
 
 namespace Shower
 {
@@ -16,6 +18,7 @@ namespace Version
     const int minor = @PROJECT_VERSION_MINOR@;
     const int patch = @PROJECT_VERSION_PATCH@;
 } // namespace Version
+constexpr G4double max_energy = 1.0e20 * eV;
 } // namespace Config
 class DataDirectoryExists : public std::exception
 {

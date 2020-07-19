@@ -5,18 +5,15 @@
 
 #include <G4StoppingPhysics.hh>
 
-namespace Shower
-{
-class StoppingConstructor : public G4StoppingPhysics
-{
+namespace Shower {
+class StoppingConstructor : public G4StoppingPhysics {
 public:
-    StoppingConstructor(G4int ver = 1);
-    StoppingConstructor(const G4String& name, G4int ver = 1);
+    explicit StoppingConstructor(G4int ver = 1);
+    explicit StoppingConstructor(const G4String& name, G4int ver = 1);
 
-    virtual ~StoppingConstructor();
+    ~StoppingConstructor() override;
 
-    virtual void ConstructParticle();
-
+    void ConstructParticle() override;
 };
 }
 #endif // STOPPINGCONSTRUCTOR_H

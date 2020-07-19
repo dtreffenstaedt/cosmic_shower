@@ -1,0 +1,20 @@
+set term postscript color
+set out "mem.eps"
+datacsv="mem.dat"
+set datafile separator comma
+set key outside
+set key top right
+set grid
+set xlabel "t/ms"
+set ylabel "memory/MB" # changed y label
+set title "memory usage at 500GeV"
+set style line 1 lw 4 lc rgb '#001945' ps 1 pt 7
+set logscale x
+f(x) = a*x*x + b*x + c
+fit f(x) datacsv using 1:2 via a,b,c
+g(x) = a2*x*x + b2*x + c2
+fit g(x) datacsv using 1:3 via a2,b2,c2
+h(x) = a3*x*x + b3*x + c3
+fit h(x) datacsv using 1:4 via a3,b3,c3
+
+plot datacsv using 1:2 title "virtual", datacsv using 1:3 title "physical", datacsv using 1:4 title "swap", f(x) ls 1, g(x) ls 1, h(x) ls 1
