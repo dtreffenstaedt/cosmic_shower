@@ -146,7 +146,9 @@ public:
      */
     [[nodiscard]] auto get_primary_particle(const bool& fallback = false) const -> Config::PrimaryParticle;
 
-    [[nodiscard]] auto get_initial_ratio(const bool& fallback = false) const -> double;
+    //    [[nodiscard]] auto get_initial_ratio(const bool& fallback = false) const -> double;
+
+    [[nodiscard]] auto get_primary_event_limit(const bool& fallback = false) const -> double;
 
     [[nodiscard]] auto get_detector_properties(const bool& fallback = false) const -> Config::DetectorProperties;
 

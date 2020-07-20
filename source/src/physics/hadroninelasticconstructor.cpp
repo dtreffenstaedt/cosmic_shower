@@ -37,7 +37,7 @@
 #include "G4ProcessManager.hh"
 
 namespace Shower {
-HadronInelasticConstructor::HadronInelasticConstructor(G4int)
+HadronInelasticConstructor::HadronInelasticConstructor(G4int /*unused*/)
     : G4VPhysicsConstructor("hInelastic FTFQGSP_BERT")
 {
 }
@@ -141,13 +141,13 @@ HadronInelasticConstructor::~HadronInelasticConstructor()
 void HadronInelasticConstructor::ConstructParticle()
 {
     G4MesonConstructor pMesonConstructor;
-    pMesonConstructor.ConstructParticle();
+    G4MesonConstructor::ConstructParticle();
 
     G4BaryonConstructor pBaryonConstructor;
-    pBaryonConstructor.ConstructParticle();
+    G4BaryonConstructor::ConstructParticle();
 
     G4ShortLivedConstructor pShortLivedConstructor;
-    pShortLivedConstructor.ConstructParticle();
+    G4ShortLivedConstructor::ConstructParticle();
 }
 
 void HadronInelasticConstructor::ConstructProcess()

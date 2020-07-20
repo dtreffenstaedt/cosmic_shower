@@ -32,7 +32,7 @@ DecayConstructor::~DecayConstructor()
 void DecayConstructor::ConstructParticle()
 {
     G4BosonConstructor bosons;
-    bosons.ConstructParticle();
+    G4BosonConstructor::ConstructParticle();
 
     // +++ Leptons, without neutrinos
     G4Electron::ElectronDefinition();
@@ -46,15 +46,15 @@ void DecayConstructor::ConstructParticle()
     // --- Leptons, without neutrinos
 
     G4MesonConstructor mesons;
-    mesons.ConstructParticle();
+    G4MesonConstructor::ConstructParticle();
 
     G4BaryonConstructor baryons;
-    baryons.ConstructParticle();
+    G4BaryonConstructor::ConstructParticle();
 
     G4IonConstructor ions;
-    ions.ConstructParticle();
+    G4IonConstructor::ConstructParticle();
 
     G4ShortLivedConstructor short_lived;
-    short_lived.ConstructParticle();
+    G4ShortLivedConstructor::ConstructParticle();
 }
 }

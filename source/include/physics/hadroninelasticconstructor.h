@@ -118,13 +118,13 @@ private:
 
     struct
     {
-        G4VCrossSectionDataSet* pi;
-        G4VCrossSectionDataSet* kaon_and_hyperon;
-        G4VCrossSectionDataSet* anti_nucleon;
-        G4VCrossSectionDataSet* neutron_inelastic;
-        G4VCrossSectionDataSet* neutron_capture;
-        G4BGGNucleonInelasticXS* neutron_bgc;
-        G4BGGNucleonInelasticXS* proton_bgc;
+        G4VCrossSectionDataSet* pi { nullptr };
+        G4VCrossSectionDataSet* kaon_and_hyperon { nullptr };
+        G4VCrossSectionDataSet* anti_nucleon { nullptr };
+        G4VCrossSectionDataSet* neutron_inelastic { nullptr };
+        G4VCrossSectionDataSet* neutron_capture { nullptr };
+        G4BGGNucleonInelasticXS* neutron_bgc { nullptr };
+        G4BGGNucleonInelasticXS* proton_bgc { nullptr };
     } m_crossections {};
 };
 }

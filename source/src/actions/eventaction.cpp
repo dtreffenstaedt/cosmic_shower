@@ -8,14 +8,13 @@ namespace Shower {
 size_t EventAction::c_n = 1;
 
 EventAction::EventAction()
-    : G4UserEventAction {}
-{
-}
+
+    = default;
 
 EventAction::~EventAction()
     = default;
 
-void EventAction::BeginOfEventAction(const G4Event*)
+void EventAction::BeginOfEventAction(const G4Event* /*anEvent*/)
 {
     std::cout << "Event started\n";
 #ifdef SHOWER_BENCHMARK
@@ -24,7 +23,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
     c_n++;
 }
 
-void EventAction::EndOfEventAction(const G4Event*)
+void EventAction::EndOfEventAction(const G4Event* /*anEvent*/)
 {
     std::cout << "Event ended\n";
 #ifdef SHOWER_BENCHMARK

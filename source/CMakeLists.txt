@@ -4,7 +4,7 @@ project (cosmic_shower)
 set(SHOWER_BUILD_TIDY ON)
 if(${SHOWER_BUILD_TIDY})
 #set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=.; -checks=*,-fuchsia-*;)
-set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,bugprone-*,performace-*,clang-analyzer-*,hicpp-*; -fix)
+set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,hicpp-*; -fix)
 endif(${SHOWER_BUILD_TIDY})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_C_COMPILER clang)
@@ -64,7 +64,7 @@ include_directories(${LIBCONFIG++_INCLUDE_DIRS})
 
 find_package(Geant4 REQUIRED)
 
-add_custom_target(clangformat COMMAND clang-format -style=WebKit -i ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES})
+add_custom_target(clangformat COMMAND clang-format -style=WebKit -i ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES} ${ATMOS_SOURCE_FILES})
 
 add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES} pthread)

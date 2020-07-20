@@ -18,7 +18,6 @@
 
 namespace Shower {
 DetectorConstruction::DetectorConstruction()
-    : G4VUserDetectorConstruction {}
 
 {
     std::cout << "θ: " << m_theta << "\nφ: " << m_phi << "\n";
@@ -81,7 +80,7 @@ auto DetectorConstruction::construct_world() -> G4VPhysicalVolume*
 
 void DetectorConstruction::construct_atmosphere()
 {
-    if (!m_world_logical) {
+    if (m_world_logical == nullptr) {
         return;
     }
     G4NistManager* nist = G4NistManager::Instance();
@@ -120,7 +119,7 @@ void DetectorConstruction::construct_atmosphere()
 
 void DetectorConstruction::construct_magnetic_field()
 {
-    if (!m_world_logical) {
+    if (m_world_logical == nullptr) {
         return;
     }
 
@@ -137,7 +136,7 @@ void DetectorConstruction::construct_magnetic_field()
 
 void DetectorConstruction::construct_detectors()
 {
-    if (!m_world_logical) {
+    if (m_world_logical == nullptr) {
         return;
     }
     std::cout << "\tDetectors: ";
@@ -205,10 +204,10 @@ void DetectorConstruction::place_detector(const std::string& name, const G4doubl
     ConfigManager::singleton()->add_detector(det);
     G4NistManager* nist = G4NistManager::Instance();
 
-    if (!m_detector_geometry) {
+    if (m_detector_geometry == nullptr) {
         m_detector_geometry = new G4Box("detector", m_detector_properties.geometry.x * 0.5 * mm, m_detector_properties.geometry.y * 0.5 * mm, m_detector_properties.geometry.z * 0.5 * mm);
     }
-    if (!m_detector_material) {
+    if (m_detector_material == nullptr) {
         m_detector_material = nist->FindOrBuildMaterial("G4_Fe");
     }
 

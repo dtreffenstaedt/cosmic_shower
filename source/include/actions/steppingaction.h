@@ -20,8 +20,7 @@ public:
     void UserSteppingAction(const G4Step* step) override;
 
 private:
-    double m_limit { ConfigManager::singleton()->get_initial_ratio() };
-    G4double m_primary_energy { ConfigManager::singleton()->get_primary_particle().momentum.m * MeV };
+    G4double m_limit { ConfigManager::singleton()->get_primary_event_limit() * MeV };
 };
 }
 

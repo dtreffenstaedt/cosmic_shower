@@ -12,10 +12,8 @@
 namespace Shower {
 
 SteppingAction::SteppingAction()
-    : G4UserSteppingAction {}
 
-{
-}
+    = default;
 
 SteppingAction::~SteppingAction()
     = default;
@@ -26,15 +24,19 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         return;
     }
     G4Track* track = step->GetTrack();
-
-    if (track->GetParentID() != 0) // only check the primary track
+    if (track->GetParentID() == 0) // only check first secondary particle
     {
         return;
     }
+    if (track->GetTotalEnergy() < m_limit) {
+        return;
+    }
 
+    /*
     if (step->GetTotalEnergyDeposit() < (m_limit * m_primary_energy)) {
         return;
     }
+    */
     std::cout << "Storing initial interaction\n";
     RecorderManager::singleton()->store_primary(track->GetPosition(), track->GetGlobalTime());
 }

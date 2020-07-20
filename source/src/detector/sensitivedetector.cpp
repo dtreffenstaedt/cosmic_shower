@@ -45,7 +45,7 @@ SensitiveDetector::SensitiveDetector(const std::string& name)
     std::ofstream file(m_file_name, std::ofstream::app);
 
     DetectorHit hit;
-    hit.write_header(file);
+    Shower::DetectorHit::write_header(file);
 
     file.close();
 
@@ -78,7 +78,7 @@ void SensitiveDetector::Initialize(G4HCofThisEvent* hit_collection)
     hit_collection->AddHitsCollection(m_collection_id, m_hits_collection);
 }
 
-auto SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) -> G4bool
+auto SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory * /*ROhist*/) -> G4bool
 {
     G4TouchableHandle touchable = step->GetPreStepPoint()->GetTouchableHandle();
     G4ThreeVector position = step->GetPreStepPoint()->GetPosition();
@@ -118,7 +118,7 @@ auto SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) -> G4bool
     return true;
 }
 
-void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
+void SensitiveDetector::EndOfEvent(G4HCofThisEvent* /*unused*/)
 {
     std::cout << m_name << " ending event\n";
     std::ofstream stream;

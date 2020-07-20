@@ -8,6 +8,7 @@ ParameterManager* ParameterManager::c_singleton = nullptr;
 
 ParameterManager::ParameterManager()
 {
+    add_argument("h", "help", "Print this help");
     c_singleton = this;
 }
 
@@ -22,10 +23,6 @@ auto ParameterManager::start(int argc, char* argv[]) -> bool
         bool found = false;
         for (size_t i = 0; i < len; i++) {
             if (arg.compare("-" + m_arguments[i].abbr) * arg.compare("--" + m_arguments[i].full) == 0) {
-                if (arg.compare("-h") * arg.compare("--help") == 0) {
-                    print_help();
-                    return false;
-                }
                 if (m_arguments[i].has_value) {
                     if (++j >= argc) {
                         std::cout << "expected name after " << arg << "\n";
@@ -43,6 +40,10 @@ auto ParameterManager::start(int argc, char* argv[]) -> bool
         if (!found) {
             std::cout << "Invalid argument " << arg << '\n';
         }
+    }
+    if (argument_set("h")) {
+        print_help();
+        return false;
     }
     return true;
 }

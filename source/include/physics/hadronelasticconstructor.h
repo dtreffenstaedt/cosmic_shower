@@ -23,15 +23,15 @@ public:
 
     void ConstructProcess() override;
 
-    G4HadronicProcess* GetElasticProcess(const G4ParticleDefinition* part) const;
+    static G4HadronicProcess* GetElasticProcess(const G4ParticleDefinition* part);
 
-    G4HadronElastic* GetElasticModel(const G4ParticleDefinition* part) const;
+    static G4HadronElastic* GetElasticModel(const G4ParticleDefinition* part);
 
-    G4HadronicProcess* GetNeutronProcess() const;
+    static G4HadronicProcess* GetNeutronProcess();
 
-    G4HadronElastic* GetNeutronModel() const;
+    static G4HadronElastic* GetNeutronModel();
 
-    void AddXSection(const G4ParticleDefinition*, G4VCrossSectionDataSet*) const;
+    static void AddXSection(const G4ParticleDefinition*, G4VCrossSectionDataSet*);
 
 private:
     // copy constructor and hide assignment operator

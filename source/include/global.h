@@ -4,24 +4,20 @@
 #define SHOWER_BUILD_UI
 /* #undef SHOWER_BENCHMARK */
 
-#include <exception>
 #include <G4SystemOfUnits.hh>
+#include <exception>
 #include <globals.hh>
 
-namespace Shower
-{
-namespace Config
-{
-namespace Version
-{
-    const int major = 0;
-    const int minor = 1;
-    const int patch = 0;
-} // namespace Version
-constexpr G4double max_energy = 1.0e20 * eV;
+namespace Shower {
+namespace Config {
+    namespace Version {
+        constexpr int major { 0 };
+        constexpr int minor { 1 };
+        constexpr int patch { 0 };
+    } // namespace Version
+    constexpr G4double max_energy { 1.0e20 * eV };
 } // namespace Config
-class DataDirectoryExists : public std::exception
-{
+class DataDirectoryExists : public std::exception {
     [[nodiscard]] auto what() const noexcept -> const char* override
     {
         return "Data error: Output directory already exists. Exiting to preserve previous data.";

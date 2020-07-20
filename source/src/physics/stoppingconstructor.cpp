@@ -43,10 +43,10 @@ void StoppingConstructor::ConstructParticle()
     // --- Leptons, without neutrinos
 
     G4MesonConstructor mesons;
-    mesons.ConstructParticle();
+    G4MesonConstructor::ConstructParticle();
 
     G4BaryonConstructor baryons;
-    baryons.ConstructParticle();
+    G4BaryonConstructor::ConstructParticle();
 }
 }
 #include "physics/stoppingconstructor.h"

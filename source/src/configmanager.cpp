@@ -111,11 +111,11 @@ auto ConfigManager::get_primary_particle(const bool& fallback) const -> Config::
     }
     return primary;
 }
-auto ConfigManager::get_initial_ratio(const bool& fallback) const -> double
+auto ConfigManager::get_primary_event_limit(const bool& fallback) const -> double
 {
     if (!fallback) {
-        if (!get_root().exists("initial_ratio")) {
-            return get_initial_ratio(true);
+        if (!get_root().exists("primary_event_limit")) {
+            return get_primary_event_limit(true);
         }
     }
     return static_cast<double>(get_root(fallback)["initial_ratio"]);
@@ -261,7 +261,7 @@ void ConfigManager::config_dump(const std::string& filename)
         }
     }
     {
-        root.add("initial_ratio", libconfig::Setting::TypeFloat) = get_initial_ratio();
+        root.add("primary_event_limit", libconfig::Setting::TypeFloat) = get_primary_event_limit();
     }
     {
         libconfig::Setting& detector_props = root.add("detector_properties", libconfig::Setting::TypeGroup);

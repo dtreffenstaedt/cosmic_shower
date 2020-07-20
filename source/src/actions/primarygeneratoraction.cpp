@@ -9,7 +9,6 @@
 
 namespace Shower {
 PrimaryGeneratorAction::PrimaryGeneratorAction()
-    : G4VUserPrimaryGeneratorAction {}
 
 {
     m_particle_gun = new G4ParticleGun(m_primary.n_particles);

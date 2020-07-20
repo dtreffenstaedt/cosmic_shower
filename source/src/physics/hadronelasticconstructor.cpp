@@ -43,13 +43,13 @@ void HadronElasticConstructor::ConstructParticle()
 {
     // G4cout << "HadronElasticConstructor::ConstructParticle" << G4endl;
     G4MesonConstructor pMesonConstructor;
-    pMesonConstructor.ConstructParticle();
+    G4MesonConstructor::ConstructParticle();
 
     G4BaryonConstructor pBaryonConstructor;
-    pBaryonConstructor.ConstructParticle();
+    G4BaryonConstructor::ConstructParticle();
 
     G4IonConstructor pConstructor;
-    pConstructor.ConstructParticle();
+    G4IonConstructor::ConstructParticle();
 }
 
 void HadronElasticConstructor::ConstructProcess()
@@ -90,7 +90,7 @@ void HadronElasticConstructor::ConstructProcess()
 
     G4HadronElasticProcess* hel { nullptr };
 
-    auto myParticleIterator = GetParticleIterator();
+    auto* myParticleIterator = GetParticleIterator();
     myParticleIterator->reset();
     while ((*myParticleIterator)()) {
         G4ParticleDefinition* particle = myParticleIterator->value();
@@ -165,7 +165,7 @@ void HadronElasticConstructor::ConstructProcess()
     }
 }
 
-auto HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) const -> G4HadronicProcess*
+auto HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* part) -> G4HadronicProcess*
 {
     G4HadronicProcess* hp { nullptr };
     G4ProcessVector* pv = part->GetProcessManager()->GetPostStepProcessVector();
@@ -179,34 +179,34 @@ auto HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* par
     return hp;
 }
 
-auto HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) const -> G4HadronElastic*
+auto HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part) -> G4HadronElastic*
 {
     G4HadronElastic* mod { nullptr };
     G4HadronicProcess* hel = GetElasticProcess(part);
-    if (hel) {
+    if (hel != nullptr) {
         std::vector<G4HadronicInteraction*>& hi = hel->GetHadronicInteractionList();
-        if (hi.size() > 0) {
+        if (!hi.empty()) {
             mod = static_cast<G4HadronElastic*>(hi[0]);
         }
     }
     return mod;
 }
 
-auto HadronElasticConstructor::GetNeutronProcess() const -> G4HadronicProcess*
+auto HadronElasticConstructor::GetNeutronProcess() -> G4HadronicProcess*
 {
     return GetElasticProcess(G4Neutron::Neutron());
 }
 
-auto HadronElasticConstructor::GetNeutronModel() const -> G4HadronElastic*
+auto HadronElasticConstructor::GetNeutronModel() -> G4HadronElastic*
 {
     return GetElasticModel(G4Neutron::Neutron());
 }
 
 void HadronElasticConstructor::AddXSection(const G4ParticleDefinition* part,
-    G4VCrossSectionDataSet* cross) const
+    G4VCrossSectionDataSet* cross)
 {
     G4HadronicProcess* hel = GetElasticProcess(part);
-    if (hel) {
+    if (hel != nullptr) {
         hel->AddDataSet(cross);
     }
 }

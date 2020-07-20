@@ -6,9 +6,8 @@
 
 namespace Shower {
 ActionInitialization::ActionInitialization()
-    : G4VUserActionInitialization {}
-{
-}
+
+    = default;
 
 ActionInitialization::~ActionInitialization()
     = default;

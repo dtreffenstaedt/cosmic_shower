@@ -30,7 +30,7 @@ public:
 
     void write_to_file(std::ofstream& file);
 
-    void write_header(std::ofstream& file);
+    static void write_header(std::ofstream& file);
 
     auto get_pdg() -> int;
 

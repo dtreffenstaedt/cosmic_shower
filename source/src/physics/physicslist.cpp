@@ -16,7 +16,7 @@
 
 namespace Shower {
 PhysicsList::PhysicsList(G4int ver)
-    : G4VModularPhysicsList {}
+
 {
     // EM Physics
     RegisterPhysics(new G4EmStandardPhysics { ver });

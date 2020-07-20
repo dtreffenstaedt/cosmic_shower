@@ -26,7 +26,6 @@ Core::Core(int argc, char* argv[])
     m_parameter_manager->add_argument("o", "overwrite", "Overwrite existing simulation data");
 
     ParameterManager::singleton()->add_argument("c", "config", "Use the configuration file specified in the value", true);
-    ParameterManager::singleton()->add_argument("h", "help", "Print this help");
 
     if (!m_parameter_manager->start(argc, argv)) {
         exit(0);
@@ -52,19 +51,15 @@ Core::~Core()
 {
     delete m_recorder_manager;
 
-    if (m_run_manager) {
-        delete m_run_manager;
-    }
+    delete m_run_manager;
+
 #ifdef SHOWER_BUILD_UI
-    if (m_vis_manager) {
-        delete m_vis_manager;
-    }
-    if (m_ui_executive) {
-        delete m_ui_executive;
-    }
-    if (m_ui_manager) {
-        delete m_ui_manager;
-    }
+    delete m_vis_manager;
+
+    delete m_ui_executive;
+
+    delete m_ui_manager;
+
 #endif
     delete m_config_manager;
 #ifdef SHOWER_BENCHMARK
@@ -80,7 +75,7 @@ auto Core::execute() -> int
     if (m_parameter_manager->argument_set("g")) {
         m_ui_manager = G4UImanager::GetUIpointer();
 
-        if (m_ui_executive) {
+        if (m_ui_executive != nullptr) {
             return execute_ui();
         }
     }
@@ -126,13 +121,13 @@ void Core::setup()
 
     constexpr size_t max = 4;
 
-    G4long seeds[max];
+    std::array<G4long, max> seeds {};
 
     for (long& seed : seeds) {
         seed = distribution(gen);
     }
 
-    CLHEP::HepRandom::setTheSeeds(seeds);
+    CLHEP::HepRandom::setTheSeeds(seeds.data());
 
 #ifdef G4MULTITHREADED
     m_run_manager = new G4MTRunManager {};
@@ -159,7 +154,7 @@ void Core::setup()
 #endif
 }
 
-void Core::print_help() const
+void Core::print_help()
 {
     std::cout << "Possible parameters:\n\t-h\t\tprint this help\n\t-c <filename>\tuse the config file <filename>\n\t\tdefault: shower.cfg\n\t-ui\t\tshow the graphical user interface\n";
 }
