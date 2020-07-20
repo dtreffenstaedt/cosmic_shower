@@ -1,7 +1,7 @@
 #ifndef cosmic_shower_GLOBAL_H
 #define cosmic_shower_GLOBAL_H
 
-#define SHOWER_BUILD_UI
+/* #undef SHOWER_BUILD_UI */
 /* #undef SHOWER_BENCHMARK */
 
 #include <G4SystemOfUnits.hh>

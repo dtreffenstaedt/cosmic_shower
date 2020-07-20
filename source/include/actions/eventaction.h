@@ -25,6 +25,7 @@ private:
 #ifdef SHOWER_BENCHMARK
     std::unique_ptr<BenchmarkManager::Measurement> m_measurement;
 #endif
+    std::chrono::steady_clock::time_point m_start;
     static size_t c_n;
 };
 }

@@ -15,7 +15,7 @@ set(PROJECT_INCLUDE_DIR "${PROJECT_BASE_DIR}include")
 set(PROJECT_CONFIG_DIR "${PROJECT_BASE_DIR}config")
 set(PROJECT_BINARY_DIR "${PROJECT_BASE_DIR}../build")
 
-set(SHOWER_BUILD_UI ON)
+set(SHOWER_BUILD_UI OFF)
 set(SHOWER_BENCHMARK OFF)
 
 include(cmake/version.cmake)
