@@ -67,7 +67,7 @@ void RecorderManager::save()
     if (!file.is_open()) {
         return;
     }
-    file << "x,y,z,time\n";
+    file << "x[mm],y[mm],z[mm],time[ns]\n";
 
     file << m_primary.pos.x() << ',' << m_primary.pos.y() << ',' << m_primary.pos.z() << ',' << m_primary.time << "# primary\n";
     while (!m_hits.empty()) {

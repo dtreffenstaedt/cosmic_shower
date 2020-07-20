@@ -118,7 +118,7 @@ auto ConfigManager::get_primary_event_limit(const bool& fallback) const -> doubl
             return get_primary_event_limit(true);
         }
     }
-    return static_cast<double>(get_root(fallback)["initial_ratio"]);
+    return static_cast<double>(get_root(fallback)["primary_event_limit"]);
 }
 
 auto ConfigManager::get_detector_properties(const bool& fallback) const -> Config::DetectorProperties

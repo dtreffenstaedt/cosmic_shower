@@ -37,7 +37,7 @@ DetectorHit::~DetectorHit()
 
 void DetectorHit::Print()
 {
-    std::cout << m_particle->GetPDGEncoding() << ',' << m_physical_volume->GetName() << ',' << m_position << ',' << m_momentum << ',' << m_energy << ',' << m_global_time << '\n';
+    std::cout << m_particle->GetPDGEncoding() << ',' << m_physical_volume->GetName() << ',' << m_position << ',' << m_momentum << ',' << m_energy << ',' << m_global_time << ',' << m_proper_time << '\n';
 }
 
 auto DetectorHit::get_pdg() -> int
@@ -49,13 +49,13 @@ void DetectorHit::write_to_file(std::ofstream& file)
 {
     file
         << m_particle->GetPDGEncoding() << ','
-        << G4BestUnit(m_position.x(), "Length") << ',' << G4BestUnit(m_position.y(), "Length") << ',' << G4BestUnit(m_position.z(), "Length") << ','
-        << m_momentum.x() << ',' << m_momentum.y() << ',' << m_momentum.z() << ',' << G4BestUnit(m_energy, "Energy")
-        << ',' << G4BestUnit(m_global_time, "Time") << ',' << G4BestUnit(m_proper_time, "Time") << '\n';
+        << m_position.x()<< ',' << m_position.y() << ',' << m_position.z() << ','
+        << m_momentum.x() << ',' << m_momentum.y() << ',' << m_momentum.z() << ',' << m_energy
+        << ',' << m_global_time << ',' << m_proper_time << '\n';
 }
 
 void DetectorHit::write_header(std::ofstream& file)
 {
-    file << "Particle,position_x,position_y,position_z,momentum_x,momentum_y,momentum_z,momentum_magnitude,global_time,proper_time\n";
+    file << "Particle,position_x[mm],position_y[mm],position_z[mm],momentum_x,momentum_y,momentum_z,momentum_magnitude[MeV],global_time[ns],proper_time[ns]\n";
 }
 }

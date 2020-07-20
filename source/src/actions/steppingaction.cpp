@@ -28,16 +28,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     {
         return;
     }
-    if (track->GetTotalEnergy() < m_limit) {
+    if ((track->GetParticleDefinition()->GetPDGMass() + track->GetKineticEnergy()) < m_limit) {
         return;
     }
 
-    /*
-    if (step->GetTotalEnergyDeposit() < (m_limit * m_primary_energy)) {
-        return;
-    }
-    */
     std::cout << "Storing initial interaction\n";
-    RecorderManager::singleton()->store_primary(track->GetPosition(), track->GetGlobalTime());
+    RecorderManager::singleton()->store_primary(track->GetStep()->GetPreStepPoint()->GetPosition(), track->GetStep()->GetPreStepPoint()->GetGlobalTime());
 }
 }

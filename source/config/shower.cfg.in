@@ -65,7 +65,9 @@ primary :
     particle = 2212;
 };
 
-initial_ratio = 0.05;
+# Energy limit which will be taken as the location of primary event.
+# If the sum of rest energy and kinetic energy of a secondary particle is above this limit, the event creating the secondary will be taken as initial event.
+# value in MeV.
 primary_event_limit = 100.0;
 
 # cut_range is the production cut in mm
