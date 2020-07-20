@@ -131,6 +131,7 @@ void Core::setup()
 
 #ifdef G4MULTITHREADED
     m_run_manager = new G4MTRunManager {};
+    m_run_manager->SetNumberOfThreads(8);
 #else
     m_run_manager = new G4RunManager {};
 #endif
