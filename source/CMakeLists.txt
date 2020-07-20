@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.5)
 project (cosmic_shower)
 
-set(SHOWER_BUILD_TIDY ON)
+set(SHOWER_BUILD_TIDY OFF)
 if(${SHOWER_BUILD_TIDY})
 #set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=.; -checks=*,-fuchsia-*;)
 set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,hicpp-*; -fix)

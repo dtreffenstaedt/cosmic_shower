@@ -41,7 +41,6 @@ HadronElasticConstructor::~HadronElasticConstructor()
 
 void HadronElasticConstructor::ConstructParticle()
 {
-    // G4cout << "HadronElasticConstructor::ConstructParticle" << G4endl;
     G4MesonConstructor pMesonConstructor;
     G4MesonConstructor::ConstructParticle();
 

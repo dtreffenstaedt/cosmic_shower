@@ -37,7 +37,7 @@ DetectorHit::~DetectorHit()
 
 void DetectorHit::Print()
 {
-    G4cout << m_particle->GetPDGEncoding() << ',' << m_physical_volume->GetName() << ',' << m_position << ',' << m_momentum << ',' << m_energy << ',' << m_global_time << '\n';
+    std::cout << m_particle->GetPDGEncoding() << ',' << m_physical_volume->GetName() << ',' << m_position << ',' << m_momentum << ',' << m_energy << ',' << m_global_time << '\n';
 }
 
 auto DetectorHit::get_pdg() -> int
