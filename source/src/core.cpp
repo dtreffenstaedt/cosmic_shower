@@ -104,7 +104,6 @@ void Core::setup(int argc, char* argv[])
 void Core::setup()
 #endif
 {
-
     std::cout << "Starting simulation for '" << m_config_manager->get_name() << "'\n";
 #ifdef SHOWER_BUILD_UI
     if (m_parameter_manager->argument_set("g")) {
