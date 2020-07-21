@@ -37,6 +37,29 @@ auto DetectorConstruction::Construct() -> G4VPhysicalVolume*
 
     construct_detectors();
 
+    G4VSolid* intensity_catcher_solid = new G4Para { "Intensitycatcher", (m_world_size * 0.5), (m_world_size * 0.5), 200 * m, 0 * radian, m_theta, m_phi };
+
+    G4NistManager* nist = G4NistManager::Instance();
+    G4Material* intensity_catcher_material = nist->FindOrBuildMaterial("G4_Pb");
+
+    G4double offset_x = m_offset_bottom.x - (-100 * m) * m_primary_particle.momentum.x / (-m_primary_particle.momentum.z);
+    G4double offset_y = m_offset_bottom.y - (-100 * m) * m_primary_particle.momentum.y / (-m_primary_particle.momentum.z);
+    G4double offset_z = (-110 * m) + m_offset_bottom.z;
+
+    auto* intensity_catcher_logical = new G4LogicalVolume { intensity_catcher_solid, intensity_catcher_material, "Intensitycatcher" };
+    m_intensity_catcher_physical = new G4PVPlacement {
+        nullptr,
+        G4ThreeVector(
+            offset_x,
+            offset_y,
+            offset_z),
+        intensity_catcher_logical,
+        "Intensitycatcher",
+        m_world_logical,
+        false,
+        0,
+        true
+    };
     return physical_world;
 }
 
@@ -75,6 +98,7 @@ auto DetectorConstruction::construct_world() -> G4VPhysicalVolume*
     Config::TrackingCuts cuts = ConfigManager::singleton()->get_tracking_cut();
     auto* limits = new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX, cuts.energy * MeV, cuts.range * mm);
     m_world_logical->SetUserLimits(limits);
+
     return physical_world;
 }
 
@@ -202,13 +226,14 @@ void DetectorConstruction::place_detector(const std::string& name, const G4doubl
     det.name = name;
 
     ConfigManager::singleton()->add_detector(det);
-    G4NistManager* nist = G4NistManager::Instance();
+    //    G4NistManager* nist = G4NistManager::Instance();
 
     if (m_detector_geometry == nullptr) {
         m_detector_geometry = new G4Box("detector", m_detector_properties.geometry.x * 0.5 * mm, m_detector_properties.geometry.y * 0.5 * mm, m_detector_properties.geometry.z * 0.5 * mm);
     }
     if (m_detector_material == nullptr) {
-        m_detector_material = nist->FindOrBuildMaterial("G4_Fe");
+        m_detector_material = new G4Material { "EJ-248", G4double { 3.36842105 }, G4double { 6.21052632 }, G4double { 1.023 * g / cm3 }, kStateSolid };
+        //        m_detector_material = nist->FindOrBuildMaterial("G4_Fe");
     }
 
     auto* logical = new G4LogicalVolume(m_detector_geometry, m_detector_material, name);

@@ -20,6 +20,13 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
+
+    if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName() == "Intensitycatcher") {
+        G4Track* track = step->GetTrack();
+        RecorderManager::singleton()->store_momentum(step->GetPreStepPoint()->GetPosition(), track->GetMomentum().mag());
+        track->SetTrackStatus(G4TrackStatus::fStopAndKill);
+        return;
+    }
     if (RecorderManager::singleton()->stored_primary()) {
         return;
     }
@@ -33,6 +40,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     }
 
     std::cout << "Storing initial interaction\n";
-    RecorderManager::singleton()->store_primary(track->GetStep()->GetPreStepPoint()->GetPosition(), track->GetStep()->GetPreStepPoint()->GetGlobalTime());
+    RecorderManager::singleton()->store_primary(step->GetPreStepPoint()->GetPosition(), step->GetPreStepPoint()->GetGlobalTime());
 }
 }

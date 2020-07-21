@@ -111,7 +111,7 @@ void Core::setup()
         m_ui_executive = new G4UIExecutive(argc, argv, "qt");
     }
 #endif
-    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine {});
+    //    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine {});
 
     std::random_device rd;
     std::mt19937::result_type initial_seed = rd() ^ ((std::mt19937::result_type)std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() + (std::mt19937::result_type)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());

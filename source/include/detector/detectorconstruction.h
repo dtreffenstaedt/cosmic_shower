@@ -57,7 +57,8 @@ protected:
 
     G4VSolid* m_detector_geometry { nullptr };
     G4Material* m_detector_material { nullptr };
-    std::vector<G4LogicalVolume*> m_detector_logicals;
+    std::vector<G4LogicalVolume*> m_detector_logicals {};
+    G4VPhysicalVolume* m_intensity_catcher_physical { nullptr };
 
     auto construct_world() -> G4VPhysicalVolume*;
     void construct_atmosphere();

@@ -49,7 +49,7 @@ void DetectorHit::write_to_file(std::ofstream& file)
 {
     file
         << m_particle->GetPDGEncoding() << ','
-        << m_position.x()<< ',' << m_position.y() << ',' << m_position.z() << ','
+        << m_position.x() << ',' << m_position.y() << ',' << m_position.z() << ','
         << m_momentum.x() << ',' << m_momentum.y() << ',' << m_momentum.z() << ',' << m_energy
         << ',' << m_global_time << ',' << m_proper_time << '\n';
 }
