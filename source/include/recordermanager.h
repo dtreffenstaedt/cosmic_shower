@@ -22,7 +22,7 @@ public:
     void store_primary(const G4ThreeVector& vector, const G4double& time);
     void store_hit(const G4ThreeVector& vector, const G4double& time);
 
-    void store_momentum(const G4ThreeVector& vector, const G4double& momentum);
+    void store_momentum(const G4ThreeVector& vector, const G4double& momentum, const G4double &energy, const bool &charged);
 
     static auto singleton() -> RecorderManager*;
 
@@ -34,14 +34,20 @@ public:
         auto in_bin(const double& x, const double& y) const -> bool;
 
         void store_momentum(const double& momentum);
-
-        auto get_value() const -> double;
+        void store_energy(const double& energy);
+        void store_charged();
+        void store_uncharged();
 
         auto get_x_center() const -> double;
         auto get_y_center() const -> double;
 
+        void store(std::ofstream &stream);
+
     private:
-        double m_value { 0 };
+        double m_momentum_density { 0 };
+        double m_energy_density { 0 };
+        size_t m_n_charged { 0 };
+        size_t m_n_uncharged { 0 };
         double m_x_min { 0 };
         double m_x_max { 0 };
         double m_y_min { 0 };

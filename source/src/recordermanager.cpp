@@ -88,23 +88,32 @@ void RecorderManager::save()
     if (!bin_file.is_open()) {
         return;
     }
-    bin_file << "x[mm],y[mm],density\n";
+    bin_file << "x[mm],y[mm],momentum density,energy_density,n charged,n uncharged\n";
 
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
-            bin_file << m_bins[i][j].get_x_center() << ',' << m_bins[i][j].get_y_center() << ',' << m_bins[i][j].get_value() << '\n';
+            m_bins[i][j].store(bin_file);
         }
     }
 
     bin_file.close();
 }
 
-void RecorderManager::store_momentum(const G4ThreeVector& vector, const G4double& momentum)
+void RecorderManager::store_momentum(const G4ThreeVector& vector, const G4double& momentum, const G4double& energy, const bool& charged)
 {
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
             if (m_bins[i][j].in_bin(vector.x(), vector.y())) {
                 m_bins[i][j].store_momentum(momentum);
+                m_bins[i][j].store_energy(energy);
+                if (charged)
+                {
+                    m_bins[i][j].store_charged();
+                }
+                else
+                {
+                    m_bins[i][j].store_uncharged();
+                }
                 return;
             }
         }
@@ -129,13 +138,22 @@ auto RecorderManager::Bin<N>::in_bin(const double& x, const double& y) const -> 
 template <size_t N>
 void RecorderManager::Bin<N>::store_momentum(const double& momentum)
 {
-    m_value += momentum * m_inverse_bin_area;
+    m_momentum_density += momentum * m_inverse_bin_area;
 }
-
 template <size_t N>
-auto RecorderManager::Bin<N>::get_value() const -> double
+void RecorderManager::Bin<N>::store_energy(const double& energy)
 {
-    return m_value;
+    m_energy_density += energy * m_inverse_bin_area;
+}
+template <size_t N>
+void RecorderManager::Bin<N>::store_charged()
+{
+    m_n_charged++;
+}
+template <size_t N>
+void RecorderManager::Bin<N>::store_uncharged()
+{
+    m_n_uncharged++;
 }
 
 template <size_t N>
@@ -148,5 +166,11 @@ template <size_t N>
 auto RecorderManager::Bin<N>::get_y_center() const -> double
 {
     return (m_y_max + m_y_min) * 0.5;
+}
+
+template <size_t N>
+void RecorderManager::Bin<N>::store(std::ofstream& stream)
+{
+    stream << get_x_center() << ',' << get_y_center() << ',' << m_momentum_density << ',' << m_energy_density << ',' << std::to_string(m_n_charged) << ',' << std::to_string(m_n_uncharged) << '\n';
 }
 }

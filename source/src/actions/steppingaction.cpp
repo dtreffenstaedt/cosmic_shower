@@ -23,7 +23,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
     if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName() == "Intensitycatcher") {
         G4Track* track = step->GetTrack();
-        RecorderManager::singleton()->store_momentum(step->GetPreStepPoint()->GetPosition(), track->GetMomentum().mag());
+        RecorderManager::singleton()->store_momentum(step->GetPreStepPoint()->GetPosition(), track->GetMomentum().mag(), track->GetKineticEnergy(), (track->GetParticleDefinition()->GetPDGCharge()) > std::numeric_limits<double>::epsilon() );
         track->SetTrackStatus(G4TrackStatus::fStopAndKill);
         return;
     }
