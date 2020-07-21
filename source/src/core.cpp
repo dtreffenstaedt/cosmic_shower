@@ -86,8 +86,8 @@ auto Core::execute() -> int
 #ifdef SHOWER_BUILD_UI
 auto Core::execute_ui() -> int
 {
-    m_ui_manager->ApplyCommand("/run/initialize");
-    m_ui_manager->ApplyCommand("/control/execute vis.mac");
+    m_run_manager->Initialize();
+    m_ui_manager->ExecuteMacroFile("vis.mac");
     m_ui_executive->SessionStart();
     return 0;
 }
