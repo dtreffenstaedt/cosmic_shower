@@ -22,6 +22,8 @@ public:
     void store_primary(const G4ThreeVector& vector, const G4double& time);
     void store_hit(const G4ThreeVector& vector, const G4double& time);
 
+    void store_detailed_hit();
+
     void store_momentum(const G4ThreeVector& vector, const G4double& momentum, const G4double &energy, const bool &charged);
 
     static auto singleton() -> RecorderManager*;

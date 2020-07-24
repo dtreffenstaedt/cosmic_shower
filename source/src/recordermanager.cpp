@@ -88,7 +88,7 @@ void RecorderManager::save()
     if (!bin_file.is_open()) {
         return;
     }
-    bin_file << "x[mm],y[mm],momentum density,energy_density,n charged,n uncharged\n";
+    bin_file << "x[mm],y[mm],rest energy[MeV],kinetic energy[MeV],n charged,n uncharged\n";
 
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
@@ -138,12 +138,12 @@ auto RecorderManager::Bin<N>::in_bin(const double& x, const double& y) const -> 
 template <size_t N>
 void RecorderManager::Bin<N>::store_momentum(const double& momentum)
 {
-    m_momentum_density += momentum * m_inverse_bin_area;
+    m_momentum_density += momentum;// * m_inverse_bin_area;
 }
 template <size_t N>
 void RecorderManager::Bin<N>::store_energy(const double& energy)
 {
-    m_energy_density += energy * m_inverse_bin_area;
+    m_energy_density += energy;// * m_inverse_bin_area;
 }
 template <size_t N>
 void RecorderManager::Bin<N>::store_charged()

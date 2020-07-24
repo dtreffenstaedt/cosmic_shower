@@ -174,7 +174,7 @@ void DetectorConstruction::construct_detectors()
         {
             std::cout << "n is a perfect scare, arranging in regular pattern.\n";
             G4double distance = m_world_size / G4double((root + 1));
-            size_t row = std::sqrt(n);
+            size_t row = static_cast<size_t>(std::sqrt(n));
             G4double pos_x = -m_world_size * 0.5;
             for (size_t i = 1; i <= row; i++) {
                 pos_x += distance;

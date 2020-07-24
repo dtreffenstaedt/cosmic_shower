@@ -41,7 +41,7 @@ auto ConfigManager::get_detectors(const bool& fallback) const -> std::variant<st
     if (!get_root(fallback).lookupValue("detectors", number)) {
         const libconfig::Setting& detectors_setting = get_root(fallback)["detectors"];
         std::vector<Config::DetectorPlacement> detectors;
-        size_t len = detectors_setting.getLength();
+        size_t len = static_cast<size_t>(detectors_setting.getLength());
         for (size_t i = 0; i < len; i++) {
             const libconfig::Setting& detector = detectors_setting[i];
             Config::DetectorPlacement settings;
