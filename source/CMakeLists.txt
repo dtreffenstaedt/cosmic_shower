@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.10)
 project (cosmic_shower)
 
 set(SHOWER_BUILD_TIDY OFF)
@@ -48,13 +48,19 @@ configure_file (
     "${PROJECT_CONFIG_DIR}/run.in"
     "${PROJECT_BINARY_DIR}/run"
 )
-add_compile_options(--std=c++17 -Wall -Wextra -Wpedantic -Werror -O3)
 if(${SHOWER_BUILD_UI})
 find_package(Geant4 REQUIRED ui_all vis_all)
 else(${SHOWER_BUILD_UI})
 find_package(Geant4 REQUIRED)
 endif(${SHOWER_BUILD_UI})
 find_package(libconfig++ REQUIRED)
+
+set(Geant4_CXX_FLAGS "")
+set(Geant4_CXX_FLAGS_DEBUG "")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-std=gnu++17 -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -Wall -Wextra -Wpedantic -Werror -O3 -Wshadow)
 
 include(cmake/files.cmake)
 
