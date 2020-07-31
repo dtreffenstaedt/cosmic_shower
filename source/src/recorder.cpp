@@ -25,12 +25,15 @@ Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shar
         std::filesystem::create_directory(m_directory);
     }
 
-    double world_size { config->get_world_size() * m };
+    double world_size { config->get_world_size()};
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
             m_bins[i][j].initialise(i, j, world_size);
         }
     }
+
+    config->config_dump(m_directory + "/config_dunp");
+
 }
 
 Recorder::~Recorder()

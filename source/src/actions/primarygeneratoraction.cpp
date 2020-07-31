@@ -21,7 +21,14 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
         G4ParticleDefinition* particle = particle_table->FindParticle(primary.particle);
         gun->SetParticleDefinition(particle);
         gun->SetParticleEnergy(primary.momentum.m);
-        gun->SetParticlePosition(G4ThreeVector((primary.origin.x) + m_offset_top.x, (primary.origin.y) + m_offset_top.y, (primary.origin.z) + m_offset_top.z));
+        if (primary.origin.absolute)
+        {
+            gun->SetParticlePosition(G4ThreeVector(primary.origin.x, primary.origin.y, primary.origin.z));
+        }
+        else
+        {
+            gun->SetParticlePosition(G4ThreeVector((primary.origin.x) + m_offset_top.x, (primary.origin.y) + m_offset_top.y, (primary.origin.z) + m_offset_top.z));
+        }
         gun->SetParticleMomentumDirection(G4ThreeVector(primary.momentum.x, primary.momentum.y, primary.momentum.z));
     }
 }

@@ -52,6 +52,7 @@ namespace Config {
             double x; // X position
             double y; // Y position
             double z; // Z position
+            bool absolute;
         } origin;
 
         struct

@@ -36,9 +36,6 @@ DetectorConstruction::~DetectorConstruction()
 
 auto DetectorConstruction::Construct() -> G4VPhysicalVolume*
 {
-    std::cout << "Setting up world:\n";
-    std::cout << '\t' << G4BestUnit(m_world_size, "Length") << '\n';
-    std::cout << '\t' << G4BestUnit(m_atmosphere_height, "Length") << '\n';
     G4VPhysicalVolume* physical_world = construct_world();
 
     construct_atmosphere();
