@@ -159,16 +159,13 @@ void DetectorConstruction::construct_detectors()
     if (m_world_logical == nullptr) {
         return;
     }
-    std::cout << "\tDetectors: ";
     std::vector<Config::DetectorPlacement> detectors;
     if (std::holds_alternative<size_t>(m_detectors)) {
         size_t n = std::get<size_t>(m_detectors);
-        std::cout << "\n\t\tn = " << std::to_string(n) << '\n';
         double root = std::sqrt(static_cast<double>(n));
         size_t k = 0;
         if (std::abs(root - std::floor(root)) <= std::numeric_limits<double>::epsilon()) // perfect square, create a uniform pattern.
         {
-            std::cout << "n is a perfect scare, arranging in regular pattern.\n";
             G4double distance = m_world_size / G4double((root + 1));
             size_t row = static_cast<size_t>(std::sqrt(n));
             G4double pos_x = -m_world_size * 0.5;
@@ -183,7 +180,6 @@ void DetectorConstruction::construct_detectors()
             }
         } else // not a square, place detectors on circle
         {
-            std::cout << "n not a perfect scare, arranging in circular pattern.\n";
             size_t max = (n % 2 == 0) ? n : (n - 1);
             double angle = std::atan(1.0) * 8 / (static_cast<double>(max) / 2.0);
             G4double r = m_world_size * 1 / 6;
@@ -206,7 +202,6 @@ void DetectorConstruction::construct_detectors()
         }
     } else {
         detectors = std::get<std::vector<Config::DetectorPlacement>>(m_detectors);
-        std::cout << "\n\t\tn = " << std::to_string(detectors.size()) << '\n';
         for (auto placement : detectors) {
             place_detector(placement.name, (placement.x * m) + m_offset_bottom.x, (placement.y * m) + m_offset_bottom.y, (placement.z * m) + m_offset_bottom.z);
         }
