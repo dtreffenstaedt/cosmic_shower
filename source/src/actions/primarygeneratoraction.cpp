@@ -11,8 +11,7 @@ namespace Shower {
 PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configuration>& configuration)
     : m_atmosphere_height { configuration->get_atmosphere_height() }
     , m_primaries { configuration->get_primaries() }
-    , m_offset_top { 0, 0, m_atmosphere_height * 2 }
-
+    , m_offset_top { 0, 0, m_atmosphere_height * 0.5}
 {
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
     for (auto& primary : m_primaries) {
