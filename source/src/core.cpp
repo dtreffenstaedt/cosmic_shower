@@ -4,7 +4,6 @@
 #include <random>
 
 #include "actions/actioninitialization.h"
-#include "configmanager.h"
 #include "detector/detectorconstruction.h"
 #include "physics/physicslist.h"
 
@@ -18,28 +17,28 @@ Core::Core(int argc, char* argv[])
     , m_ui_manager { nullptr }
     ,
 #endif
-    m_parameter_manager { new ParameterManager {} }
+    m_parameters { std::make_shared<Parameters>() }
 {
 #ifdef SHOWER_BUILD_UI
-    m_parameter_manager->add_argument("g", "graphical", "Show the user interface");
+    m_parameters->add_argument("g", "graphical", "Show the user interface");
 #endif
-    m_parameter_manager->add_argument("o", "overwrite", "Overwrite existing simulation data");
+    m_parameters->add_argument("o", "overwrite", "Overwrite existing simulation data");
 
-    ParameterManager::singleton()->add_argument("c", "config", "Use the configuration file specified in the value", true);
+    m_parameters->add_argument("c", "config", "Use the configuration file specified in the value", true);
 
-    if (!m_parameter_manager->start(argc, argv)) {
+    if (!m_parameters->start(argc, argv)) {
         exit(0);
     }
 
-    if (m_parameter_manager->argument_set("c")) {
-        m_config_manager = new ConfigManager { m_parameter_manager->argument_value("c") };
+    if (m_parameters->argument_set("c")) {
+        m_configuration = std::make_shared<Configuration>(m_parameters->argument_value("c"));
     } else {
-        m_config_manager = new ConfigManager {};
+        m_configuration = std::make_shared<Configuration>();
     }
 #ifdef SHOWER_BENCHMARK
     m_benchmark_manager = new BenchmarkManager { "benchmark" + std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m / 1000) + "GeV-" };
 #endif
-    m_recorder_manager = new RecorderManager {};
+    m_recorder = std::make_shared<Recorder>(m_configuration, m_parameters);
 #ifdef SHOWER_BUILD_UI
     setup(argc, argv);
 #else
@@ -49,8 +48,6 @@ Core::Core(int argc, char* argv[])
 
 Core::~Core()
 {
-    delete m_recorder_manager;
-
     delete m_run_manager;
 
 #ifdef SHOWER_BUILD_UI
@@ -61,18 +58,16 @@ Core::~Core()
     delete m_ui_manager;
 
 #endif
-    delete m_config_manager;
 #ifdef SHOWER_BENCHMARK
     delete m_benchmark_manager;
 #endif
-    delete m_parameter_manager;
 }
 
 auto Core::execute() -> int
 {
 
 #ifdef SHOWER_BUILD_UI
-    if (m_parameter_manager->argument_set("g")) {
+    if (m_parameters->argument_set("g")) {
         m_ui_manager = G4UImanager::GetUIpointer();
 
         if (m_ui_executive != nullptr) {
@@ -94,7 +89,7 @@ auto Core::execute_ui() -> int
 #endif
 auto Core::execute_cli() -> int
 {
-    m_run_manager->BeamOn(m_config_manager->get_events());
+    m_run_manager->BeamOn(m_configuration->get_events());
     return 0;
 }
 
@@ -104,9 +99,9 @@ void Core::setup(int argc, char* argv[])
 void Core::setup()
 #endif
 {
-    std::cout << "Starting simulation for '" << m_config_manager->get_name() << "'\n";
+    std::cout << "Starting simulation for '" << m_configuration->get_name() << "'\n";
 #ifdef SHOWER_BUILD_UI
-    if (m_parameter_manager->argument_set("g")) {
+    if (m_parameters->argument_set("g")) {
         m_ui_executive = new G4UIExecutive(argc, argv, "qt");
     }
 #endif
@@ -137,11 +132,11 @@ void Core::setup()
 
     m_run_manager->SetVerboseLevel(0);
 
-    m_run_manager->SetUserInitialization(new DetectorConstruction {});
+    m_run_manager->SetUserInitialization(new DetectorConstruction { m_recorder, m_configuration });
 
     m_run_manager->SetUserInitialization(new PhysicsList {});
 
-    m_run_manager->SetUserInitialization(new ActionInitialization {});
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration });
 
     m_run_manager->Initialize();
 

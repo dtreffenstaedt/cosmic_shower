@@ -8,28 +8,37 @@
 #include <G4UnitsTable.hh>
 
 namespace Shower {
-PrimaryGeneratorAction::PrimaryGeneratorAction()
+PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configuration>& configuration)
+    : m_atmosphere_height { configuration->get_atmosphere_height() }
+    , m_primaries { configuration->get_primaries() }
+    , m_offset_top { 0, 0, m_atmosphere_height * 2 }
 
 {
-    m_particle_gun = new G4ParticleGun(m_primary.n_particles);
-
-    std::cout << "setting up primary generator: \n\tE_kin = " << G4BestUnit(m_primary.momentum.m * MeV, "Energy") << "\n\tn = " << std::to_string(m_primary.n_particles) << '\n';
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition* particle = particle_table->FindParticle(m_primary.particle);
-    m_particle_gun->SetParticleDefinition(particle);
-    m_particle_gun->SetParticleEnergy(m_primary.momentum.m * MeV);
-    m_particle_gun->SetParticlePosition(G4ThreeVector((m_primary.origin.x * m) + m_offset_top.x, (m_primary.origin.y * m) + m_offset_top.y, (m_primary.origin.z * m) + m_offset_top.z));
-    m_particle_gun->SetParticleMomentumDirection(G4ThreeVector(m_primary.momentum.x, m_primary.momentum.y, m_primary.momentum.z));
+    for (auto& primary : m_primaries) {
+        auto* gun = new G4ParticleGun(primary.n_particles);
+        m_particle_guns.push_back(gun);
+        G4ParticleDefinition* particle = particle_table->FindParticle(primary.particle);
+        gun->SetParticleDefinition(particle);
+        gun->SetParticleEnergy(primary.momentum.m);
+        gun->SetParticlePosition(G4ThreeVector((primary.origin.x) + m_offset_top.x, (primary.origin.y) + m_offset_top.y, (primary.origin.z) + m_offset_top.z));
+        gun->SetParticleMomentumDirection(G4ThreeVector(primary.momentum.x, primary.momentum.y, primary.momentum.z));
+    }
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
-    delete m_particle_gun;
+    for (auto* gun : m_particle_guns) {
+        delete gun;
+    }
+    m_particle_guns.clear();
 }
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* e)
 {
-    m_particle_gun->GeneratePrimaryVertex(e);
+    for (auto* gun : m_particle_guns) {
+        gun->GeneratePrimaryVertex(e);
+    }
 }
 
 }

@@ -6,7 +6,7 @@
 #include <G4VUserPrimaryGeneratorAction.hh>
 #include <globals.hh>
 
-#include "configmanager.h"
+#include "configuration.h"
 #include "global.h"
 
 class G4ParticleGun;
@@ -16,25 +16,21 @@ class G4Box;
 namespace Shower {
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 public:
-    PrimaryGeneratorAction();
+    PrimaryGeneratorAction(const std::shared_ptr<Configuration>& configuration);
     ~PrimaryGeneratorAction() override;
 
     void GeneratePrimaries(G4Event* e) override;
 
 private:
-    G4ParticleGun* m_particle_gun { nullptr };
-    Config::PrimaryParticle m_primary { ConfigManager::singleton()->get_primary_particle() };
-    G4double m_atmosphere_height { ConfigManager::singleton()->get_atmosphere_height() * m };
+    std::vector<G4ParticleGun*> m_particle_guns {};
+    G4double m_atmosphere_height { 0 * m };
+    std::vector<Config::PrimaryParticle> m_primaries {};
     struct
     {
-        G4double x;
-        G4double y;
-        G4double z;
-    } m_offset_top {
-        -m_atmosphere_height * m_primary.momentum.x / std::abs(m_primary.momentum.z) / 2,
-        -m_atmosphere_height* m_primary.momentum.y / std::abs(m_primary.momentum.z) / 2,
-        m_atmosphere_height / 2
-    };
+        G4double x { 0 * m };
+        G4double y { 0 * m };
+        G4double z { 0 * m };
+    } m_offset_top {};
     //    G4Box* m_envelope_box;
 };
 }

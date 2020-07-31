@@ -1,5 +1,5 @@
-#ifndef SENSITIVEDETECTOR_H
-#define SENSITIVEDETECTOR_H
+#ifndef DETAILEDSENSITIVEDETECTOR_H
+#define DETAILEDSENSITIVEDETECTOR_H
 
 #include "global.h"
 
@@ -9,19 +9,20 @@
 
 namespace Shower {
 
-class SensitiveDetector : public G4VSensitiveDetector {
+class DetailedSensitiveDetector : public G4VSensitiveDetector {
 public:
-    explicit SensitiveDetector(const std::string& name, const std::shared_ptr<Recorder>& recorder);
+    explicit DetailedSensitiveDetector(const std::string& name, const std::shared_ptr<Recorder>& recorder);
 
-    ~SensitiveDetector() override = default;
+    ~DetailedSensitiveDetector() override = default;
 
     // +++ reimplemented from G4VSensitiveDetector
     auto ProcessHits(G4Step* step, G4TouchableHistory*) -> G4bool override;
     // --- reimplemented from G4VSensitiveDetector
 
 private:
+    std::vector<int> m_pdg_codes;
     std::shared_ptr<Recorder> m_recorder;
 };
 
 }
-#endif // SENSITIVEDETECTOR_H
+#endif // DETAILEDSENSITIVEDETECTOR_H

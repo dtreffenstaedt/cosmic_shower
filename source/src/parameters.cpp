@@ -1,18 +1,15 @@
-#include "parametermanager.h"
+#include "parameters.h"
 
 #include <iostream>
 
 namespace Shower {
 
-ParameterManager* ParameterManager::c_singleton = nullptr;
-
-ParameterManager::ParameterManager()
+Parameters::Parameters()
 {
     add_argument("h", "help", "Print this help");
-    c_singleton = this;
 }
 
-auto ParameterManager::start(int argc, char* argv[]) -> bool
+auto Parameters::start(int argc, char* argv[]) -> bool
 {
     if (argc < 2) {
         return true;
@@ -48,7 +45,7 @@ auto ParameterManager::start(int argc, char* argv[]) -> bool
     return true;
 }
 
-void ParameterManager::print_help() const
+void Parameters::print_help() const
 {
     std::cout << "Possible arguments:\n";
     size_t len = m_arguments.size();
@@ -61,12 +58,7 @@ void ParameterManager::print_help() const
     }
 }
 
-auto ParameterManager::singleton() -> ParameterManager*
-{
-    return c_singleton;
-}
-
-auto ParameterManager::argument_set(const std::string& name) const -> bool
+auto Parameters::argument_set(const std::string& name) const -> bool
 {
     size_t len = m_arguments.size();
     for (size_t i = 0; i < len; i++) {
@@ -77,7 +69,7 @@ auto ParameterManager::argument_set(const std::string& name) const -> bool
     return false;
 }
 
-auto ParameterManager::argument_value(const std::string& name) const -> std::string
+auto Parameters::argument_value(const std::string& name) const -> std::string
 {
     size_t len = m_arguments.size();
     for (size_t i = 0; i < len; i++) {
@@ -88,7 +80,7 @@ auto ParameterManager::argument_value(const std::string& name) const -> std::str
     return std::string {};
 }
 
-void ParameterManager::add_argument(const std::string& abbreviation, const std::string& full, const std::string& description, const bool& value)
+void Parameters::add_argument(const std::string& abbreviation, const std::string& full, const std::string& description, const bool& value)
 {
     Commandline cmd;
     cmd.abbr = abbreviation;

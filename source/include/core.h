@@ -16,9 +16,9 @@
 #else
 #include <G4RunManager.hh>
 #endif
-#include "configmanager.h"
-#include "parametermanager.h"
-#include "recordermanager.h"
+#include "configuration.h"
+#include "parameters.h"
+#include "recorder.h"
 #ifdef SHOWER_BENCHMARK
 #include "benchmarkmanager.h"
 #endif
@@ -57,12 +57,12 @@ private:
     G4UImanager* m_ui_manager;
 #endif
 
-    ConfigManager* m_config_manager;
+    std::shared_ptr<Configuration> m_configuration;
 #ifdef SHOWER_BENCHMARK
     BenchmarkManager* m_benchmark_manager;
 #endif
-    ParameterManager* m_parameter_manager;
-    RecorderManager* m_recorder_manager;
+    std::shared_ptr<Parameters> m_parameters;
+    std::shared_ptr<Recorder> m_recorder;
 };
 }
 #endif // CORE_H

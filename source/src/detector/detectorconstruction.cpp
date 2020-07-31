@@ -1,5 +1,6 @@
 #include "detector/detectorconstruction.h"
 
+#include "detector/detailedsensitivedetector.h"
 #include "detector/sensitivedetector.h"
 
 #include <G4Box.hh>
@@ -17,10 +18,17 @@
 #include <G4UserLimits.hh>
 
 namespace Shower {
-DetectorConstruction::DetectorConstruction()
-
+DetectorConstruction::DetectorConstruction(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration)
+    : m_recorder { recorder }
+    , m_configuration { configuration }
+    , m_detectors { configuration->get_detectors() }
+    , m_atmosphere_layers { configuration->get_atmosphere_layers() }
+    , m_world_size { configuration->get_world_size() }
+    , m_atmosphere_height { configuration->get_atmosphere_height() }
+    , m_magnetic_field { configuration->get_magnetic_field() }
+    , m_detector_properties { configuration->get_detector_properties() }
+    , m_offset_bottom { 0 * m, 0 * m, -m_atmosphere_height * 0.5 }
 {
-    std::cout << "θ: " << m_theta << "\nφ: " << m_phi << "\n";
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -42,18 +50,16 @@ auto DetectorConstruction::Construct() -> G4VPhysicalVolume*
     G4NistManager* nist = G4NistManager::Instance();
     G4Material* intensity_catcher_material = nist->FindOrBuildMaterial("G4_Pb");
 
-    G4double offset_x = m_offset_bottom.x - (-100 * m) * m_primary_particle.momentum.x / (-m_primary_particle.momentum.z);
-    G4double offset_y = m_offset_bottom.y - (-100 * m) * m_primary_particle.momentum.y / (-m_primary_particle.momentum.z);
     G4double offset_z = (-110 * m) + m_offset_bottom.z;
 
-    auto* intensity_catcher_logical = new G4LogicalVolume { intensity_catcher_solid, intensity_catcher_material, "Intensitycatcher" };
+    m_intensity_catcher_logical = new G4LogicalVolume { intensity_catcher_solid, intensity_catcher_material, "Intensitycatcher" };
     m_intensity_catcher_physical = new G4PVPlacement {
         nullptr,
         G4ThreeVector(
-            offset_x,
-            offset_y,
+            0 * m,
+            0 * m,
             offset_z),
-        intensity_catcher_logical,
+        m_intensity_catcher_logical,
         "Intensitycatcher",
         m_world_logical,
         false,
@@ -95,8 +101,8 @@ auto DetectorConstruction::construct_world() -> G4VPhysicalVolume*
         0,
         true);
 
-    Config::TrackingCuts cuts = ConfigManager::singleton()->get_tracking_cut();
-    auto* limits = new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX, cuts.energy * MeV, cuts.range * mm);
+    Config::TrackingCuts cuts = m_configuration->get_tracking_cut();
+    auto* limits = new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX, cuts.energy, cuts.range);
     m_world_logical->SetUserLimits(limits);
 
     return physical_world;
@@ -113,14 +119,11 @@ void DetectorConstruction::construct_atmosphere()
     size_t len = m_atmosphere_layers.size();
     for (size_t i = 0; i < len; i++) {
         Config::AtmosphereLayer definition = m_atmosphere_layers[i];
-        G4double layer_lower = definition.lower * m; // lower end of each layer
-        G4double layer_thickness = (definition.upper - definition.lower) * m; // layer thickness
-        G4double density = definition.density * kg / m3;
-        G4double pressure = definition.pressure * pascal;
-        G4double temperature = definition.temperature * kelvin;
-
-        G4double offset_x = m_offset_bottom.x - ((definition.lower * m + definition.upper * m) / 2) * m_primary_particle.momentum.x / (-m_primary_particle.momentum.z);
-        G4double offset_y = m_offset_bottom.y - ((definition.lower * m + definition.upper * m) / 2) * m_primary_particle.momentum.y / (-m_primary_particle.momentum.z);
+        G4double layer_lower = definition.lower; // lower end of each layer
+        G4double layer_thickness = (definition.upper - definition.lower); // layer thickness
+        G4double density = definition.density;
+        G4double pressure = definition.pressure;
+        G4double temperature = definition.temperature;
 
         auto* layer_material = new G4Material("atmosphere" + std::to_string(i), density, air, kStateGas, temperature, pressure);
         m_solid_layers.push_back(new G4Para("atmosphere" + std::to_string(i), m_world_size * 0.5, m_world_size * 0.5, layer_thickness * 0.5, 0 * radian, m_theta, m_phi));
@@ -128,8 +131,8 @@ void DetectorConstruction::construct_atmosphere()
         m_physical_layers.push_back(new G4PVPlacement(
             nullptr,
             G4ThreeVector(
-                offset_x,
-                offset_y,
+                0 * m,
+                0 * m,
                 (layer_lower + layer_thickness * 0.5) + m_offset_bottom.z // center point of each layer
                 ),
             m_logical_volumes[i],
@@ -147,11 +150,7 @@ void DetectorConstruction::construct_magnetic_field()
         return;
     }
 
-    G4double microTesla = tesla / 1000000.0;
-
-    std::cout << "\t Magnetic field:\n\t\tB_x = " << m_magnetic_field.x << "\n\t\tB_y = " << m_magnetic_field.y << "\n\t\tB_z = " << m_magnetic_field.z << '\n';
-
-    auto* magnetic_field = new G4UniformMagField(G4ThreeVector(m_magnetic_field.x * microTesla, m_magnetic_field.y * microTesla, m_magnetic_field.z * microTesla));
+    auto* magnetic_field = new G4UniformMagField(G4ThreeVector(m_magnetic_field.x, m_magnetic_field.y, m_magnetic_field.z));
 
     G4FieldManager* field_manager = G4TransportationManager::GetTransportationManager()->GetFieldManager();
     field_manager->SetDetectorField(magnetic_field);
@@ -225,15 +224,13 @@ void DetectorConstruction::place_detector(const std::string& name, const G4doubl
     det.z = z;
     det.name = name;
 
-    ConfigManager::singleton()->add_detector(det);
-    //    G4NistManager* nist = G4NistManager::Instance();
+    m_configuration->add_detector(det);
 
     if (m_detector_geometry == nullptr) {
-        m_detector_geometry = new G4Box("detector", m_detector_properties.geometry.x * 0.5 * mm, m_detector_properties.geometry.y * 0.5 * mm, m_detector_properties.geometry.z * 0.5 * mm);
+        m_detector_geometry = new G4Box("detector", m_detector_properties.geometry.x * 0.5, m_detector_properties.geometry.y * 0.5, m_detector_properties.geometry.z * 0.5);
     }
     if (m_detector_material == nullptr) {
-        m_detector_material = new G4Material { "EJ-248", G4double { 3.36842105 }, G4double { 6.21052632 }, G4double { 1.023 * g / cm3 }, kStateSolid };
-        //        m_detector_material = nist->FindOrBuildMaterial("G4_Fe");
+        m_detector_material = new G4Material { "EJ-248", m_detector_properties.physical.z, m_detector_properties.physical.a, m_detector_properties.physical.rho, kStateSolid };
     }
 
     auto* logical = new G4LogicalVolume(m_detector_geometry, m_detector_material, name);
@@ -256,12 +253,14 @@ void DetectorConstruction::place_detector(const std::string& name, const G4doubl
 
 void DetectorConstruction::define_detectors()
 {
+    auto* detector = new DetailedSensitiveDetector { "detectors", m_recorder };
     G4SDManager* sd_manager = G4SDManager::GetSDMpointer();
+    sd_manager->AddNewDetector(detector);
     for (auto& m_detector_logical : m_detector_logicals) {
-        auto* detector = new SensitiveDetector(m_detector_logical->GetName());
-
-        sd_manager->AddNewDetector(detector);
         m_detector_logical->SetSensitiveDetector(detector);
     }
+    auto* detector_intensity = new SensitiveDetector { "intensity_catcher", m_recorder };
+    sd_manager->AddNewDetector(detector_intensity);
+    m_intensity_catcher_logical->SetSensitiveDetector(detector_intensity);
 }
 }

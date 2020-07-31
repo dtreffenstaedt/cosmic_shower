@@ -7,8 +7,9 @@
 
 #include <variant>
 
-#include "configmanager.h"
+#include "configuration.h"
 #include "global.h"
+#include "recorder.h"
 #include <G4Box.hh>
 #include <G4Material.hh>
 #include <G4SystemOfUnits.hh>
@@ -19,7 +20,7 @@ class G4LogicalVolume;
 namespace Shower {
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
-    DetectorConstruction();
+    DetectorConstruction(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration);
 
     ~DetectorConstruction() override;
 
@@ -27,26 +28,23 @@ public:
     void ConstructSDandField() override;
 
 protected:
-    std::variant<std::vector<Config::DetectorPlacement>, size_t> m_detectors { ConfigManager::singleton()->get_detectors() };
-    std::vector<Config::AtmosphereLayer> m_atmosphere_layers { ConfigManager::singleton()->get_atmosphere_layers() };
-    G4double m_world_size { ConfigManager::singleton()->get_world_size() * m };
-    G4double m_atmosphere_height { ConfigManager::singleton()->get_atmosphere_height() * m };
-    Config::MagneticField m_magnetic_field { ConfigManager::singleton()->get_magnetic_field() };
-    Config::DetectorProperties m_detector_properties { ConfigManager::singleton()->get_detector_properties() };
-    Config::PrimaryParticle m_primary_particle { ConfigManager::singleton()->get_primary_particle() };
-    G4double m_theta { std::atan(std::sqrt(std::pow(m_primary_particle.momentum.x, 2) + std::pow(m_primary_particle.momentum.y, 2)) / m_primary_particle.momentum.z) * radian };
-    G4double m_phi { std::atan2(m_primary_particle.momentum.y, m_primary_particle.momentum.x) * radian };
+    std::shared_ptr<Recorder> m_recorder { nullptr };
+    std::shared_ptr<Configuration> m_configuration { nullptr };
+    std::variant<std::vector<Config::DetectorPlacement>, size_t> m_detectors {};
+    std::vector<Config::AtmosphereLayer> m_atmosphere_layers {};
+    G4double m_world_size {};
+    G4double m_atmosphere_height {};
+    Config::MagneticField m_magnetic_field {};
+    Config::DetectorProperties m_detector_properties {};
+    G4double m_theta { 0 * radian };
+    G4double m_phi { 0 * radian };
 
     struct
     {
-        G4double x;
-        G4double y;
-        G4double z;
-    } m_offset_bottom {
-        m_atmosphere_height * m_primary_particle.momentum.x / (-m_primary_particle.momentum.z) / 2,
-        m_atmosphere_height* m_primary_particle.momentum.y / (-m_primary_particle.momentum.z) / 2,
-        -m_atmosphere_height / 2
-    };
+        G4double x { 0 * m };
+        G4double y { 0 * m };
+        G4double z { 0 * m };
+    } m_offset_bottom {};
 
     G4LogicalVolume* m_world_logical { nullptr };
     G4LogicalVolume* m_air_logical {};
@@ -59,6 +57,7 @@ protected:
     G4Material* m_detector_material { nullptr };
     std::vector<G4LogicalVolume*> m_detector_logicals {};
     G4VPhysicalVolume* m_intensity_catcher_physical { nullptr };
+    G4LogicalVolume* m_intensity_catcher_logical { nullptr };
 
     auto construct_world() -> G4VPhysicalVolume*;
     void construct_atmosphere();

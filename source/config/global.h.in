@@ -7,6 +7,7 @@
 #include <G4SystemOfUnits.hh>
 #include <exception>
 #include <globals.hh>
+#include <memory>
 
 namespace Shower {
 namespace Config {
@@ -22,6 +23,16 @@ class DataDirectoryExists : public std::exception {
     {
         return "Data error: Output directory already exists. Exiting to preserve previous data.";
     }
+};
+class Recorder;
+class Configuration;
+class Parameters;
+
+struct Objects
+{
+    std::shared_ptr<Recorder> recorder;
+    std::shared_ptr<Configuration> configuration;
+    std::shared_ptr<Parameters> parameters;
 };
 } // namespace Shower
 

@@ -2,9 +2,6 @@
 
 #include <G4EmExtraPhysics.hh>
 #include <G4EmStandardPhysics.hh>
-#include <G4HadronElasticPhysics.hh>
-#include <G4HadronPhysicsFTFQGSP_BERT.hh>
-#include <G4HadronicParameters.hh>
 #include <G4IonPhysics.hh>
 #include <G4NeutronTrackingCut.hh>
 #include <G4StepLimiterPhysics.hh>
@@ -26,12 +23,6 @@ PhysicsList::PhysicsList(G4int ver)
 
     // Decays
     RegisterPhysics(new DecayConstructor { ver });
-
-    // Hadron Elastic scattering
-    //    RegisterPhysics(new G4HadronElasticPhysics { ver });
-
-    // Hadron Physics
-    //    RegisterPhysics(new G4HadronPhysicsFTFQGSP_BERT { ver });
 
     // Stopping Physics
     RegisterPhysics(new StoppingConstructor { ver });

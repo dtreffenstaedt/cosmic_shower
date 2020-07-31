@@ -1,5 +1,5 @@
-#ifndef CONFIGMANAGER_H
-#define CONFIGMANAGER_H
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
 
 #include "global.h"
 #include <libconfig.h++>
@@ -16,6 +16,12 @@ namespace Config {
             double y;
             double z;
         } geometry;
+        struct
+        {
+            double z;
+            double a;
+            double rho;
+        } physical;
     };
     struct TrackingCuts {
         double energy;
@@ -62,6 +68,7 @@ namespace Config {
     };
 
     struct AtmosphereLayer {
+        int id;
         double lower; // lower bound of layer
         double upper; // upper bound of layer
         double density; // average density of layer
@@ -119,12 +126,9 @@ class FaultyMagneticFieldDefinition : public std::exception {
     }
 };
 
-class ConfigManager {
+class Configuration {
 public:
-    explicit ConfigManager(std::string file_name = "shower.cfg");
-    virtual ~ConfigManager();
-
-    static auto singleton() -> ConfigManager*;
+    explicit Configuration(std::string file_name = "shower.cfg");
 
     /**
      * Returns either a list of Detectors or the number of detectors to generate.
@@ -144,7 +148,7 @@ public:
     /**
      * Primary particle definition
      */
-    [[nodiscard]] auto get_primary_particle(const bool& fallback = false) const -> Config::PrimaryParticle;
+    [[nodiscard]] auto get_primaries(const bool& fallback = false) const -> std::vector<Config::PrimaryParticle>;
 
     //    [[nodiscard]] auto get_initial_ratio(const bool& fallback = false) const -> double;
 
@@ -180,10 +184,8 @@ private:
 
     std::vector<Config::DetectorPlacement> m_detectors;
 
-    static ConfigManager* c_singleton;
-
     std::string m_file_name;
 };
 }
 
-#endif // CONFIGMANAGER_H
+#endif // CONFIGURATION_H

@@ -1,5 +1,5 @@
-#ifndef PARAMETERMANAGER_H
-#define PARAMETERMANAGER_H
+#ifndef PARAMETERS_H
+#define PARAMETERS_H
 
 #include "global.h"
 
@@ -7,9 +7,9 @@
 #include <vector>
 
 namespace Shower {
-class ParameterManager {
+class Parameters {
 public:
-    ParameterManager();
+    Parameters();
 
     [[nodiscard]] auto argument_set(const std::string& name) const -> bool;
     [[nodiscard]] auto argument_value(const std::string& name) const -> std::string;
@@ -20,11 +20,7 @@ public:
 
     void print_help() const;
 
-    static auto singleton() -> ParameterManager*;
-
 private:
-    static ParameterManager* c_singleton;
-
     struct Commandline {
         std::string abbr = std::string {};
         std::string full = std::string {};
@@ -37,4 +33,4 @@ private:
     std::vector<Commandline> m_arguments;
 };
 }
-#endif // PARAMETERMANAGER_H
+#endif // PARAMETERS_H

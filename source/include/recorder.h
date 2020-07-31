@@ -1,8 +1,9 @@
-#ifndef RECORDERMANAGER_H
-#define RECORDERMANAGER_H
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include "configmanager.h"
+#include "configuration.h"
 #include "global.h"
+#include "parameters.h"
 
 #include <array>
 #include <atomic>
@@ -12,21 +13,41 @@
 
 namespace Shower {
 
-class RecorderManager {
+struct DetailedHit {
+    const G4int pdg {};
+    const G4double momentum {};
+    const G4ThreeVector momentum_direction {};
+    const G4ThreeVector position {};
+    const G4double global_time {};
+    const G4double proper_time {};
+    const G4String name {};
+};
+
+struct Hit {
+    G4ThreeVector position {};
+    G4double time {};
+};
+
+struct GroundIntensity {
+    const G4ThreeVector position {};
+    const G4double rest_energy {};
+    const G4double energy {};
+    const bool charged {};
+};
+
+class Recorder {
 public:
-    RecorderManager();
-    virtual ~RecorderManager();
+    Recorder(const std::shared_ptr<Configuration>& config, const std::shared_ptr<Parameters>& params);
+    virtual ~Recorder();
 
     [[nodiscard]] auto stored_primary() const -> bool;
 
-    void store_primary(const G4ThreeVector& vector, const G4double& time);
-    void store_hit(const G4ThreeVector& vector, const G4double& time);
+    void store_primary(const Hit& primary);
+    void store_hit(const Hit& hit);
 
-    void store_detailed_hit();
+    void store_detailed_hit(const DetailedHit& hit);
 
-    void store_momentum(const G4ThreeVector& vector, const G4double& momentum, const G4double &energy, const bool &charged);
-
-    static auto singleton() -> RecorderManager*;
+    void store_ground_intensity(const GroundIntensity& intensity);
 
     template <size_t N>
     class Bin {
@@ -43,7 +64,7 @@ public:
         auto get_x_center() const -> double;
         auto get_y_center() const -> double;
 
-        void store(std::ofstream &stream);
+        void store(std::ofstream& stream);
 
     private:
         double m_momentum_density { 0 };
@@ -58,23 +79,20 @@ public:
     };
 
 private:
-    struct Hit {
-        G4ThreeVector pos;
-        G4double time;
-    };
     void save();
 
-    static RecorderManager* c_singleton;
+    std::string m_directory {};
 
     std::atomic<bool> m_stored_primary { false };
 
     Hit m_primary {};
 
     std::queue<Hit> m_hits {};
+    std::queue<DetailedHit> m_detailed_hits {};
     static constexpr size_t m_size { 10 };
 
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};
 };
 }
 
-#endif // RECORDERMANAGER_H
+#endif // RECORDER_H
