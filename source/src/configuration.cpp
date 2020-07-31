@@ -289,7 +289,7 @@ void Configuration::config_dump(const std::string& filename)
         geometry.add("z", libconfig::Setting::TypeFloat) = det_prop.geometry.z / mm;
         physical.add("z", libconfig::Setting::TypeFloat) = det_prop.physical.z;
         physical.add("a", libconfig::Setting::TypeFloat) = det_prop.physical.a;
-        physical.add("rho", libconfig::Setting::TypeFloat) = det_prop.physical.rho / (g / m3);
+        physical.add("rho", libconfig::Setting::TypeFloat) = det_prop.physical.rho / (g / cm3);
     }
     {
         libconfig::Setting& primary_setting = root.add("primary", libconfig::Setting::TypeList);
