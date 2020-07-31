@@ -16,7 +16,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
     for (auto& primary : m_primaries) {
         auto* gun = new G4ParticleGun(primary.n_particles);
-        m_particle_guns.push_back(gun);
         G4ParticleDefinition* particle = particle_table->FindParticle(primary.particle);
         gun->SetParticleDefinition(particle);
         gun->SetParticleEnergy(primary.momentum.m);
@@ -29,6 +28,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
             gun->SetParticlePosition(G4ThreeVector((primary.origin.x) + m_offset_top.x, (primary.origin.y) + m_offset_top.y, (primary.origin.z) + m_offset_top.z));
         }
         gun->SetParticleMomentumDirection(G4ThreeVector(primary.momentum.x, primary.momentum.y, primary.momentum.z));
+        m_particle_guns.push_back(gun);
     }
 }
 
