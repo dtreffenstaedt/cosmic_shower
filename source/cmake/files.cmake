@@ -36,9 +36,9 @@ set(SIM_HEADER_FILES "${PROJECT_INCLUDE_DIR}/detector/detectorconstruction.h"
 
 if(${SHOWER_BENCHMARK})
 set(SIM_SOURCE_FILES "${SIM_SOURCE_FILES}"
-    "${PROJECT_SOURCE_DIR}/benchmarkmanager.cpp")
+    "${PROJECT_SOURCE_DIR}/benchmark.cpp")
 set(SIM_HEADER_FILES "${SIM_HEADER_FILES}"
-    "${PROJECT_INCLUDE_DIR}/benchmarkmanager.h")
+    "${PROJECT_INCLUDE_DIR}/benchmark.h")
 endif(${SHOWER_BENCHMARK})
 
 set(ATMOS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/atmosphere_layers.cpp")

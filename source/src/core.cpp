@@ -36,7 +36,7 @@ Core::Core(int argc, char* argv[])
         m_configuration = std::make_shared<Configuration>();
     }
 #ifdef SHOWER_BENCHMARK
-    m_benchmark_manager = new BenchmarkManager { "benchmark" + std::to_string(ConfigManager::singleton()->get_primary_particle().momentum.m / 1000) + "GeV-" };
+    m_benchmark = std::make_shared<Benchmark>("benchmark");
 #endif
     m_recorder = std::make_shared<Recorder>(m_configuration, m_parameters);
 #ifdef SHOWER_BUILD_UI
@@ -57,9 +57,6 @@ Core::~Core()
 
     delete m_ui_manager;
 
-#endif
-#ifdef SHOWER_BENCHMARK
-    delete m_benchmark_manager;
 #endif
 }
 
@@ -136,7 +133,11 @@ void Core::setup()
 
     m_run_manager->SetUserInitialization(new PhysicsList {});
 
+#ifdef SHOWER_BENCHMARK
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration, m_benchmark });
+#else
     m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration });
+#endif
 
     m_run_manager->Initialize();
 

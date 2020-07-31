@@ -1,5 +1,5 @@
-#ifndef BENCHMARKMANAGER_H
-#define BENCHMARKMANAGER_H
+#ifndef BENCHMARK_H
+#define BENCHMARK_H
 
 #include "global.h"
 
@@ -12,7 +12,7 @@
 #include <string>
 
 namespace Shower {
-class BenchmarkManager {
+class Benchmark {
 public:
     class Measurement {
     public:
@@ -47,17 +47,14 @@ public:
         std::unique_ptr<std::thread> m_thread;
     };
 
-    BenchmarkManager(const std::string& filename);
+    Benchmark(const std::string& filename);
 
     std::unique_ptr<Measurement> start(const std::string& id);
 
-    static BenchmarkManager* singleton();
 
 private:
     std::string m_file_name;
-
-    static BenchmarkManager* c_singleton;
 };
 }
 
-#endif // BENCHMARKMANAGER_H
+#endif // BENCHMARK_H

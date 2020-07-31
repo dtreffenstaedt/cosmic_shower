@@ -7,9 +7,11 @@
 namespace Shower {
 size_t EventAction::c_n = 1;
 
-EventAction::EventAction()
-
-    = default;
+#ifdef SHOWER_BENCHMARK
+EventAction::EventAction(const std::shared_ptr<Benchmark>& benchmark)
+    : m_benchmark { benchmark}
+{}
+#endif
 
 EventAction::~EventAction()
     = default;
@@ -18,7 +20,7 @@ void EventAction::BeginOfEventAction(const G4Event* /*anEvent*/)
 {
     std::cout << "Event started\n";
 #ifdef SHOWER_BENCHMARK
-    m_measurement = BenchmarkManager::singleton()->start("event" + std::to_string(c_n));
+    m_measurement = m_benchmark->start("event" + std::to_string(c_n));
 #endif
     c_n++;
     m_start = std::chrono::steady_clock::now();

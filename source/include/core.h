@@ -20,7 +20,7 @@
 #include "parameters.h"
 #include "recorder.h"
 #ifdef SHOWER_BENCHMARK
-#include "benchmarkmanager.h"
+#include "benchmark.h"
 #endif
 
 namespace Shower {
@@ -59,7 +59,7 @@ private:
 
     std::shared_ptr<Configuration> m_configuration;
 #ifdef SHOWER_BENCHMARK
-    BenchmarkManager* m_benchmark_manager;
+    std::shared_ptr<Benchmark> m_benchmark;
 #endif
     std::shared_ptr<Parameters> m_parameters;
     std::shared_ptr<Recorder> m_recorder;

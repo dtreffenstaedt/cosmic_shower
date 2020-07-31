@@ -1,4 +1,4 @@
-#include "benchmarkmanager.h"
+#include "benchmark.h"
 
 #include <fstream>
 #include <iostream>
@@ -8,15 +8,14 @@
 #include "string.h"
 
 namespace Shower {
-BenchmarkManager* BenchmarkManager::c_singleton = nullptr;
 
-BenchmarkManager::Measurement::Measurement(const std::string& filename, const std::string& name)
+Benchmark::Measurement::Measurement(const std::string& filename, const std::string& name)
 {
     m_stream.open(filename + name);
     m_stream << "time[ms],virtual memory[MB],physical memory[MB],swap[MB]\n";
 }
 
-BenchmarkManager::Measurement::~Measurement()
+Benchmark::Measurement::~Measurement()
 {
     m_thread->join();
     if (m_stream.is_open()) {
@@ -25,7 +24,7 @@ BenchmarkManager::Measurement::~Measurement()
     }
 }
 
-std::chrono::steady_clock::duration BenchmarkManager::Measurement::stop()
+std::chrono::steady_clock::duration Benchmark::Measurement::stop()
 {
     m_duration = std::chrono::steady_clock::now() - m_start;
 
@@ -33,13 +32,13 @@ std::chrono::steady_clock::duration BenchmarkManager::Measurement::stop()
     return m_duration;
 }
 
-void BenchmarkManager::Measurement::start()
+void Benchmark::Measurement::start()
 {
     m_start = std::chrono::steady_clock::now();
-    m_thread = std::make_unique<std::thread>(&BenchmarkManager::Measurement::run, this);
+    m_thread = std::make_unique<std::thread>(&Benchmark::Measurement::run, this);
 }
 
-void BenchmarkManager::Measurement::run()
+void Benchmark::Measurement::run()
 {
     while (!m_stop) {
         auto duration = std::chrono::steady_clock::now() - m_start;
@@ -57,7 +56,7 @@ void BenchmarkManager::Measurement::run()
     end();
 }
 
-void BenchmarkManager::Measurement::end()
+void Benchmark::Measurement::end()
 {
     m_virtual_memory /= static_cast<double>(m_n);
     m_physical_memory /= static_cast<double>(m_n);
@@ -65,7 +64,7 @@ void BenchmarkManager::Measurement::end()
     m_stream.close();
 }
 
-int BenchmarkManager::Measurement::parse_line(char* line)
+int Benchmark::Measurement::parse_line(char* line)
 {
     // This assumes that a digit will be found and the line ends in " Kb".
     int i = strlen(line);
@@ -77,7 +76,7 @@ int BenchmarkManager::Measurement::parse_line(char* line)
     return i;
 }
 
-auto BenchmarkManager::Measurement::get_virtual_memory() -> double
+auto Benchmark::Measurement::get_virtual_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
     int result = -1;
@@ -93,7 +92,7 @@ auto BenchmarkManager::Measurement::get_virtual_memory() -> double
     return result;
 }
 
-auto BenchmarkManager::Measurement::get_physical_memory() -> double
+auto Benchmark::Measurement::get_physical_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
     int result = -1;
@@ -109,7 +108,7 @@ auto BenchmarkManager::Measurement::get_physical_memory() -> double
     return result;
 }
 
-auto BenchmarkManager::Measurement::get_swap_memory() -> double
+auto Benchmark::Measurement::get_swap_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
     int result = -1;
@@ -125,24 +124,18 @@ auto BenchmarkManager::Measurement::get_swap_memory() -> double
     return result;
 }
 
-BenchmarkManager::BenchmarkManager(const std::string& filename)
+Benchmark::Benchmark(const std::string& filename)
     : m_file_name { filename }
 {
-    c_singleton = this;
 }
 
-std::unique_ptr<BenchmarkManager::Measurement> BenchmarkManager::start(const std::string& id)
+std::unique_ptr<Benchmark::Measurement> Benchmark::start(const std::string& id)
 {
     std::unique_ptr<Measurement> measurement = std::make_unique<Measurement>(m_file_name, id);
 
     measurement->start();
 
     return measurement;
-}
-
-BenchmarkManager* BenchmarkManager::singleton()
-{
-    return c_singleton;
 }
 
 }

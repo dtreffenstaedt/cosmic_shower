@@ -4,7 +4,7 @@
 #include "global.h"
 
 #ifdef SHOWER_BENCHMARK
-#include "benchmarkmanager.h"
+#include "benchmark.h"
 #endif
 
 #include <G4UserEventAction.hh>
@@ -15,7 +15,11 @@ class G4Event;
 namespace Shower {
 class EventAction : public G4UserEventAction {
 public:
-    EventAction();
+#ifdef SHOWER_BENCHMARK
+    EventAction(const std::shared_ptr<Benchmark>& benchmark);
+#else
+    EventAction() = default;
+#endif
     ~EventAction() override;
 
     void BeginOfEventAction(const G4Event*) override;
@@ -23,10 +27,12 @@ public:
 
 private:
 #ifdef SHOWER_BENCHMARK
-    std::unique_ptr<BenchmarkManager::Measurement> m_measurement;
+    std::unique_ptr<Benchmark::Measurement> m_measurement;
+    std::shared_ptr<Benchmark> m_benchmark;
 #endif
     std::chrono::steady_clock::time_point m_start;
     static size_t c_n;
+
 };
 }
 
