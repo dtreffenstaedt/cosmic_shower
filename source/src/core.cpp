@@ -151,9 +151,4 @@ void Core::setup()
     m_vis_manager->Initialize();
 #endif
 }
-
-void Core::print_help()
-{
-    std::cout << "Possible parameters:\n\t-h\t\tprint this help\n\t-c <filename>\tuse the config file <filename>\n\t\tdefault: shower.cfg\n\t-ui\t\tshow the graphical user interface\n";
-}
 }

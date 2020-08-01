@@ -38,7 +38,6 @@ private:
 #else
     void setup();
 #endif
-    static void print_help();
 
 #ifdef SHOWER_BUILD_UI
     auto execute_ui() -> int;
