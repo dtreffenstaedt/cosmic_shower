@@ -16,7 +16,7 @@ namespace Shower {
 class EventAction : public G4UserEventAction {
 public:
 #ifdef SHOWER_BENCHMARK
-    EventAction(const std::shared_ptr<Benchmark>& benchmark);
+    EventAction(std::shared_ptr<Benchmark>  benchmark);
 #else
     EventAction() = default;
 #endif
@@ -32,7 +32,6 @@ private:
 #endif
     std::chrono::steady_clock::time_point m_start;
     static size_t c_n;
-
 };
 }
 

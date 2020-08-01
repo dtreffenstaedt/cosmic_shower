@@ -37,7 +37,7 @@ public:
 
         std::ofstream m_stream;
 
-        int parse_line(char* line);
+        static auto parse_line(char* line) -> size_t;
 
         auto get_virtual_memory() -> double;
         auto get_physical_memory() -> double;
@@ -47,10 +47,9 @@ public:
         std::unique_ptr<std::thread> m_thread;
     };
 
-    Benchmark(const std::string& filename);
+    Benchmark(std::string  filename);
 
     std::unique_ptr<Measurement> start(const std::string& id);
-
 
 private:
     std::string m_file_name;

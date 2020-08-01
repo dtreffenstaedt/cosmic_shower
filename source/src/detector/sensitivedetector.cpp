@@ -1,7 +1,5 @@
 #include "detector/sensitivedetector.h"
 
-#include "configuration.h"
-#include "parameters.h"
 #include "recorder.h"
 
 #include <G4Box.hh>
@@ -9,12 +7,13 @@
 #include <G4PVPlacement.hh>
 #include <G4SDManager.hh>
 #include <G4SystemOfUnits.hh>
+#include <utility>
 
 namespace Shower {
 
-SensitiveDetector::SensitiveDetector(const std::string& name, const std::shared_ptr<Recorder>& recorder)
+SensitiveDetector::SensitiveDetector(const std::string& name, std::shared_ptr<Recorder> recorder)
     : G4VSensitiveDetector { "/" + name }
-    , m_recorder { recorder }
+    , m_recorder { std::move(recorder) }
 {
 }
 

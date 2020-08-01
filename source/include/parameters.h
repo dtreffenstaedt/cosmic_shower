@@ -25,9 +25,9 @@ private:
         std::string abbr = std::string {};
         std::string full = std::string {};
         std::string description = std::string {};
+        std::string value = std::string {};
         bool has_value = false;
         bool is_set = false;
-        std::string value = std::string {};
     };
 
     std::vector<Commandline> m_arguments;

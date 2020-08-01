@@ -17,7 +17,7 @@ public:
     explicit HadronElasticConstructor(G4int ver = 0,
         const G4String& nam = "hElasticWEL_CHIPS_XS");
 
-    virtual ~HadronElasticConstructor();
+    ~HadronElasticConstructor() override;
 
     void ConstructParticle() override;
 

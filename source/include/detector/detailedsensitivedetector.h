@@ -9,9 +9,11 @@
 
 namespace Shower {
 
+class Recorder;
+
 class DetailedSensitiveDetector : public G4VSensitiveDetector {
 public:
-    explicit DetailedSensitiveDetector(const std::string& name, const std::shared_ptr<Recorder>& recorder);
+    explicit DetailedSensitiveDetector(const std::string& name, std::shared_ptr<Recorder> recorder);
 
     ~DetailedSensitiveDetector() override = default;
 

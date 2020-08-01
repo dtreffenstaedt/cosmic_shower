@@ -1,10 +1,9 @@
 cmake_minimum_required (VERSION 3.10)
 project (cosmic_shower)
 
-set(SHOWER_BUILD_TIDY OFF)
+set(SHOWER_BUILD_TIDY ON)
 if(${SHOWER_BUILD_TIDY})
-#set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=.; -checks=*,-fuchsia-*;)
-set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,hicpp-*; -fix)
+set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,modernize-*,hicpp-*; -fix)
 endif(${SHOWER_BUILD_TIDY})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_C_COMPILER clang)
@@ -16,7 +15,7 @@ set(PROJECT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 set(SHOWER_BUILD_UI OFF)
-set(SHOWER_BENCHMARK OFF)
+set(SHOWER_BENCHMARK ON)
 
 include(cmake/version.cmake)
 
@@ -60,7 +59,7 @@ set(Geant4_CXX_FLAGS_DEBUG "")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-std=gnu++17 -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -Wall -Wextra -Wpedantic -Werror -O3 -Wshadow)
+add_compile_options(-Weverything -Wno-c++98-compat -Wno-padded -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wall -Wextra -Wpedantic -Wshadow -Werror -O3)
 
 include(cmake/files.cmake)
 
@@ -75,7 +74,7 @@ add_custom_target(clangformat COMMAND clang-format -style=WebKit -i ${SIM_SOURCE
 add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES} pthread)
 
-add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES})
+add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES} ${ATMOS_HEADER_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

@@ -7,6 +7,8 @@
 #include "detector/detectorconstruction.h"
 #include "physics/physicslist.h"
 
+#include "cancelcriterion.h"
+
 namespace Shower {
 Core::Core(int argc, char* argv[])
     : m_run_manager { nullptr }
@@ -105,7 +107,7 @@ void Core::setup()
     //    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine {});
 
     std::random_device rd;
-    std::mt19937::result_type initial_seed = rd() ^ ((std::mt19937::result_type)std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() + (std::mt19937::result_type)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+    std::mt19937::result_type initial_seed = rd() ^ (static_cast<std::mt19937::result_type>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + static_cast<std::mt19937::result_type>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
 
     std::mt19937 gen(initial_seed);
     std::uniform_int_distribution<G4long> distribution;
@@ -134,9 +136,9 @@ void Core::setup()
     m_run_manager->SetUserInitialization(new PhysicsList {});
 
 #ifdef SHOWER_BENCHMARK
-    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration, m_benchmark });
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, std::make_shared<NeverCancel>(), m_configuration, m_benchmark });
 #else
-    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration });
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, std::make_shared<NeverCancel>(), m_configuration });
 #endif
 
     m_run_manager->Initialize();

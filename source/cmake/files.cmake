@@ -7,6 +7,7 @@ set(SIM_SOURCE_FILES "${PROJECT_SOURCE_DIR}/main.cpp"
                  "${PROJECT_SOURCE_DIR}/configuration.cpp"
                  "${PROJECT_SOURCE_DIR}/parameters.cpp"
                  "${PROJECT_SOURCE_DIR}/recorder.cpp"
+                 "${PROJECT_SOURCE_DIR}/cancelcriterion.cpp"
                  "${PROJECT_SOURCE_DIR}/core.cpp"
                  "${PROJECT_SOURCE_DIR}/physics/physicslist.cpp"
                  "${PROJECT_SOURCE_DIR}/physics/decayconstructor.cpp"
@@ -24,6 +25,7 @@ set(SIM_HEADER_FILES "${PROJECT_INCLUDE_DIR}/detector/detectorconstruction.h"
                  "${PROJECT_INCLUDE_DIR}/configuration.h"
                  "${PROJECT_INCLUDE_DIR}/parameters.h"
                  "${PROJECT_INCLUDE_DIR}/recorder.h"
+                 "${PROJECT_INCLUDE_DIR}/cancelcriterion.h"
                  "${PROJECT_INCLUDE_DIR}/core.h"
                  "${PROJECT_INCLUDE_DIR}/physics/physicslist.h"
                  "${PROJECT_INCLUDE_DIR}/physics/decayconstructor.h"
@@ -41,4 +43,5 @@ set(SIM_HEADER_FILES "${SIM_HEADER_FILES}"
     "${PROJECT_INCLUDE_DIR}/benchmark.h")
 endif(${SHOWER_BENCHMARK})
 
+set(ATMOS_HEADER_FILES "${PROJECT_INCLUDE_DIR}/atmosphere_layers.h")
 set(ATMOS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/atmosphere_layers.cpp")

@@ -1,21 +1,32 @@
 #include "actions/actioninitialization.h"
 
+#include <utility>
+
 #include "actions/eventaction.h"
 #include "actions/primarygeneratoraction.h"
 #include "actions/steppingaction.h"
 
+#include "configuration.h"
+#include "recorder.h"
+#include "cancelcriterion.h"
+#ifdef SHOWER_BENCHMARK
+#include "benchmark.h"
+#endif
+
 namespace Shower {
 #ifdef SHOWER_BENCHMARK
-ActionInitialization::ActionInitialization(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration, const std::shared_ptr<Benchmark> &benchmark)
-    : m_recorder { recorder }
-    , m_configuration { configuration }
-    , m_benchmark { benchmark }
+ActionInitialization::ActionInitialization(std::shared_ptr<Recorder>  recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration>  configuration, std::shared_ptr<Benchmark>  benchmark)
+    : m_recorder {std::move( recorder )}
+    , m_configuration {std::move( configuration )}
+    , m_cancel_criterion {std::move(cancel_criterion)}
+    , m_benchmark {std::move( benchmark )}
 {
 }
 #else
-ActionInitialization::ActionInitialization(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration)
-    : m_recorder { recorder }
-    , m_configuration { configuration }
+ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration)
+    : m_recorder { std::move(recorder) }
+    , m_configuration { std::move(configuration) }
+    , m_cancel_criterion { std::move(cancel_criterion)}
 {
 }
 #endif
@@ -29,11 +40,11 @@ void ActionInitialization::Build() const
     SetUserAction(new PrimaryGeneratorAction { m_configuration });
 
 #ifdef SHOWER_BENCHMARK
-    SetUserAction(new EventAction {m_benchmark});
+    SetUserAction(new EventAction { m_benchmark });
 #else
     SetUserAction(new EventAction {});
 #endif
 
-    SetUserAction(new SteppingAction { m_recorder, m_configuration });
+    SetUserAction(new SteppingAction { m_recorder, m_cancel_criterion, m_configuration });
 }
 }

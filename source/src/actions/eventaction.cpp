@@ -3,14 +3,16 @@
 #include <G4Event.hh>
 
 #include <iostream>
+#include <utility>
 
 namespace Shower {
 size_t EventAction::c_n = 1;
 
 #ifdef SHOWER_BENCHMARK
-EventAction::EventAction(const std::shared_ptr<Benchmark>& benchmark)
-    : m_benchmark { benchmark}
-{}
+EventAction::EventAction(std::shared_ptr<Benchmark>  benchmark)
+    : m_benchmark {std::move( benchmark )}
+{
+}
 #endif
 
 EventAction::~EventAction()

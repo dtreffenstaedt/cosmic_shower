@@ -2,10 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <utility>
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 namespace Shower {
 
@@ -24,7 +25,7 @@ Benchmark::Measurement::~Measurement()
     }
 }
 
-std::chrono::steady_clock::duration Benchmark::Measurement::stop()
+auto Benchmark::Measurement::stop() -> std::chrono::steady_clock::duration
 {
     m_duration = std::chrono::steady_clock::now() - m_start;
 
@@ -64,72 +65,73 @@ void Benchmark::Measurement::end()
     m_stream.close();
 }
 
-int Benchmark::Measurement::parse_line(char* line)
+auto Benchmark::Measurement::parse_line(char* line) -> size_t
 {
     // This assumes that a digit will be found and the line ends in " Kb".
-    int i = strlen(line);
+    size_t i = strlen(line);
     const char* p = line;
-    while (*p < '0' || *p > '9')
+    while (*p < '0' || *p > '9') {
         p++;
+    }
     line[i - 3] = '\0';
-    i = atoi(p);
+    i = std::stoul(p);
     return i;
 }
 
 auto Benchmark::Measurement::get_virtual_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
-    int result = -1;
+    size_t result { 0 };
     char line[128];
 
-    while (fgets(line, 128, file) != NULL) {
+    while (fgets(line, 128, file) != nullptr) {
         if (strncmp(line, "VmSize:", 7) == 0) {
             result = parse_line(line);
             break;
         }
     }
     fclose(file);
-    return result;
+    return static_cast<double>(result);
 }
 
 auto Benchmark::Measurement::get_physical_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
-    int result = -1;
+    size_t result { 0 };
     char line[128];
 
-    while (fgets(line, 128, file) != NULL) {
+    while (fgets(line, 128, file) != nullptr) {
         if (strncmp(line, "VmRSS:", 6) == 0) {
             result = parse_line(line);
             break;
         }
     }
     fclose(file);
-    return result;
+    return static_cast<double>(result);
 }
 
 auto Benchmark::Measurement::get_swap_memory() -> double
 {
     FILE* file = fopen("/proc/self/status", "r");
-    int result = -1;
+    size_t result { 0 };
     char line[128];
 
-    while (fgets(line, 128, file) != NULL) {
+    while (fgets(line, 128, file) != nullptr) {
         if (strncmp(line, "VmSwap:", 7) == 0) {
             result = parse_line(line);
             break;
         }
     }
     fclose(file);
-    return result;
+    return static_cast<double>(result);
 }
 
-Benchmark::Benchmark(const std::string& filename)
-    : m_file_name { filename }
+Benchmark::Benchmark(std::string  filename)
+    : m_file_name {std::move( filename )}
 {
 }
 
-std::unique_ptr<Benchmark::Measurement> Benchmark::start(const std::string& id)
+auto Benchmark::start(const std::string& id) -> std::unique_ptr<Benchmark::Measurement>
 {
     std::unique_ptr<Measurement> measurement = std::make_unique<Measurement>(m_file_name, id);
 

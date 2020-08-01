@@ -4,6 +4,12 @@
 #include <fstream>
 
 namespace Shower {
+
+auto DataDirectoryExists::what() const noexcept -> const char*
+{
+    return "Data error: Output directory already exists. Exiting to preserve previous data.";
+}
+
 Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shared_ptr<Parameters>& params)
 {
     std::string data = config->get_data_directory();
@@ -25,7 +31,7 @@ Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shar
         std::filesystem::create_directory(m_directory);
     }
 
-    double world_size { config->get_world_size()};
+    double world_size { config->get_world_size() };
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
             m_bins[i][j].initialise(i, j, world_size);
@@ -33,7 +39,6 @@ Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shar
     }
 
     config->config_dump(m_directory + "/config_dunp");
-
 }
 
 Recorder::~Recorder()
@@ -60,10 +65,16 @@ void Recorder::store_hit(const Hit& hit)
 
 void Recorder::store_detailed_hit(const DetailedHit& hit)
 {
+    constexpr int pdg_mu{13};
     m_detailed_hits.push(hit);
-    if (std::abs(hit.pdg) == 13) {
+    if (std::abs(hit.pdg) == pdg_mu) {
         store_hit({ hit.position, hit.global_time });
     }
+}
+
+void Recorder::store_secondary(const Secondary& intensity)
+{
+    m_secondaries.push(intensity);
 }
 
 void Recorder::save()
@@ -118,6 +129,30 @@ void Recorder::save()
         }
 
         file.close();
+    }
+    {
+        libconfig::Config save;
+        libconfig::Setting& root = save.getRoot();
+        libconfig::Setting& primary_setting = root.add("secondaties", libconfig::Setting::TypeList);
+        while (!m_secondaries.empty()) {
+            auto& prim = m_secondaries.front();
+            m_secondaries.pop();
+            libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
+            libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
+            libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
+            origin.add("x", libconfig::Setting::TypeFloat) = prim.position.x() / meter;
+            origin.add("y", libconfig::Setting::TypeFloat) = prim.position.y() / meter;
+            origin.add("z", libconfig::Setting::TypeFloat) = prim.position.z() / meter;
+            origin.add("absolute", libconfig::Setting::TypeBoolean) = true;
+
+            momentum.add("x", libconfig::Setting::TypeFloat) = prim.momentum.x();
+            momentum.add("y", libconfig::Setting::TypeFloat) = prim.momentum.y();
+            momentum.add("z", libconfig::Setting::TypeFloat) = prim.momentum.z();
+            momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.kinetic_energy / MeV;
+
+            primary.add("particle", libconfig::Setting::TypeInt) = prim.pdg;
+        }
+        save.writeFile((m_directory + "/secondaries").c_str());
     }
 }
 

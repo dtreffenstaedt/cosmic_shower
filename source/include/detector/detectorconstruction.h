@@ -20,7 +20,7 @@ class G4LogicalVolume;
 namespace Shower {
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
-    DetectorConstruction(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration);
+    DetectorConstruction(std::shared_ptr<Recorder> recorder, const std::shared_ptr<Configuration>& configuration);
 
     ~DetectorConstruction() override;
 

@@ -16,10 +16,11 @@
 #include <G4UniformMagField.hh>
 #include <G4UnitsTable.hh>
 #include <G4UserLimits.hh>
+#include <utility>
 
 namespace Shower {
-DetectorConstruction::DetectorConstruction(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration)
-    : m_recorder { recorder }
+DetectorConstruction::DetectorConstruction(std::shared_ptr<Recorder> recorder, const std::shared_ptr<Configuration>& configuration)
+    : m_recorder { std::move(recorder) }
     , m_configuration { configuration }
     , m_detectors { configuration->get_detectors() }
     , m_atmosphere_layers { configuration->get_atmosphere_layers() }
@@ -167,7 +168,7 @@ void DetectorConstruction::construct_detectors()
         if (std::abs(root - std::floor(root)) <= std::numeric_limits<double>::epsilon()) // perfect square, create a uniform pattern.
         {
             G4double distance = m_world_size / G4double((root + 1));
-            size_t row = static_cast<size_t>(std::sqrt(n));
+            auto row = static_cast<size_t>(std::sqrt(n));
             G4double pos_x = -m_world_size * 0.5;
             for (size_t i = 1; i <= row; i++) {
                 pos_x += distance;

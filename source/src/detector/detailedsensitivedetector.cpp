@@ -1,18 +1,19 @@
 #include "detector/detailedsensitivedetector.h"
 
-#include "recorder.h"
-
 #include <G4Box.hh>
 #include <G4NistManager.hh>
 #include <G4PVPlacement.hh>
 #include <G4SDManager.hh>
 #include <G4SystemOfUnits.hh>
+#include <utility>
+
+#include "recorder.h"
 
 namespace Shower {
 
-DetailedSensitiveDetector::DetailedSensitiveDetector(const std::string& name, const std::shared_ptr<Recorder>& recorder)
+DetailedSensitiveDetector::DetailedSensitiveDetector(const std::string& name, std::shared_ptr<Recorder> recorder)
     : G4VSensitiveDetector { "/" + name }
-    , m_recorder { recorder }
+    , m_recorder { std::move(recorder) }
 {
 }
 

@@ -34,7 +34,7 @@ PhysicsList::PhysicsList(G4int ver)
     RegisterPhysics(new G4NeutronTrackingCut { ver });
 
     // Introduce Tracking Cuts
-    RegisterPhysics(new G4StepLimiterPhysics { ver });
+    RegisterPhysics(new G4StepLimiterPhysics { static_cast<char>(ver) });
 
     // Very High Energy Physics (100 TeV < E < 10^20 eV)
     RegisterPhysics(new HadronElasticConstructor { ver });

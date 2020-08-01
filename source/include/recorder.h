@@ -7,6 +7,7 @@
 
 #include <array>
 #include <atomic>
+#include <exception>
 #include <queue>
 
 #include <G4ThreeVector.hh>
@@ -35,6 +36,17 @@ struct GroundIntensity {
     const bool charged {};
 };
 
+struct Secondary {
+    const G4ThreeVector position {};
+    const G4ThreeVector momentum {};
+    const G4double kinetic_energy {};
+    const int pdg {};
+};
+
+class DataDirectoryExists : public std::exception {
+    [[nodiscard]] auto what() const noexcept -> const char* override;
+};
+
 class Recorder {
 public:
     Recorder(const std::shared_ptr<Configuration>& config, const std::shared_ptr<Parameters>& params);
@@ -48,6 +60,8 @@ public:
     void store_detailed_hit(const DetailedHit& hit);
 
     void store_ground_intensity(const GroundIntensity& intensity);
+
+    void store_secondary(const Secondary& intensity);
 
     template <size_t N>
     class Bin {
@@ -89,6 +103,7 @@ private:
 
     std::queue<Hit> m_hits {};
     std::queue<DetailedHit> m_detailed_hits {};
+    std::queue<Secondary> m_secondaries {};
     static constexpr size_t m_size { 10 };
 
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};

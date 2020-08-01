@@ -5,6 +5,41 @@
 
 namespace Shower {
 
+auto NoNameDefined::what() const noexcept -> const char*
+{
+    return "Config error: No name defined.";
+}
+
+auto ArgumentError::what() const noexcept -> const char*
+{
+    return "commandline argument error.";
+}
+
+auto FaultyDetectorDefinition::what() const noexcept -> const char*
+{
+    return "Config error: Faulty detector definition.";
+}
+
+auto FaultyAtmosphereLayerDefinition::what() const noexcept -> const char*
+{
+    return "Config error: Faulty atmosphere layer definition.";
+}
+
+auto FaultyPrimaryDefinition::what() const noexcept -> const char*
+{
+    return "Config error: Faulty primary definition.";
+}
+
+auto FaultySecondaryDefinition::what() const noexcept -> const char*
+{
+    return "Config error: Faulty secondary definition.";
+}
+
+auto FaultyMagneticFieldDefinition::what() const noexcept -> const char*
+{
+    return "Config error: Faulty magnetic field definition.";
+}
+
 Configuration::Configuration(std::string file_name)
     : m_file_name { std::move(file_name) }
 {
@@ -28,8 +63,8 @@ auto Configuration::get_detectors(const bool& fallback) const -> std::variant<st
     if (!get_root(fallback).lookupValue("detectors", number)) {
         const libconfig::Setting& detectors_setting = get_root(fallback)["detectors"];
         std::vector<Config::DetectorPlacement> detectors;
-        size_t len = static_cast<size_t>(detectors_setting.getLength());
-        for (size_t i = 0; i < len; i++) {
+        auto len = detectors_setting.getLength();
+        for (int i = 0; i < len; i++) {
             const libconfig::Setting& detector = detectors_setting[i];
             Config::DetectorPlacement settings;
             if (!(detector.lookupValue("x", settings.x) && detector.lookupValue("y", settings.y) && detector.lookupValue("z", settings.z) && detector.lookupValue("name", settings.name))) {
@@ -40,7 +75,7 @@ auto Configuration::get_detectors(const bool& fallback) const -> std::variant<st
             settings.z *= m;
             detectors.push_back(settings);
         }
-        return detectors;
+        return std::move(detectors);
     }
     return static_cast<size_t>(number);
 }
@@ -54,8 +89,8 @@ auto Configuration::get_atmosphere_layers(const bool& fallback) const -> std::ve
     }
     const libconfig::Setting& layers_setting = get_root(fallback)["layers"];
     std::vector<Config::AtmosphereLayer> layers;
-    size_t len = layers_setting.getLength();
-    for (size_t i = 0; i < len; i++) {
+    auto len = layers_setting.getLength();
+    for (int i = 0; i < len; i++) {
         const libconfig::Setting& layer = layers_setting[i];
         Config::AtmosphereLayer settings {};
         if (!(layer.lookupValue("id", settings.id) && layer.lookupValue("lower", settings.lower) && layer.lookupValue("upper", settings.upper) && layer.lookupValue("density", settings.density) && layer.lookupValue("pressure", settings.pressure) && layer.lookupValue("temperature", settings.temperature))) {
@@ -80,8 +115,8 @@ auto Configuration::get_particles(const bool& fallback) const -> std::vector<Con
     }
     const libconfig::Setting& particles_setting = get_root(fallback)["particles"];
     std::vector<Config::SecondaryParticle> particles;
-    size_t len = particles_setting.getLength();
-    for (size_t i = 0; i < len; i++) {
+    auto len = particles_setting.getLength();
+    for (int i = 0; i < len; i++) {
         Config::SecondaryParticle settings {};
         settings.pdg = particles_setting[i];
         particles.push_back(settings);
@@ -99,8 +134,8 @@ auto Configuration::get_primaries(const bool& fallback) const -> std::vector<Con
 
     const libconfig::Setting& primaries_setting = get_root(fallback)["primary"];
     std::vector<Config::PrimaryParticle> primaries;
-    size_t len = static_cast<size_t>(primaries_setting.getLength());
-    for (size_t i = 0; i < len; i++) {
+    auto len = primaries_setting.getLength();
+    for (int i = 0; i < len; i++) {
         const libconfig::Setting& primary_setting = primaries_setting[i];
         const libconfig::Setting& origin = primary_setting["origin"];
         const libconfig::Setting& momentum = primary_setting["momentum"];

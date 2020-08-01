@@ -168,8 +168,8 @@ auto HadronElasticConstructor::GetElasticProcess(const G4ParticleDefinition* par
 {
     G4HadronicProcess* hp { nullptr };
     G4ProcessVector* pv = part->GetProcessManager()->GetPostStepProcessVector();
-    size_t n = pv->size();
-    for (size_t i = 0; i < n; ++i) {
+    int n = static_cast<int>(pv->size());
+    for (int i = 0; i < n; ++i) {
         if ((*pv)[i]->GetProcessSubType() == fHadronElastic) {
             hp = static_cast<G4HadronicProcess*>((*pv)[i]);
             break;

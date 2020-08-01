@@ -5,17 +5,22 @@
 #include <globals.hh>
 
 #include "global.h"
-#ifdef SHOWER_BENCHMARK
-#include "benchmark.h"
-#endif
 
 namespace Shower {
+
+class Recorder;
+class Configuration;
+class CancelCriterion;
+#ifdef SHOWER_BENCHMARK
+class Benchmark;
+#endif
+
 class ActionInitialization : public G4VUserActionInitialization {
 public:
 #ifdef SHOWER_BENCHMARK
-    explicit ActionInitialization(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration, const std::shared_ptr<Benchmark>& benchmark);
+    explicit ActionInitialization(std::shared_ptr<Recorder>  recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration>  configuration, std::shared_ptr<Benchmark>  benchmark);
 #else
-    explicit ActionInitialization(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration);
+    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration);
 #endif
 
     void BuildForMaster() const override;
@@ -24,6 +29,7 @@ public:
 private:
     std::shared_ptr<Recorder> m_recorder;
     std::shared_ptr<Configuration> m_configuration;
+    std::shared_ptr<CancelCriterion> m_cancel_criterion;
 #ifdef SHOWER_BENCHMARK
     std::shared_ptr<Benchmark> m_benchmark;
 #endif

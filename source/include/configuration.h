@@ -79,52 +79,31 @@ namespace Config {
 }
 
 class NoNameDefined : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: No name defined.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class ArgumentError : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "commandline argument error.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class FaultyDetectorDefinition : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: Faulty detector definition.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class FaultyAtmosphereLayerDefinition : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: Faulty atmosphere layer definition.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class FaultyPrimaryDefinition : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: Faulty primary definition.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class FaultySecondaryDefinition : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: Faulty secondary definition.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class FaultyMagneticFieldDefinition : public std::exception {
-    [[nodiscard]] auto what() const noexcept -> const char* override
-    {
-        return "Config error: Faulty magnetic field definition.";
-    }
+    [[nodiscard]] auto what() const noexcept -> const char* override;
 };
 
 class Configuration {
