@@ -10,47 +10,56 @@ Dependencies are:
 
 To build, run `cmake ../source/`, then `make` from the build directory.
 
-The `generate` script sets the environment to use clang and executes cmake.
+If you want to use a graphical user interface, run cmake with `-DSHOWER_BUILD_UI=ON`. Default is OFF.
 
-If you don't want a graphical user interface, run cmake with `-DSHOWER_BUILD_UI=OFF`. Default is ON.
+If you want to perform benchmarks, run cmake with `-DSHOWER_BENCHMARK=ON`. Default is OFF.
 
-If you want to measure runtime, run cmake with `-DSHOWER_BENCHMARK=ON`. Default is OFF.
-
-This causes the runtime of each event to be measured and the average time of each event to be saved to a csv file. The first column of that file is the primary energy in GeV, the second is the time for the event in ms.
+This saves the execution time per event and measures memory usage over the program runtime. Note that this option reduces performance.
 
 Default compiler options are
 ```
---std=c++17 -Wall -Werror -Wextra -Wpedantic -O3
+-Weverything -Wno-c++98-compat -Wno-padded -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wall -Wextra -Wpedantic -Wshadow -Werror -O3
 ```
 
 There are two executables generated, one is `cosmic_shower`, which is the simulation itself.
 
 The other is `atmosphere_layers` which calculates the optimal atmosphere layer thickness.
 
+All binaries will be placed in the `build/bin/` directory.
+
 ### cosmic_shower
 
 This is the simulation software, it reads the configuration file `shower.cfg` from the directory it is executed from.
 
-The simulation runs headless per default. It reads the configuration file and starts the run, while creating a data output directory as set in the configuration file by the `data_directory` and `name` preferences. In this directory, each detector creates its own file where it records the individual hits in a CSV format.
-The columns hold values as follows:
+The simulation runs headless per default. It reads the configuration file and starts the run, while creating a data output directory as set in the configuration file by the `data_directory` and `name` preferences. In this directory all output files are placed.
+These output files are: 
+```
+config_dump		contains the used configuration
+detailed_hits		contains all detailed hit information from the detectors
+hits			contains a list of hits on detectors with only position and timestamp to test multilateration easily
+ground_intensity	contains the amount of energy arrived at ground level separated into chunks
+secondaries		If the simulation was cut short this contains the list of all particles active in the simulation at time of shutdown
+```
+The Data in the `secondaries` file is formatted in the libconfig format so it can be directly used to restart the simulation with those particles
+
+The `detailed_hits` file is a csv file with the follwing columns
 ```
 Particle,position_x,position_y,position_z,momentum_x,momentum_y,momentum_z,momentum_magnitude,global_time,local_time,proper_time 
 ```
-if there are multiple runs in one simulation, each run will be separated by a `# Event <n>` comment in the individual detector files.
-
-Additionally to the hits, the actually used configuration is dumped to the file `config_dump.cfg` where all effective options of the run are recorded. If a number of deters has been defined in the configuration, the config dump contains all actually used positions.
+if there are multiple runs in one simulation, each run will be separated by a `# Event <n>` comment.
 
 Following commandline arguments are possible:
 ```
-	-h		print this help
-	-c <filename>	use the config file <filename>
-		default: shower.cfg
-	-ui		show the graphical user interface
-	
-	-o		Overwrite old data
+	-h	--help
+			Print this help
+	-g	--graphical
+			Show the user interface
+	-o	--overwrite
+			Overwrite existing simulation data
+	-c	--config (value)
+			Use the configuration file specified in the value
 ```
-
-The ´-ui´ option is only avialable if `-DSHOWER_BUILD_UI` has been set to `ON`.
+The ´-g´ option is only avialable if `-DSHOWER_BUILD_UI` has been set to `ON`.
 
 ### configuration
 
