@@ -65,7 +65,7 @@ void Recorder::store_hit(const Hit& hit)
 
 void Recorder::store_detailed_hit(const DetailedHit& hit)
 {
-    constexpr int pdg_mu{13};
+    constexpr int pdg_mu { 13 };
     m_detailed_hits.push(hit);
     if (std::abs(hit.pdg) == pdg_mu) {
         store_hit({ hit.position, hit.global_time });

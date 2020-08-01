@@ -16,7 +16,7 @@ namespace Shower {
 class EventAction : public G4UserEventAction {
 public:
 #ifdef SHOWER_BENCHMARK
-    EventAction(std::shared_ptr<Benchmark>  benchmark);
+    EventAction(std::shared_ptr<Benchmark> benchmark);
 #else
     EventAction() = default;
 #endif

@@ -18,7 +18,7 @@ class Benchmark;
 class ActionInitialization : public G4VUserActionInitialization {
 public:
 #ifdef SHOWER_BENCHMARK
-    explicit ActionInitialization(std::shared_ptr<Recorder>  recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration>  configuration, std::shared_ptr<Benchmark>  benchmark);
+    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration, std::shared_ptr<Benchmark> benchmark);
 #else
     explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration);
 #endif

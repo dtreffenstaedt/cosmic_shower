@@ -7,24 +7,21 @@
 
 namespace Shower {
 
-class CancelCriterion
-{
+class CancelCriterion {
 public:
     virtual ~CancelCriterion();
 
     [[nodiscard]] virtual auto met() const -> bool = 0;
 };
 
-class NeverCancel : public CancelCriterion
-{
+class NeverCancel : public CancelCriterion {
 public:
     ~NeverCancel() override;
 
     [[nodiscard]] auto met() const -> bool override;
 };
 
-class TimedCancel : public CancelCriterion
-{
+class TimedCancel : public CancelCriterion {
 public:
     explicit TimedCancel(const std::chrono::minutes time);
 
@@ -33,7 +30,7 @@ public:
     [[nodiscard]] auto met() const -> bool override;
 
 private:
-    std::atomic<bool> m_met{false};
+    std::atomic<bool> m_met { false };
 };
 }
 #endif // CANCELCRITERION_H

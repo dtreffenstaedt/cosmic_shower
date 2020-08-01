@@ -9,8 +9,8 @@ namespace Shower {
 size_t EventAction::c_n = 1;
 
 #ifdef SHOWER_BENCHMARK
-EventAction::EventAction(std::shared_ptr<Benchmark>  benchmark)
-    : m_benchmark {std::move( benchmark )}
+EventAction::EventAction(std::shared_ptr<Benchmark> benchmark)
+    : m_benchmark { std::move(benchmark) }
 {
 }
 #endif

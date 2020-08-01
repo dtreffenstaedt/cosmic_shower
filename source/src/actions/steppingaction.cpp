@@ -7,9 +7,9 @@
 #include <iostream>
 #include <utility>
 
+#include "cancelcriterion.h"
 #include "configuration.h"
 #include "recorder.h"
-#include "cancelcriterion.h"
 
 namespace Shower {
 
@@ -22,20 +22,16 @@ SteppingAction::SteppingAction(std::shared_ptr<Recorder> recorder, std::shared_p
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
-    if (m_cancel_criterion->met())
-    {
+    if (m_cancel_criterion->met()) {
         G4Track* track = step->GetTrack();
         const G4StepPoint* pre = step->GetPreStepPoint();
 
-        m_recorder->store_secondary({
-                                      pre->GetPosition(),
-                                        track->GetMomentumDirection(),
-                                        track->GetKineticEnergy(),
-                                        track->GetParticleDefinition()->GetPDGEncoding()
-                                    });
+        m_recorder->store_secondary({ pre->GetPosition(),
+            track->GetMomentumDirection(),
+            track->GetKineticEnergy(),
+            track->GetParticleDefinition()->GetPDGEncoding() });
 
         track->SetTrackStatus(G4TrackStatus::fStopAndKill);
-
     }
     if (!m_recorder->stored_primary()) {
         const G4Track* track = step->GetTrack();

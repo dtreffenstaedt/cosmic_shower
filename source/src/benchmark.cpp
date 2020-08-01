@@ -126,8 +126,8 @@ auto Benchmark::Measurement::get_swap_memory() -> double
     return static_cast<double>(result);
 }
 
-Benchmark::Benchmark(std::string  filename)
-    : m_file_name {std::move( filename )}
+Benchmark::Benchmark(std::string filename)
+    : m_file_name { std::move(filename) }
 {
 }
 

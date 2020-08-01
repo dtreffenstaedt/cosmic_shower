@@ -27,7 +27,7 @@ public:
 
     private:
         std::chrono::steady_clock::time_point m_start;
-        std::chrono::steady_clock::duration m_duration;
+        std::chrono::steady_clock::duration m_duration {};
 
         double m_virtual_memory { 0 };
         double m_physical_memory { 0 };
@@ -39,15 +39,15 @@ public:
 
         static auto parse_line(char* line) -> size_t;
 
-        auto get_virtual_memory() -> double;
-        auto get_physical_memory() -> double;
-        auto get_swap_memory() -> double;
+        static auto get_virtual_memory() -> double;
+        static auto get_physical_memory() -> double;
+        static auto get_swap_memory() -> double;
 
         void end();
         std::unique_ptr<std::thread> m_thread;
     };
 
-    Benchmark(std::string  filename);
+    Benchmark(std::string filename);
 
     std::unique_ptr<Measurement> start(const std::string& id);
 

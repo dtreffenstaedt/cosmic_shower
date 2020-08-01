@@ -6,7 +6,6 @@ namespace Shower {
 
 CancelCriterion::~CancelCriterion() = default;
 
-
 NeverCancel::~NeverCancel() = default;
 
 auto NeverCancel::met() const -> bool
@@ -14,10 +13,9 @@ auto NeverCancel::met() const -> bool
     return false;
 }
 
-
 TimedCancel::TimedCancel(const std::chrono::minutes time)
 {
-    std::thread([this, &time]{
+    std::thread([this, &time] {
         std::this_thread::yield();
         std::this_thread::sleep_for(time);
         m_met = true;
