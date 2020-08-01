@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
 project (cosmic_shower)
 
-set(SHOWER_BUILD_TIDY ON)
+set(SHOWER_BUILD_TIDY OFF)
 if(${SHOWER_BUILD_TIDY})
 set(CMAKE_CXX_CLANG_TIDY clang-tidy; -header-filter=^global; -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,modernize-*,hicpp-*; -fix)
 endif(${SHOWER_BUILD_TIDY})
@@ -15,7 +15,7 @@ set(PROJECT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 set(SHOWER_BUILD_UI OFF)
-set(SHOWER_BENCHMARK ON)
+set(SHOWER_BENCHMARK OFF)
 
 include(cmake/version.cmake)
 
