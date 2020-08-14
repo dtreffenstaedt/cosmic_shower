@@ -40,7 +40,7 @@ void ActionInitialization::Build() const
 #ifdef SHOWER_BENCHMARK
     SetUserAction(new EventAction { m_recorder, m_benchmark });
 #else
-    SetUserAction(new EventAction {m_recorder});
+    SetUserAction(new EventAction { m_recorder });
 #endif
 
     SetUserAction(new SteppingAction { m_recorder, m_configuration });

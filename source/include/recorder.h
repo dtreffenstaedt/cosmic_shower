@@ -86,7 +86,6 @@ public:
 
         [[nodiscard]] auto empty() const -> bool;
 
-
     private:
         void clear();
         std::atomic<bool> m_empty { true };

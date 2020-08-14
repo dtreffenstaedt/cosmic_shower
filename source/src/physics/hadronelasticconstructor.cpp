@@ -28,7 +28,6 @@
 
 #include "G4CrossSectionElastic.hh"
 
-
 namespace Shower {
 
 HadronElasticConstructor::HadronElasticConstructor(G4int ver, const G4String& nam)
@@ -57,7 +56,7 @@ void HadronElasticConstructor::ConstructProcess()
     constexpr G4double elim_anti_nuc = 100 * MeV;
     constexpr G4double delta = 0.1 * MeV;
 
-    auto* anuc = new G4AntiNuclElastic{};
+    auto* anuc = new G4AntiNuclElastic {};
     anuc->SetMinEnergy(elim_anti_nuc);
     anuc->SetMaxEnergy(Config::max_energy);
     auto* anuc_crosssection = anuc->GetComponentCrossSection();
@@ -66,19 +65,19 @@ void HadronElasticConstructor::ConstructProcess()
     anucxs->SetMinKinEnergy(elim_anti_nuc);
     anucxs->SetMaxKinEnergy(Config::max_energy);
 
-    auto* lhep0 = new G4HadronElastic{};
+    auto* lhep0 = new G4HadronElastic {};
     lhep0->SetMaxEnergy(elim_anti_nuc + delta);
 
-    auto* he = new G4ElasticHadrNucleusHE{};
+    auto* he = new G4ElasticHadrNucleusHE {};
     he->SetMaxEnergy(Config::max_energy);
 
-    auto* gg_hadron_nucl = new G4ComponentGGHadronNucleusXsc{};
+    auto* gg_hadron_nucl = new G4ComponentGGHadronNucleusXsc {};
     gg_hadron_nucl->SetMaxKinEnergy(Config::max_energy);
 
     G4VCrossSectionDataSet* theComponentGGHadronNucleusData = new G4CrossSectionElastic(gg_hadron_nucl, 1, 256, 0.0, Config::max_energy);
     theComponentGGHadronNucleusData->SetMaxKinEnergy(Config::max_energy);
 
-    auto* gg_nucl_nucl = new G4ComponentGGNuclNuclXsc{};
+    auto* gg_nucl_nucl = new G4ComponentGGNuclNuclXsc {};
     gg_nucl_nucl->SetMaxKinEnergy(Config::max_energy);
 
     G4VCrossSectionDataSet* theComponentGGNuclNuclData = new G4CrossSectionElastic(gg_nucl_nucl, 1, 256, 0.0, Config::max_energy);

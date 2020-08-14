@@ -79,8 +79,7 @@ void Recorder::store_detailed_hit(const DetailedHit& hit)
 void Recorder::store_secondary(const Secondary& intensity)
 {
     constexpr int pdg_geantino { 0 };
-    if (intensity.pdg == pdg_geantino)
-    {
+    if (intensity.pdg == pdg_geantino) {
         return;
     }
     m_secondaries.push(intensity);
@@ -101,7 +100,8 @@ auto Recorder::directory() const -> std::string
 
 void Recorder::save()
 {
-    std::cout<<"Saving data\n"<<std::flush;
+    std::cout << "Saving data\n"
+              << std::flush;
     if (!m_hits.empty()) {
         std::ofstream file(directory() + "/hits", std::ofstream::app);
         if (file.is_open()) {
@@ -158,9 +158,9 @@ void Recorder::save()
             auto& prim = m_secondaries.front();
             m_secondaries.pop();
             constexpr int pdg_geantino { 0 };
-            if (prim.pdg == pdg_geantino)
-            {
-                std::cout<<"ignoring geantino\n"<<std::flush;
+            if (prim.pdg == pdg_geantino) {
+                std::cout << "ignoring geantino\n"
+                          << std::flush;
                 continue;
             }
             libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
@@ -204,8 +204,7 @@ auto Recorder::bins_empty() const -> bool
 {
     for (size_t i { 0 }; i < m_size; i++) {
         for (size_t j { 0 }; j < m_size; j++) {
-            if (!m_bins[i][j].empty())
-            {
+            if (!m_bins[i][j].empty()) {
                 return false;
             }
         }

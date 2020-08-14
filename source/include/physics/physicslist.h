@@ -3,8 +3,8 @@
 
 #include "global.h"
 
-#include "recorder.h"
 #include "cancelcriterion.h"
+#include "recorder.h"
 
 #include <G4VModularPhysicsList.hh>
 

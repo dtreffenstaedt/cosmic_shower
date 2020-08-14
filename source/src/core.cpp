@@ -134,7 +134,7 @@ void Core::setup()
 
     m_run_manager->SetUserInitialization(new DetectorConstruction { m_recorder, m_configuration });
 
-    m_run_manager->SetUserInitialization(new PhysicsList {m_recorder, std::make_shared<TimedCancel>(std::chrono::minutes{1})});
+    m_run_manager->SetUserInitialization(new PhysicsList { m_recorder, std::make_shared<TimedCancel>(std::chrono::minutes { 1 }) });
 
 #ifdef SHOWER_BENCHMARK
     m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration, m_benchmark });
