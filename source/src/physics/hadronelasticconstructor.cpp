@@ -28,6 +28,7 @@
 
 #include "G4CrossSectionElastic.hh"
 
+
 namespace Shower {
 
 HadronElasticConstructor::HadronElasticConstructor(G4int ver, const G4String& nam)
@@ -56,35 +57,31 @@ void HadronElasticConstructor::ConstructProcess()
     constexpr G4double elim_anti_nuc = 100 * MeV;
     constexpr G4double delta = 0.1 * MeV;
 
-    auto* anuc = new G4AntiNuclElastic();
+    auto* anuc = new G4AntiNuclElastic{};
     anuc->SetMinEnergy(elim_anti_nuc);
     anuc->SetMaxEnergy(Config::max_energy);
-    auto* anucxs = new G4CrossSectionElastic(anuc->GetComponentCrossSection());
-    //    anucxs->SetMinKinEnergy(elim_anti_nuc);
+    auto* anuc_crosssection = anuc->GetComponentCrossSection();
+    anuc_crosssection->SetMaxKinEnergy(Config::max_energy);
+    auto* anucxs = new G4CrossSectionElastic(anuc_crosssection, 1, 256, elim_anti_nuc, Config::max_energy);
+    anucxs->SetMinKinEnergy(elim_anti_nuc);
     anucxs->SetMaxKinEnergy(Config::max_energy);
 
-    auto* lhep0 = new G4HadronElastic();
+    auto* lhep0 = new G4HadronElastic{};
     lhep0->SetMaxEnergy(elim_anti_nuc + delta);
-    //    lhep0->SetMaxEnergy(Config::max_energy);
 
-    auto* he = new G4ElasticHadrNucleusHE();
-    //    he->SetMinEnergy(100 * TeV);
+    auto* he = new G4ElasticHadrNucleusHE{};
     he->SetMaxEnergy(Config::max_energy);
 
-    auto* gg_hadron_nucl = new G4ComponentGGHadronNucleusXsc {};
-    //    gg_hadron_nucl->SetMinKinEnergy(0.0);
+    auto* gg_hadron_nucl = new G4ComponentGGHadronNucleusXsc{};
     gg_hadron_nucl->SetMaxKinEnergy(Config::max_energy);
 
-    G4VCrossSectionDataSet* theComponentGGHadronNucleusData = new G4CrossSectionElastic(gg_hadron_nucl);
-    //    theComponentGGHadronNucleusData->SetMinKinEnergy(0.0);
+    G4VCrossSectionDataSet* theComponentGGHadronNucleusData = new G4CrossSectionElastic(gg_hadron_nucl, 1, 256, 0.0, Config::max_energy);
     theComponentGGHadronNucleusData->SetMaxKinEnergy(Config::max_energy);
 
-    auto* gg_nucl_nucl = new G4ComponentGGNuclNuclXsc {};
-    //    gg_nucl_nucl->SetMinKinEnergy(100 * TeV);
+    auto* gg_nucl_nucl = new G4ComponentGGNuclNuclXsc{};
     gg_nucl_nucl->SetMaxKinEnergy(Config::max_energy);
 
-    G4VCrossSectionDataSet* theComponentGGNuclNuclData = new G4CrossSectionElastic(gg_nucl_nucl);
-    //    theComponentGGNuclNuclData->SetMinKinEnergy(100 * TeV);
+    G4VCrossSectionDataSet* theComponentGGNuclNuclData = new G4CrossSectionElastic(gg_nucl_nucl, 1, 256, 0.0, Config::max_energy);
     theComponentGGNuclNuclData->SetMaxKinEnergy(Config::max_energy);
 
     G4HadronElasticProcess* hel { nullptr };
@@ -112,10 +109,8 @@ void HadronElasticConstructor::ConstructProcess()
 
             hel = new G4HadronElasticProcess {};
             auto* nuc_elastic = new G4BGGNucleonElasticXS { particle };
-            //            nuc_elastic->SetMinKinEnergy(100 * TeV);
             nuc_elastic->SetMaxKinEnergy(Config::max_energy);
             auto* chips = new G4ChipsElasticModel();
-            //            chips->SetMinEnergy(100 * TeV);
             chips->SetMaxEnergy(Config::max_energy);
             hel->AddDataSet(nuc_elastic);
             hel->RegisterMe(chips);
@@ -125,10 +120,8 @@ void HadronElasticConstructor::ConstructProcess()
 
             hel = new G4HadronElasticProcess {};
             auto* nuc_elastic = new G4NeutronElasticXS {};
-            //            nuc_elastic->SetMinKinEnergy(100 * TeV);
             nuc_elastic->SetMaxKinEnergy(Config::max_energy);
             auto* chips = new G4ChipsElasticModel();
-            //            chips->SetMinEnergy(100 * TeV);
             chips->SetMaxEnergy(Config::max_energy);
             hel->AddDataSet(nuc_elastic);
             hel->RegisterMe(chips);
@@ -140,7 +133,6 @@ void HadronElasticConstructor::ConstructProcess()
 
             hel = new G4HadronElasticProcess {};
             auto* nuc_elastic = new G4BGGPionElasticXS { particle };
-            //            nuc_elastic->SetMinKinEnergy(100 * TeV);
             nuc_elastic->SetMaxKinEnergy(Config::max_energy);
             hel->AddDataSet(nuc_elastic);
             hel->RegisterMe(he);
@@ -186,6 +178,7 @@ auto HadronElasticConstructor::GetElasticModel(const G4ParticleDefinition* part)
         std::vector<G4HadronicInteraction*>& hi = hel->GetHadronicInteractionList();
         if (!hi.empty()) {
             mod = static_cast<G4HadronElastic*>(hi[0]);
+            mod->SetMaxEnergy(Config::max_energy);
         }
     }
     return mod;
@@ -205,6 +198,7 @@ void HadronElasticConstructor::AddXSection(const G4ParticleDefinition* part,
     G4VCrossSectionDataSet* cross)
 {
     G4HadronicProcess* hel = GetElasticProcess(part);
+    cross->SetMaxKinEnergy(Config::max_energy);
     if (hel != nullptr) {
         hel->AddDataSet(cross);
     }

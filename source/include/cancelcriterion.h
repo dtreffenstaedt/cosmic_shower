@@ -11,26 +11,25 @@ class CancelCriterion {
 public:
     virtual ~CancelCriterion();
 
-    [[nodiscard]] virtual auto met() const -> bool = 0;
+    [[nodiscard]] auto met() const -> bool;
+
+protected:
+    void set_met();
+
+private:
+    std::atomic<bool> m_met { false };
 };
 
 class NeverCancel : public CancelCriterion {
 public:
     ~NeverCancel() override;
-
-    [[nodiscard]] auto met() const -> bool override;
 };
 
 class TimedCancel : public CancelCriterion {
 public:
-    explicit TimedCancel(const std::chrono::minutes time);
+    explicit TimedCancel(const std::chrono::seconds time);
 
     ~TimedCancel() override;
-
-    [[nodiscard]] auto met() const -> bool override;
-
-private:
-    std::atomic<bool> m_met { false };
 };
 }
 #endif // CANCELCRITERION_H

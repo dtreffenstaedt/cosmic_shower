@@ -15,18 +15,16 @@
 
 namespace Shower {
 #ifdef SHOWER_BENCHMARK
-ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration, std::shared_ptr<Benchmark> benchmark)
+ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration, std::shared_ptr<Benchmark> benchmark)
     : m_recorder { std::move(recorder) }
     , m_configuration { std::move(configuration) }
-    , m_cancel_criterion { std::move(cancel_criterion) }
     , m_benchmark { std::move(benchmark) }
 {
 }
 #else
-ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, std::shared_ptr<Configuration> configuration)
+ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration)
     : m_recorder { std::move(recorder) }
     , m_configuration { std::move(configuration) }
-    , m_cancel_criterion { std::move(cancel_criterion) }
 {
 }
 #endif
@@ -40,11 +38,11 @@ void ActionInitialization::Build() const
     SetUserAction(new PrimaryGeneratorAction { m_configuration });
 
 #ifdef SHOWER_BENCHMARK
-    SetUserAction(new EventAction { m_benchmark });
+    SetUserAction(new EventAction { m_recorder, m_benchmark });
 #else
-    SetUserAction(new EventAction {});
+    SetUserAction(new EventAction {m_recorder});
 #endif
 
-    SetUserAction(new SteppingAction { m_recorder, m_cancel_criterion, m_configuration });
+    SetUserAction(new SteppingAction { m_recorder, m_configuration });
 }
 }

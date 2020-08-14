@@ -50,6 +50,7 @@ Core::Core(int argc, char* argv[])
 
 Core::~Core()
 {
+    m_recorder->save();
     delete m_run_manager;
 
 #ifdef SHOWER_BUILD_UI
@@ -133,12 +134,12 @@ void Core::setup()
 
     m_run_manager->SetUserInitialization(new DetectorConstruction { m_recorder, m_configuration });
 
-    m_run_manager->SetUserInitialization(new PhysicsList {});
+    m_run_manager->SetUserInitialization(new PhysicsList {m_recorder, std::make_shared<TimedCancel>(std::chrono::minutes{1})});
 
 #ifdef SHOWER_BENCHMARK
-    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, std::make_shared<NeverCancel>(), m_configuration, m_benchmark });
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration, m_benchmark });
 #else
-    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, std::make_shared<NeverCancel>(), m_configuration });
+    m_run_manager->SetUserInitialization(new ActionInitialization { m_recorder, m_configuration });
 #endif
 
     m_run_manager->Initialize();

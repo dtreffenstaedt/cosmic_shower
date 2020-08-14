@@ -55,10 +55,12 @@ void HadronInelasticConstructor::CreateModels()
     m_models.string = new G4FTFModel;
     m_models.string->SetMinEnergy(0.0);
     m_models.string->SetMaxEnergy(Config::max_energy);
+    m_models.QGSM_fragmentation = new G4QGSMFragmentation;
 
-    m_models.string_decay = new G4ExcitedStringDecay(m_models.QGSM_fragmentation = new G4QGSMFragmentation);
+    m_models.string_decay = new G4ExcitedStringDecay(m_models.QGSM_fragmentation);
     m_models.string->SetFragmentationModel(m_models.string_decay);
-    m_models.pre_equilib = new G4PreCompoundModel(m_models.handler = new G4ExcitationHandler);
+    m_models.handler = new G4ExcitationHandler;
+    m_models.pre_equilib = new G4PreCompoundModel(m_models.handler);
     m_models.cascade = new G4GeneratorPrecompoundInterface(m_models.pre_equilib);
     m_models.cascade->SetMinEnergy(0.0);
     m_models.cascade->SetMaxEnergy(Config::max_energy);

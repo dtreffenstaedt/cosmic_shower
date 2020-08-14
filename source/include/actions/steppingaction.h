@@ -18,14 +18,13 @@ class CancelCriterion;
 
 class SteppingAction : public G4UserSteppingAction {
 public:
-    SteppingAction(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, const std::shared_ptr<Configuration>& configuration);
+    SteppingAction(std::shared_ptr<Recorder> recorder, const std::shared_ptr<Configuration>& configuration);
 
     void UserSteppingAction(const G4Step* step) override;
 
 private:
     G4double m_limit { 0 * MeV };
     std::shared_ptr<Recorder> m_recorder;
-    std::shared_ptr<CancelCriterion> m_cancel_criterion;
 };
 }
 

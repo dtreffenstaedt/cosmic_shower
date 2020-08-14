@@ -63,37 +63,47 @@ public:
 
     void store_secondary(const Secondary& intensity);
 
+    void next_event();
+
+    void save();
+
     template <size_t N>
     class Bin {
     public:
         void initialise(const size_t& x, const size_t& y, const double& world_size);
 
-        auto in_bin(const double& x, const double& y) const -> bool;
+        [[nodiscard]] auto in_bin(const double& x, const double& y) const -> bool;
 
         void store_momentum(const double& momentum);
         void store_energy(const double& energy);
         void store_charged();
         void store_uncharged();
 
-        auto get_x_center() const -> double;
-        auto get_y_center() const -> double;
+        [[nodiscard]] auto get_x_center() const -> double;
+        [[nodiscard]] auto get_y_center() const -> double;
 
         void store(std::ofstream& stream);
 
+        [[nodiscard]] auto empty() const -> bool;
+
+
     private:
-        double m_momentum_density { 0 };
-        double m_energy_density { 0 };
-        size_t m_n_charged { 0 };
-        size_t m_n_uncharged { 0 };
-        double m_x_min { 0 };
-        double m_x_max { 0 };
-        double m_y_min { 0 };
-        double m_y_max { 0 };
-        double m_inverse_bin_area { 0 };
+        void clear();
+        std::atomic<bool> m_empty { true };
+        std::atomic<double> m_momentum_density { 0 };
+        std::atomic<double> m_energy_density { 0 };
+        std::atomic<size_t> m_n_charged { 0 };
+        std::atomic<size_t> m_n_uncharged { 0 };
+        std::atomic<double> m_x_min { 0 };
+        std::atomic<double> m_x_max { 0 };
+        std::atomic<double> m_y_min { 0 };
+        std::atomic<double> m_y_max { 0 };
+        std::atomic<double> m_inverse_bin_area { 0 };
     };
 
 private:
-    void save();
+    [[nodiscard]] auto directory() const -> std::string;
+    [[nodiscard]] auto bins_empty() const -> bool;
 
     std::string m_directory {};
 
@@ -107,7 +117,8 @@ private:
     static constexpr size_t m_size { 10 };
 
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};
+
+    std::atomic<size_t> m_event_number { 0 };
 };
 }
-
 #endif // RECORDER_H
