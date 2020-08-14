@@ -8,7 +8,7 @@
 #include <array>
 #include <atomic>
 #include <exception>
-#include <queue>
+#include <vector>
 
 #include <G4ThreeVector.hh>
 
@@ -37,9 +37,17 @@ struct GroundIntensity {
 };
 
 struct Secondary {
-    const G4ThreeVector position {};
-    const G4ThreeVector momentum {};
-    const G4double kinetic_energy {};
+    struct {
+        const double x{};
+        const double y{};
+        const double z{};
+    } position;
+    struct {
+        const double x{};
+        const double y{};
+        const double z{};
+    } energy;
+    const double kinetic_energy {};
     const int pdg {};
 };
 
@@ -110,9 +118,9 @@ private:
 
     Hit m_primary {};
 
-    std::queue<Hit> m_hits {};
-    std::queue<DetailedHit> m_detailed_hits {};
-    std::queue<Secondary> m_secondaries {};
+    std::vector<Hit> m_hits {};
+    std::vector<DetailedHit> m_detailed_hits {};
+    std::vector<Secondary> m_secondaries {};
     static constexpr size_t m_size { 10 };
 
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};

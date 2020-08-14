@@ -39,6 +39,8 @@ Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shar
     }
 
     config->config_dump(m_directory + "/config_dunp");
+    std::cout<<"sizeof: "<<sizeof(Secondary)<<'\n'<<std::flush;
+    m_secondaries.reserve(20000);
 }
 
 Recorder::~Recorder()
@@ -60,13 +62,13 @@ void Recorder::store_primary(const Hit& primary)
 
 void Recorder::store_hit(const Hit& hit)
 {
-    m_hits.push(hit);
+    m_hits.push_back(hit);
 }
 
 void Recorder::store_detailed_hit(const DetailedHit& hit)
 {
     constexpr int pdg_mu { 13 };
-    m_detailed_hits.push(hit);
+    m_detailed_hits.push_back(hit);
     if (std::abs(hit.pdg) == pdg_mu) {
         store_hit({ hit.position, hit.global_time });
     }
@@ -74,7 +76,7 @@ void Recorder::store_detailed_hit(const DetailedHit& hit)
 
 void Recorder::store_secondary(const Secondary& intensity)
 {
-    m_secondaries.push(intensity);
+    m_secondaries.push_back(intensity);
 }
 
 void Recorder::next_event()
@@ -100,11 +102,10 @@ void Recorder::save()
             file << "x[m],y[m],z[m],time[ns]\n";
 
             file << m_primary.position.x() / meter << ',' << m_primary.position.y() / meter << ',' << m_primary.position.z() / meter << ',' << m_primary.time << "# primary\n";
-            while (!m_hits.empty()) {
-                Hit h = m_hits.front();
-                m_hits.pop();
+            for (const auto& h: m_hits) {
                 file << h.position.x() << ',' << h.position.y() << ',' << h.position.z() << ',' << h.time << "\n";
             }
+            m_hits.clear();
 
             file.close();
         }
@@ -114,9 +115,7 @@ void Recorder::save()
         if (file.is_open()) {
             file << "Particle,Detector,position_x[m],position_y[m],position_z[m],momentum_x,momentum_y,momentum_z,momentum_magnitude[MeV],global_time[ns],proper_time[ns]\n";
 
-            while (!m_detailed_hits.empty()) {
-                DetailedHit h = m_detailed_hits.front();
-                m_detailed_hits.pop();
+            for (const auto& h: m_detailed_hits) {
                 file
                     << h.pdg << ','
                     << h.position.x() / meter << ',' << h.position.y() / meter << ',' << h.position.z() / meter << ','
@@ -124,6 +123,7 @@ void Recorder::save()
                     << h.momentum / MeV << ','
                     << h.global_time / ns << ',' << h.proper_time / ns << '\n';
             }
+            m_detailed_hits.clear();
 
             file.close();
         }
@@ -146,9 +146,7 @@ void Recorder::save()
         libconfig::Config save;
         libconfig::Setting& root = save.getRoot();
         libconfig::Setting& primary_setting = root.add("secondaties", libconfig::Setting::TypeList);
-        while (!m_secondaries.empty()) {
-            auto& prim = m_secondaries.front();
-            m_secondaries.pop();
+        for (const auto& prim: m_secondaries) {
             libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
             libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
             libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
@@ -164,6 +162,7 @@ void Recorder::save()
 
             primary.add("particle", libconfig::Setting::TypeInt) = prim.pdg;
         }
+        m_secondaries.clear();
         save.writeFile((directory() + "/secondaries").c_str());
     }
 }

@@ -21,11 +21,13 @@ auto ParticleKiller::IsApplicable(const G4ParticleDefinition & /*particle*/) -> 
 auto ParticleKiller::PostStepDoIt(const G4Track& track, const G4Step& step) -> G4VParticleChange*
 {
     const G4StepPoint* pre = step.GetPreStepPoint();
-
-    m_recorder->store_secondary({ pre->GetPosition(),
-        track.GetMomentumDirection(),
+    const G4ThreeVector pos = pre->GetPosition();
+    const G4ThreeVector mom = track.GetMomentumDirection();
+    m_recorder->store_secondary({ {pos.x(), pos.y(), pos.z()},
+        {mom.x(), mom.y(), mom.z()},
         track.GetKineticEnergy(),
-        track.GetParticleDefinition()->GetPDGEncoding() });
+        track.GetParticleDefinition()->GetPDGEncoding()
+        });
 
     pParticleChange->Initialize(track);
     pParticleChange->ProposeTrackStatus(fStopAndKill);
