@@ -66,10 +66,6 @@ void Recorder::store_hit(const Hit& hit)
 void Recorder::store_detailed_hit(const DetailedHit& hit)
 {
     constexpr int pdg_mu { 13 };
-    constexpr int pdg_geantino { 0 };
-    if (hit.pdg == pdg_geantino) {
-        return;
-    }
     m_detailed_hits.push(hit);
     if (std::abs(hit.pdg) == pdg_mu) {
         store_hit({ hit.position, hit.global_time });
@@ -78,10 +74,6 @@ void Recorder::store_detailed_hit(const DetailedHit& hit)
 
 void Recorder::store_secondary(const Secondary& intensity)
 {
-    constexpr int pdg_geantino { 0 };
-    if (intensity.pdg == pdg_geantino) {
-        return;
-    }
     m_secondaries.push(intensity);
 }
 
@@ -157,23 +149,17 @@ void Recorder::save()
         while (!m_secondaries.empty()) {
             auto& prim = m_secondaries.front();
             m_secondaries.pop();
-            constexpr int pdg_geantino { 0 };
-            if (prim.pdg == pdg_geantino) {
-                std::cout << "ignoring geantino\n"
-                          << std::flush;
-                continue;
-            }
             libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
             libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
             libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
-            origin.add("x", libconfig::Setting::TypeFloat) = prim.position.x() / meter;
-            origin.add("y", libconfig::Setting::TypeFloat) = prim.position.y() / meter;
-            origin.add("z", libconfig::Setting::TypeFloat) = prim.position.z() / meter;
+            origin.add("x", libconfig::Setting::TypeFloat) = prim.position.x / meter;
+            origin.add("y", libconfig::Setting::TypeFloat) = prim.position.y / meter;
+            origin.add("z", libconfig::Setting::TypeFloat) = prim.position.z / meter;
             origin.add("absolute", libconfig::Setting::TypeBoolean) = true;
 
-            momentum.add("x", libconfig::Setting::TypeFloat) = prim.momentum.x();
-            momentum.add("y", libconfig::Setting::TypeFloat) = prim.momentum.y();
-            momentum.add("z", libconfig::Setting::TypeFloat) = prim.momentum.z();
+            momentum.add("x", libconfig::Setting::TypeFloat) = prim.energy.x;
+            momentum.add("y", libconfig::Setting::TypeFloat) = prim.energy.y;
+            momentum.add("z", libconfig::Setting::TypeFloat) = prim.energy.z;
             momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.kinetic_energy / MeV;
 
             primary.add("particle", libconfig::Setting::TypeInt) = prim.pdg;
