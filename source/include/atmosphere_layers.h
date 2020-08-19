@@ -8,14 +8,13 @@ namespace Consts {
 static constexpr long double R = 8.31446261815324L;
 static constexpr long double M = 28.96L / 1000.0L;
 static constexpr long double g = 9.81L;
-namespace Initial
-{
-static constexpr long double rho_0 = 1.225L;
-static constexpr long double p_0 = 101325L;
-static constexpr long double T_0 = 273.15L + 15.0L;
-static constexpr long double kappa = 1.235L;
-static constexpr long double height = 40000.0L;
-static constexpr size_t layers = 10;
+namespace Initial {
+    static constexpr long double rho_0 = 1.225L;
+    static constexpr long double p_0 = 101325L;
+    static constexpr long double T_0 = 273.15L + 15.0L;
+    static constexpr long double kappa = 1.235L;
+    static constexpr long double height = 40000.0L;
+    static constexpr size_t layers = 10;
 }
 static constexpr size_t max_tries = 10;
 

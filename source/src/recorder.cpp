@@ -119,7 +119,7 @@ void Recorder::save()
             file << "x[m],y[m],z[m],time[ns]\n";
 
             file << m_primary.position.x() / meter << ',' << m_primary.position.y() / meter << ',' << m_primary.position.z() / meter << ',' << m_primary.time << "# primary\n";
-            for (const auto& h: m_hits) {
+            for (const auto& h : m_hits) {
                 file << h.position.x() << ',' << h.position.y() << ',' << h.position.z() << ',' << h.time << "\n";
             }
             m_hits.clear();
@@ -132,7 +132,7 @@ void Recorder::save()
         if (file.is_open()) {
             file << "Particle,Detector,position_x[m],position_y[m],position_z[m],momentum_x,momentum_y,momentum_z,momentum_magnitude[MeV],global_time[ns],proper_time[ns]\n";
 
-            for (const auto& h: m_detailed_hits) {
+            for (const auto& h : m_detailed_hits) {
                 file
                     << h.pdg << ','
                     << h.position.x() / meter << ',' << h.position.y() / meter << ',' << h.position.z() / meter << ','
