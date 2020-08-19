@@ -1,9 +1,5 @@
-set(SHARED_SOURCE_FILES
-    "${PROJECT_SOURCE_DIR}/configuration.cpp"
-)
-set(SHARED_HEADER_FILES
-    "${PROJECT_INCLUDE_DIR}/configuration.h"
-)
+set(SHARED_SOURCE_FILES "${PROJECT_SOURCE_DIR}/configuration.cpp")
+set(SHARED_HEADER_FILES "${PROJECT_INCLUDE_DIR}/configuration.h")
 
 set(SIM_SOURCE_FILES
     "${SHARED_SOURCE_FILES}"
@@ -24,8 +20,7 @@ set(SIM_SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/physics/hadroninelasticconstructor.cpp"
     "${PROJECT_SOURCE_DIR}/physics/hadronelasticconstructor.cpp"
     "${PROJECT_SOURCE_DIR}/detector/sensitivedetector.cpp"
-    "${PROJECT_SOURCE_DIR}/detector/detailedsensitivedetector.cpp"
-)
+    "${PROJECT_SOURCE_DIR}/detector/detailedsensitivedetector.cpp")
 set(SIM_HEADER_FILES
     "${SHARED_HEADER_FILES}"
     "${PROJECT_INCLUDE_DIR}/detector/detectorconstruction.h"
@@ -44,42 +39,24 @@ set(SIM_HEADER_FILES
     "${PROJECT_INCLUDE_DIR}/physics/hadroninelasticconstructor.h"
     "${PROJECT_INCLUDE_DIR}/physics/hadronelasticconstructor.h"
     "${PROJECT_INCLUDE_DIR}/detector/sensitivedetector.h"
-    "${PROJECT_INCLUDE_DIR}/detector/detailedsensitivedetector.h"
-)
+    "${PROJECT_INCLUDE_DIR}/detector/detailedsensitivedetector.h")
 
 if(${SHOWER_BENCHMARK})
-set(SIM_SOURCE_FILES
-    "${SIM_SOURCE_FILES}"
-    "${PROJECT_SOURCE_DIR}/benchmark.cpp"
-)
-set(SIM_HEADER_FILES
-    "${SIM_HEADER_FILES}"
-    "${PROJECT_INCLUDE_DIR}/benchmark.h"
-)
+  set(SIM_SOURCE_FILES "${SIM_SOURCE_FILES}"
+                       "${PROJECT_SOURCE_DIR}/benchmark.cpp")
+  set(SIM_HEADER_FILES "${SIM_HEADER_FILES}"
+                       "${PROJECT_INCLUDE_DIR}/benchmark.h")
 endif(${SHOWER_BENCHMARK})
 
+set(NODE_SOURCE_FILES "${PROJECT_SOURCE_DIR}/node.cpp")
+set(NODE_HEADER_FILES "${PROJECT_INCLUDE_DIR}/node.h")
 
-set(NODE_SOURCE_FILES
-    "${PROJECT_SOURCE_DIR}/node.cpp"
-)
-set(NODE_HEADER_FILES
-    "${PROJECT_INCLUDE_DIR}/node.h"
-)
+set(VIS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/vis.cpp")
+set(VIS_HEADER_FILES "${PROJECT_INCLUDE_DIR}/vis.h")
 
-set(VIS_SOURCE_FILES
-    "${PROJECT_SOURCE_DIR}/vis.cpp"
-)
-set(VIS_HEADER_FILES
-    "${PROJECT_INCLUDE_DIR}/vis.h"
-)
+set(ATMOS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/atmosphere_layers.cpp")
 
-set(ATMOS_SOURCE_FILES
-    "${PROJECT_SOURCE_DIR}/atmosphere_layers.cpp"
-)
-
-set(ATMOS_HEADER_FILES
-    "${PROJECT_INCLUDE_DIR}/atmosphere_layers.h"
-)
+set(ATMOS_HEADER_FILES "${PROJECT_INCLUDE_DIR}/atmosphere_layers.h")
 
 set(ALL_SOURCES_AND_HEADERS
     "${SIM_SOURCE_FILES}"
@@ -89,5 +66,4 @@ set(ALL_SOURCES_AND_HEADERS
     "${NODE_SOURCE_FILES}"
     "${NODE_HEADER_FILES}"
     "${VIS_SOURCE_FILES}"
-    "${VIS_HEADER_FILES}"
-)
+    "${VIS_HEADER_FILES}")
