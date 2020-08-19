@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include <libconfig.h++>
+#include <utility>
 
 namespace Node {
 
@@ -23,10 +24,10 @@ auto ParticleScorer::score(const PrimaryParticle& particle) const -> double
     return score;
 }
 
-Cluster::Cluster(std::shared_ptr<ParticleScorer> scorer, const std::string& directory, const std::string& config)
-    : m_scorer { scorer }
-    , m_directory { directory }
-    , m_config_file { config }
+Cluster::Cluster(std::shared_ptr<ParticleScorer> scorer, std::string directory, std::string config)
+    : m_scorer { std::move(scorer) }
+    , m_directory { std::move(directory) }
+    , m_config_file { std::move(config) }
 {
 }
 
@@ -72,7 +73,7 @@ auto Cluster::save() const -> void
     root.lookup("name") = name;
     root.remove("primary");
     libconfig::Setting& primary_setting = root.add("primary", libconfig::Setting::TypeList);
-    for (auto& prim : m_primaries) {
+    for (const auto& prim : m_primaries) {
         libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
         libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
         libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
@@ -121,7 +122,7 @@ auto Cluster::save() const -> void
     }).detach();*/
 }
 
-auto Cluster::generate_id() const -> std::string
+auto Cluster::generate_id() -> std::string
 {
     std::uint64_t point = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
     std::random_device rd;
@@ -192,9 +193,9 @@ auto FixedClusterRule::result(const PrimaryParticle& /*particle*/) const -> Resu
     return Result::SameCluster;
 }
 
-ParticleDistributor::ParticleDistributor(const std::string& directory, const std::string& config, const std::string& secondaries)
+ParticleDistributor::ParticleDistributor(const std::string& directory, std::string config, const std::string& secondaries)
     : m_directory { directory }
-    , m_config_file { config }
+    , m_config_file { std::move(config) }
     , m_secondaries { secondaries }
     , m_cluster_rule { std::make_shared<FixedClusterRule>(m_scorer, secondaries) }
     , m_stream { m_secondaries, std::ifstream::in }
@@ -236,7 +237,7 @@ auto ParticleDistributor::parse() -> void
         return;
     }
     for (std::size_t i { 0 }; i < 100; i++) {
-        while (std::isspace(m_stream.peek())) {
+        while (std::isspace(m_stream.peek()) != 0) {
             (void)m_stream.get();
         } // skip any whitespace
         if (!(m_stream.good()) || (m_stream.peek() == EOF)) {

@@ -40,7 +40,7 @@ public:
 
 class Cluster {
 public:
-    explicit Cluster(std::shared_ptr<ParticleScorer> scorer, const std::string& directory, const std::string& config);
+    explicit Cluster(std::shared_ptr<ParticleScorer> scorer, std::string directory, std::string config);
 
     [[nodiscard]] auto score() const -> double;
 
@@ -51,7 +51,7 @@ public:
     auto save() const -> void;
 
 private:
-    [[nodiscard]] auto generate_id() const -> std::string;
+    [[nodiscard]] static auto generate_id() -> std::string;
     std::shared_ptr<ParticleScorer> m_scorer { nullptr };
     std::vector<PrimaryParticle> m_primaries {};
 
@@ -109,7 +109,7 @@ private:
 
 class ParticleDistributor {
 public:
-    explicit ParticleDistributor(const std::string& directory, const std::string& config, const std::string& secondaries);
+    explicit ParticleDistributor(const std::string& directory, std::string config, const std::string& secondaries);
     auto distribute() -> void;
     virtual ~ParticleDistributor();
 
