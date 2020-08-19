@@ -69,10 +69,16 @@ include_directories(${LIBCONFIG++_INCLUDE_DIRS})
 
 find_package(Geant4 REQUIRED)
 
-add_custom_target(clangformat COMMAND clang-format -style=WebKit -i ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES} ${ATMOS_SOURCE_FILES})
+add_custom_target(clangformat COMMAND clang-format -style=WebKit -i ${ALL_SOURCES_AND_HEADERS})
 
 add_executable(${PROJECT_NAME} ${SIM_SOURCE_FILES} ${SIM_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${LIBCONFIG++_LIBRARIES} pthread)
+
+add_executable(node ${NODE_SOURCE_FILES} ${NODE_HEADER_FILES})
+target_link_libraries(node ${LIBCONFIG++_LIBRARIES} pthread)
+
+add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
+target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
 
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES} ${ATMOS_HEADER_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
