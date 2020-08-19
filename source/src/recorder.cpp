@@ -77,6 +77,23 @@ void Recorder::store_detailed_hit(const DetailedHit& hit)
 void Recorder::store_secondary(const Secondary& intensity)
 {
     m_secondaries.push_back(intensity);
+    if (m_secondaries.size() > 200) {
+        std::ofstream stream { directory() + "/secondaries", std::fstream::out | std::fstream::app };
+        for (const auto& prim : m_secondaries) {
+            stream
+                << prim.pdg << ','
+                << prim.name << ','
+                << std::setprecision(10) << prim.position.x / m << ','
+                << std::setprecision(10) << prim.position.y / m << ','
+                << std::setprecision(10) << prim.position.z / m << ','
+                << std::setprecision(10) << prim.energy.x << ','
+                << std::setprecision(10) << prim.energy.y << ','
+                << std::setprecision(10) << prim.energy.z << ','
+                << std::setprecision(10) << prim.kinetic_energy / MeV << '\n';
+        }
+        stream.close();
+        m_secondaries.clear();
+    }
 }
 
 void Recorder::next_event()
@@ -143,27 +160,21 @@ void Recorder::save()
         }
     }
     if (!m_secondaries.empty()) {
-        libconfig::Config save;
-        libconfig::Setting& root = save.getRoot();
-        libconfig::Setting& primary_setting = root.add("secondaties", libconfig::Setting::TypeList);
-        for (const auto& prim: m_secondaries) {
-            libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
-            libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
-            libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
-            origin.add("x", libconfig::Setting::TypeFloat) = prim.position.x / meter;
-            origin.add("y", libconfig::Setting::TypeFloat) = prim.position.y / meter;
-            origin.add("z", libconfig::Setting::TypeFloat) = prim.position.z / meter;
-            origin.add("absolute", libconfig::Setting::TypeBoolean) = true;
-
-            momentum.add("x", libconfig::Setting::TypeFloat) = prim.energy.x;
-            momentum.add("y", libconfig::Setting::TypeFloat) = prim.energy.y;
-            momentum.add("z", libconfig::Setting::TypeFloat) = prim.energy.z;
-            momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.kinetic_energy / MeV;
-
-            primary.add("particle", libconfig::Setting::TypeInt) = prim.pdg;
+        std::ofstream stream { directory() + "/secondaries", std::fstream::out | std::fstream::app };
+        for (const auto& prim : m_secondaries) {
+            stream
+                << prim.pdg << ','
+                << prim.name << ','
+                << std::setprecision(10) << prim.position.x / m << ','
+                << std::setprecision(10) << prim.position.y / m << ','
+                << std::setprecision(10) << prim.position.z / m << ','
+                << std::setprecision(10) << prim.energy.x << ','
+                << std::setprecision(10) << prim.energy.y << ','
+                << std::setprecision(10) << prim.energy.z << ','
+                << std::setprecision(10) << prim.kinetic_energy / MeV << '\n';
         }
+        stream.close();
         m_secondaries.clear();
-        save.writeFile((directory() + "/secondaries").c_str());
     }
 }
 

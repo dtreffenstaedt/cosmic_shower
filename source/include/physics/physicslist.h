@@ -13,7 +13,7 @@
 namespace Shower {
 class PhysicsList : public G4VModularPhysicsList {
 public:
-    explicit PhysicsList(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, const G4int ver = 1);
+    explicit PhysicsList(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion, const G4int ver = 0);
     ~PhysicsList() override;
 
     void SetCuts() override;

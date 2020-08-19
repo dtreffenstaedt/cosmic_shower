@@ -38,17 +38,18 @@ struct GroundIntensity {
 
 struct Secondary {
     struct {
-        const double x{};
-        const double y{};
-        const double z{};
+        const double x {};
+        const double y {};
+        const double z {};
     } position;
     struct {
-        const double x{};
-        const double y{};
-        const double z{};
+        const double x {};
+        const double y {};
+        const double z {};
     } energy;
     const double kinetic_energy {};
     const int pdg {};
+    const std::string name {};
 };
 
 class DataDirectoryExists : public std::exception {

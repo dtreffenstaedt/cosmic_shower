@@ -15,8 +15,16 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
 {
     G4ParticleTable* particle_table = G4ParticleTable::GetParticleTable();
     for (auto& primary : m_primaries) {
-        auto* gun = new G4ParticleGun(primary.n_particles);
         G4ParticleDefinition* particle = particle_table->FindParticle(primary.particle);
+        if (particle == nullptr) {
+            particle = particle_table->FindParticle(primary.name);
+            if (particle == nullptr) {
+                std::cerr << "Error: could not find particle " << primary.particle << '(' << primary.name << ')' << '\n'
+                          << std::flush;
+                continue;
+            }
+        }
+        auto* gun = new G4ParticleGun(primary.n_particles);
         gun->SetParticleDefinition(particle);
         gun->SetParticleEnergy(primary.momentum.m);
         if (primary.origin.absolute) {

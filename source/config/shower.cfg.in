@@ -70,6 +70,7 @@ primary = (
         n_particles = 1;
 
         particle = 2212;
+        name = "proton";
     }
 );
 

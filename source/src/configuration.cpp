@@ -140,7 +140,7 @@ auto Configuration::get_primaries(const bool& fallback) const -> std::vector<Con
         const libconfig::Setting& origin = primary_setting["origin"];
         const libconfig::Setting& momentum = primary_setting["momentum"];
         Config::PrimaryParticle primary {};
-        if (!(origin.lookupValue("absolute", primary.origin.absolute) && origin.lookupValue("x", primary.origin.x) && origin.lookupValue("y", primary.origin.y) && origin.lookupValue("z", primary.origin.z) && momentum.lookupValue("x", primary.momentum.y) && momentum.lookupValue("y", primary.momentum.y) && momentum.lookupValue("z", primary.momentum.z) && momentum.lookupValue("magnitude", primary.momentum.m) && primary_setting.lookupValue("n_particles", primary.n_particles) && primary_setting.lookupValue("particle", primary.particle))) {
+        if (!(origin.lookupValue("absolute", primary.origin.absolute) && origin.lookupValue("x", primary.origin.x) && origin.lookupValue("y", primary.origin.y) && origin.lookupValue("z", primary.origin.z) && momentum.lookupValue("x", primary.momentum.y) && momentum.lookupValue("y", primary.momentum.y) && momentum.lookupValue("z", primary.momentum.z) && momentum.lookupValue("magnitude", primary.momentum.m) && primary_setting.lookupValue("n_particles", primary.n_particles) && primary_setting.lookupValue("name", primary.name) && primary_setting.lookupValue("particle", primary.particle))) {
             throw FaultyPrimaryDefinition();
         }
         primary.origin.x *= m;
@@ -345,6 +345,7 @@ void Configuration::config_dump(const std::string& filename)
 
             primary.add("n_particles", libconfig::Setting::TypeInt) = prim.n_particles;
             primary.add("particle", libconfig::Setting::TypeInt) = prim.particle;
+            primary.add("name", libconfig::Setting::TypeString) = prim.name;
         }
     }
     {

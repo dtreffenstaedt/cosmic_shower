@@ -66,6 +66,7 @@ namespace Config {
 
         int n_particles;
         int particle; // type of initial particle
+        std::string name;
     };
 
     struct AtmosphereLayer {
