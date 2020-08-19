@@ -111,8 +111,6 @@ auto Recorder::directory() const -> std::string
 
 void Recorder::save()
 {
-    std::cout << "Saving data\n"
-              << std::flush;
     if (!m_hits.empty()) {
         std::ofstream file(directory() + "/hits", std::ofstream::app);
         if (file.is_open()) {

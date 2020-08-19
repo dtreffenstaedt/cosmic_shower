@@ -46,9 +46,6 @@ PhysicsList::PhysicsList(std::shared_ptr<Recorder> recorder, std::shared_ptr<Can
     //    RegisterPhysics(new HadronInelasticConstructor { ver });
 
     RegisterPhysics(new ParticleKillerConstructor { recorder, cancel_criterion, ver });
-
-    std::cout << "Geantino pdg: " << G4Geantino::GeantinoDefinition()->GetPDGEncoding() << '\n'
-              << std::flush;
 }
 
 PhysicsList::~PhysicsList()
