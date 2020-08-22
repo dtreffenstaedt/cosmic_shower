@@ -1,9 +1,9 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#include <string>
-#include <memory>
 #include <future>
+#include <memory>
+#include <string>
 #include <vector>
 
 namespace Node {
@@ -31,8 +31,6 @@ private:
     std::string m_directory { "./primaries/" };
     std::string m_config_file { "shower.cfg" };
 };
-
-
 
 }
 

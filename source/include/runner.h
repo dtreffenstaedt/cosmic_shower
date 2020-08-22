@@ -10,8 +10,7 @@ namespace Node {
 
 class ParticleDistributor;
 
-class Runner
-{
+class Runner {
 public:
     Runner(const std::string& name, const std::string& config_directory, const std::string& output_directory);
 

@@ -1,14 +1,12 @@
 #include "node.h"
 
-#include <string>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
+#include <string>
 
 #include <libconfig.h++>
 
 #include "particledistributor.h"
-
-
 
 auto main(const int argc, const char* argv[]) -> int
 {

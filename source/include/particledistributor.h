@@ -1,12 +1,12 @@
 #ifndef PARTICLEDISTRIBUTOR_H
 #define PARTICLEDISTRIBUTOR_H
 
+#include <fstream>
+#include <future>
+#include <memory>
+#include <queue>
 #include <string>
 #include <vector>
-#include <future>
-#include <queue>
-#include <memory>
-#include <fstream>
 
 namespace Node {
 

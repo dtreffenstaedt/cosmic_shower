@@ -1,16 +1,15 @@
 #include "cluster.h"
 
-#include "particlescorer.h"
 #include "particledistributor.h"
+#include "particlescorer.h"
 
 #include <libconfig.h++>
 
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 #include <random>
 
 namespace Node {
-
 
 Cluster::Cluster(std::shared_ptr<ParticleScorer> scorer, std::string directory, std::string config)
     : m_scorer { std::move(scorer) }
@@ -84,7 +83,7 @@ auto Cluster::save() const -> std::future<void>
     root.lookupValue("data_directory", secondaryfile);
     secondaryfile += name + "/event_1/secondaries";
     config.writeFile((configfile).c_str());
-/*
+    /*
     if (fork() == 0) {
         if (system(("./node " + configfile).c_str()) != 0) {
             std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
@@ -95,16 +94,16 @@ auto Cluster::save() const -> std::future<void>
         }
         exit(0);
     }*/
-    return std::async(std::launch::async, [configfile, secondaryfile]{
+    return std::async(std::launch::async, [configfile, secondaryfile] {
         if (system(("./run -c " + configfile).c_str()) != 0) {
-            std::ofstream log {"node.log", std::fstream::out | std::fstream::app};
-            log<<"Error executing for"<<configfile<<'\n'<<std::flush;
+            std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
+            log << "Error executing for" << configfile << '\n'
+                << std::flush;
             log.close();
         }
 
-        if (std::filesystem::exists(secondaryfile))
-        {
-            Node::ParticleDistributor distributor{"./sims/", configfile, secondaryfile};
+        if (std::filesystem::exists(secondaryfile)) {
+            Node::ParticleDistributor distributor { "./sims/", configfile, secondaryfile };
             distributor.distribute();
         }
     });

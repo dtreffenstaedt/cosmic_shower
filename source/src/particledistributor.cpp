@@ -1,8 +1,8 @@
 #include "particledistributor.h"
 
+#include "cluster.h"
 #include "clusterrule.h"
 #include "particlescorer.h"
-#include "cluster.h"
 
 #include <filesystem>
 
