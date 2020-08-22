@@ -48,8 +48,20 @@ if(${SHOWER_BENCHMARK})
                        "${PROJECT_INCLUDE_DIR}/benchmark.h")
 endif(${SHOWER_BENCHMARK})
 
-set(NODE_SOURCE_FILES "${PROJECT_SOURCE_DIR}/node.cpp")
-set(NODE_HEADER_FILES "${PROJECT_INCLUDE_DIR}/node.h")
+set(NODE_SOURCE_FILES
+    "${PROJECT_SOURCE_DIR}/node.cpp"
+    "${PROJECT_SOURCE_DIR}/runner.cpp"
+    "${PROJECT_SOURCE_DIR}/cluster.cpp"
+    "${PROJECT_SOURCE_DIR}/particlescorer.cpp"
+    "${PROJECT_SOURCE_DIR}/particledistributor.cpp"
+    )
+set(NODE_HEADER_FILES
+    "${PROJECT_INCLUDE_DIR}/node.h"
+    "${PROJECT_INCLUDE_DIR}/runner.h"
+    "${PROJECT_INCLUDE_DIR}/cluster.h"
+    "${PROJECT_INCLUDE_DIR}/particlescorer.h"
+    "${PROJECT_INCLUDE_DIR}/particledistributor.h"
+    )
 
 set(VIS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/vis.cpp")
 set(VIS_HEADER_FILES "${PROJECT_INCLUDE_DIR}/vis.h")
