@@ -1,13 +1,13 @@
 #ifndef CORERUNNER_H
 #define CORERUNNER_H
 
-#include <vector>
-#include <string>
-#include <memory>
 #include <atomic>
-#include <mutex>
 #include <future>
+#include <memory>
+#include <mutex>
 #include <queue>
+#include <string>
+#include <vector>
 
 #include "particlescorer.h"
 

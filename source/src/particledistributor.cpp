@@ -2,8 +2,8 @@
 
 #include "cluster.h"
 #include "clusterrule.h"
-#include "particlescorer.h"
 #include "corerunner.h"
+#include "particlescorer.h"
 
 #include <filesystem>
 #include <iostream>
@@ -16,10 +16,11 @@ ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::string& 
     , m_secondaries { secondaries }
     , m_cluster_rule { std::make_shared<FixedClusterRule>(m_scorer, secondaries) }
     , m_stream { secondaries, std::ifstream::in }
-    , m_runner { runner}
+    , m_runner { runner }
 {
     if (!m_stream.is_open()) {
-        std::cout<<"Error opening file '"<<secondaries<<"'\n"<<std::flush;
+        std::cout << "Error opening file '" << secondaries << "'\n"
+                  << std::flush;
     }
     runner->preserve(true);
     if (!std::filesystem::exists(directory)) {

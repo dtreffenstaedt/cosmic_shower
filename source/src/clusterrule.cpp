@@ -1,8 +1,8 @@
 #include "clusterrule.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iterator>
-#include <algorithm>
 
 #include "cluster.h"
 #include "particlescorer.h"

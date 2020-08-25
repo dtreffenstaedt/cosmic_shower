@@ -1,10 +1,10 @@
 #include "corerunner.h"
 
-#include "particledistributor.h"
 #include "cluster.h"
+#include "particledistributor.h"
 
-#include <filesystem>
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
 
 #include <libconfig.h++>
@@ -21,22 +21,26 @@ CoreRunner::~CoreRunner()
     m_run = false;
 }
 
-auto CoreRunner::register_instance(const std::string& name) -> void {
+auto CoreRunner::register_instance(const std::string& name) -> void
+{
     std::scoped_lock<std::mutex, std::mutex> lock { m_active_mutex, m_queued_mutex };
     m_locked = true;
     if (m_active.size() < m_max_threads) {
         run(name);
     } else {
         m_queued.push(name);
-        std::cout<<"Holding Event '"<<name<<"' ("<<m_queued.size()<<" in queue)\n"<<std::flush;
+        std::cout << "Holding Event '" << name << "' (" << m_queued.size() << " in queue)\n"
+                  << std::flush;
     }
     m_locked = false;
 }
 
-auto CoreRunner::run() -> int {
+auto CoreRunner::run() -> int
+{
     while (m_run) {
         if (m_active.empty() && m_queued.empty() && (m_preserved == 0)) {
-            std::cout<<"Quitting\n"<<std::flush;
+            std::cout << "Quitting\n"
+                      << std::flush;
             m_run = false;
             break;
         }
@@ -62,7 +66,8 @@ auto CoreRunner::run() -> int {
             if (m_active.size() < m_max_threads) {
                 if (!m_queued.empty()) {
                     run(m_queued.front());
-                    std::cout<<"Getting Event '"<<m_queued.front()<<"' ("<<m_queued.size() - 1<<" in queue)\n"<<std::flush;
+                    std::cout << "Getting Event '" << m_queued.front() << "' (" << m_queued.size() - 1 << " in queue)\n"
+                              << std::flush;
                     m_queued.pop();
                 }
             }
@@ -73,7 +78,8 @@ auto CoreRunner::run() -> int {
     return 0;
 }
 
-auto CoreRunner::preserve(const bool state) -> void {
+auto CoreRunner::preserve(const bool state) -> void
+{
     if (state) {
         m_preserved++;
     } else {
@@ -81,7 +87,8 @@ auto CoreRunner::preserve(const bool state) -> void {
     }
 }
 
-auto CoreRunner::run(const std::string& name) -> void {
+auto CoreRunner::run(const std::string& name) -> void
+{
 
     libconfig::Config config;
     config.readFile((m_directory + "/" + name).c_str());
@@ -102,12 +109,14 @@ auto CoreRunner::run(const std::string& name) -> void {
 
         std::string secondaryfile { output_directory + "event_1/secondaries" };
 
-        std::cout<<"Checking for secondaries: "<<secondaryfile<<'\n'<<std::flush;
+        std::cout << "Checking for secondaries: " << secondaryfile << '\n'
+                  << std::flush;
         if (std::filesystem::exists(secondaryfile)) {
-            ParticleDistributor distributor{this, m_directory, name, secondaryfile};
+            ParticleDistributor distributor { this, m_directory, name, secondaryfile };
             distributor.distribute();
         } else {
-            std::cout<<"Not found.\n"<<std::flush;
+            std::cout << "Not found.\n"
+                      << std::flush;
         }
     }));
 }
