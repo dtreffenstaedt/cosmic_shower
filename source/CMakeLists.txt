@@ -51,6 +51,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(
   -Weverything
   -Wno-c++98-compat
+  -Wno-c++98-compat-bind-to-temporary-copy
   -Wno-padded
   -Wwrite-strings
   -Wpointer-arith
