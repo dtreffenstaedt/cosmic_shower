@@ -3,18 +3,25 @@
 #include "cluster.h"
 #include "clusterrule.h"
 #include "particlescorer.h"
+#include "corerunner.h"
 
 #include <filesystem>
+#include <iostream>
 
 namespace Node {
 
-ParticleDistributor::ParticleDistributor(const std::string& directory, std::string config, const std::string& secondaries)
+ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::string& directory, std::string config, const std::string& secondaries)
     : m_directory { directory }
     , m_config_file { std::move(config) }
     , m_secondaries { secondaries }
     , m_cluster_rule { std::make_shared<FixedClusterRule>(m_scorer, secondaries) }
-    , m_stream { m_secondaries, std::ifstream::in }
+    , m_stream { secondaries, std::ifstream::in }
+    , m_runner { runner}
 {
+    if (!m_stream.is_open()) {
+        std::cout<<"Error opening file '"<<secondaries<<"'\n"<<std::flush;
+    }
+    runner->preserve(true);
     if (!std::filesystem::exists(directory)) {
         std::filesystem::create_directory(directory);
     }
@@ -24,9 +31,7 @@ ParticleDistributor::ParticleDistributor(const std::string& directory, std::stri
 ParticleDistributor::~ParticleDistributor()
 {
     m_stream.close();
-    for (auto& thread : m_threads) {
-        thread.get();
-    }
+    m_runner->preserve(false);
 }
 
 auto ParticleDistributor::distribute() -> void
@@ -39,14 +44,14 @@ auto ParticleDistributor::distribute() -> void
         PrimaryParticle primary { next() };
 
         if (m_cluster_rule->result(primary) == ClusterRule::Result::NewCluster) {
-            m_threads.push_back(current_cluster->save());
+            m_runner->register_instance(current_cluster->save());
             current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
             m_clusters.push_back(current_cluster);
             m_cluster_rule->update_cluster(current_cluster);
         }
         current_cluster->add(primary);
     }
-    m_threads.push_back(current_cluster->save());
+    m_runner->register_instance(current_cluster->save());
 }
 
 auto ParticleDistributor::parse() -> void

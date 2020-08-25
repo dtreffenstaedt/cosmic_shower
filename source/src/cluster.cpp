@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <fstream>
 #include <random>
+#include <iostream>
 
 namespace Node {
 
@@ -39,10 +40,10 @@ auto Cluster::number() const -> std::size_t
     return m_primaries.size();
 }
 
-auto Cluster::save() const -> std::future<void>
+auto Cluster::save() const -> std::string
 {
     libconfig::Config config;
-    config.readFile(m_config_file.c_str());
+    config.readFile((m_directory + "/" + m_config_file).c_str());
     libconfig::Setting& root = config.getRoot();
     std::string name {};
     root.lookupValue("name", name);
@@ -78,35 +79,9 @@ auto Cluster::save() const -> std::future<void>
         primary.add("particle", libconfig::Setting::TypeInt) = prim.particle;
         primary.add("name", libconfig::Setting::TypeString) = prim.name;
     }
-    std::string configfile { m_directory + name };
-    std::string secondaryfile {};
-    root.lookupValue("data_directory", secondaryfile);
-    secondaryfile += name + "/event_1/secondaries";
+    std::string configfile { m_directory + "/" + name };
     config.writeFile((configfile).c_str());
-    /*
-    if (fork() == 0) {
-        if (system(("./node " + configfile).c_str()) != 0) {
-            std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
-            log << "Error executing for" << configfile << '\n'
-                << std::flush;
-            log.close();
-            exit(-1);
-        }
-        exit(0);
-    }*/
-    return std::async(std::launch::async, [configfile, secondaryfile] {
-        if (system(("./run -c " + configfile).c_str()) != 0) {
-            std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
-            log << "Error executing for" << configfile << '\n'
-                << std::flush;
-            log.close();
-        }
-
-        if (std::filesystem::exists(secondaryfile)) {
-            Node::ParticleDistributor distributor { "./sims/", configfile, secondaryfile };
-            distributor.distribute();
-        }
-    });
+    return name;
 }
 
 auto Cluster::generate_id() -> std::string

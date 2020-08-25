@@ -21,7 +21,7 @@ public:
 
     [[nodiscard]] auto number() const -> std::size_t;
 
-    [[nodiscard]] auto save() const -> std::future<void>;
+    [[nodiscard]] auto save() const -> std::string;
 
 private:
     [[nodiscard]] static auto generate_id() -> std::string;

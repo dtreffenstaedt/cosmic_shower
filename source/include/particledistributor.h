@@ -7,6 +7,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <atomic>
 
 namespace Node {
 
@@ -14,10 +15,11 @@ class ParticleScorer;
 class ClusterRule;
 class Cluster;
 struct PrimaryParticle;
+class CoreRunner;
 
 class ParticleDistributor {
 public:
-    explicit ParticleDistributor(const std::string& directory, std::string config, const std::string& secondaries);
+    explicit ParticleDistributor(CoreRunner* runner, const std::string& directory, std::string config, const std::string& secondaries);
     auto distribute() -> void;
     virtual ~ParticleDistributor();
 
@@ -36,7 +38,8 @@ private:
     std::queue<PrimaryParticle> m_primaries {};
     std::ifstream m_stream {};
     bool m_end { false };
-    std::vector<std::future<void>> m_threads {};
+    CoreRunner* m_runner;
 };
+
 }
 #endif // PARTICLEDISTRIBUTOR_H

@@ -2,8 +2,10 @@
 
 #include <fstream>
 #include <iterator>
+#include <algorithm>
 
 #include "cluster.h"
+#include "particlescorer.h"
 
 namespace Node {
 
