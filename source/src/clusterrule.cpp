@@ -43,19 +43,12 @@ auto SimpleClusterRule::result(const PrimaryParticle& /*particle*/) const -> Res
     return Result::SameCluster;
 }
 
-FixedClusterRule::FixedClusterRule(std::shared_ptr<ParticleScorer> scorer, const std::string& secondaries)
+FixedClusterRule::FixedClusterRule(std::shared_ptr<ParticleScorer> scorer, const std::vector<PrimaryParticle>& secondaries)
     : ClusterRule(scorer)
 {
-    std::ifstream myfile(secondaries);
 
-    myfile.unsetf(std::ios_base::skipws);
 
-    std::size_t lines = static_cast<std::size_t>(std::count(
-        std::istream_iterator<char>(myfile),
-        std::istream_iterator<char>(),
-        '\n'));
-
-    m_max = (lines / s_number) + 1;
+    m_max = (secondaries.size() / s_number) + 1;
 }
 
 auto FixedClusterRule::result(const PrimaryParticle& /*particle*/) const -> Result

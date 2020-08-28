@@ -20,6 +20,7 @@ class CoreRunner;
 class ParticleDistributor {
 public:
     explicit ParticleDistributor(CoreRunner* runner, const std::string& directory, std::string config, const std::string& secondaries);
+    auto pre_conditions() -> void;
     auto distribute() -> void;
     virtual ~ParticleDistributor();
 
@@ -34,11 +35,10 @@ private:
     std::string m_config_file { "shower.cfg" };
     std::string m_secondaries { "secondaries" };
     std::shared_ptr<ParticleScorer> m_scorer { std::make_shared<ParticleScorer>() };
-    std::shared_ptr<ClusterRule> m_cluster_rule {};
-    std::queue<PrimaryParticle> m_primaries {};
+    std::vector<PrimaryParticle> m_primaries {};
     std::ifstream m_stream {};
-    bool m_end { false };
     CoreRunner* m_runner;
+    std::shared_ptr<ClusterRule> m_cluster_rule {};
 };
 
 }

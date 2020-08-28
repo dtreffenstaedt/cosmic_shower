@@ -7,7 +7,6 @@
 #include <libconfig.h++>
 
 #include "corerunner.h"
-#include "runner.h"
 
 auto main(const int argc, const char* argv[]) -> int
 {

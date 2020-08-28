@@ -32,7 +32,13 @@ class ParticleScorer {
 public:
     [[nodiscard]] virtual auto score(const PrimaryParticle& particle) const -> double;
 
+    [[nodiscard]] constexpr auto limit() const -> double {
+        return s_lower_limit;
+    }
+
     virtual ~ParticleScorer() = default;
+private:
+    static constexpr double s_lower_limit { 1.0e-1 };
 };
 
 }

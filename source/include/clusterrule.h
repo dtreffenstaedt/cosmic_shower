@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace Node {
 
@@ -46,7 +47,7 @@ private:
 
 class FixedClusterRule : public ClusterRule {
 public:
-    explicit FixedClusterRule(std::shared_ptr<ParticleScorer> scorer, const std::string& secondaries);
+    explicit FixedClusterRule(std::shared_ptr<ParticleScorer> scorer, const std::vector<PrimaryParticle>& secondaries);
 
     [[nodiscard]] auto result(const PrimaryParticle& particle) const -> Result override;
 

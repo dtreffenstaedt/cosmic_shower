@@ -7,6 +7,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 
 namespace Node {
 
@@ -14,7 +15,6 @@ ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::string& 
     : m_directory { directory }
     , m_config_file { std::move(config) }
     , m_secondaries { secondaries }
-    , m_cluster_rule { std::make_shared<FixedClusterRule>(m_scorer, secondaries) }
     , m_stream { secondaries, std::ifstream::in }
     , m_runner { runner }
 {
@@ -27,23 +27,28 @@ ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::string& 
         std::filesystem::create_directory(directory);
     }
     parse();
+    m_cluster_rule = std::make_shared<FixedClusterRule>(m_scorer, m_primaries);
 }
 
 ParticleDistributor::~ParticleDistributor()
 {
+    m_primaries.clear();
     m_stream.close();
     m_runner->preserve(false);
 }
 
+auto ParticleDistributor::pre_conditions() -> void {
+    std::random_shuffle(m_primaries.begin(), m_primaries.end());
+}
+
 auto ParticleDistributor::distribute() -> void
 {
+    pre_conditions();
     m_clusters.clear();
     std::shared_ptr<Cluster> current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
     m_clusters.push_back(current_cluster);
     m_cluster_rule->update_cluster(current_cluster);
-    while (has_next()) {
-        PrimaryParticle primary { next() };
-
+    for (auto& primary: m_primaries) {
         if (m_cluster_rule->result(primary) == ClusterRule::Result::NewCluster) {
             m_runner->register_instance(current_cluster->save());
             current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
@@ -52,20 +57,17 @@ auto ParticleDistributor::distribute() -> void
         }
         current_cluster->add(primary);
     }
+    m_primaries.clear();
     m_runner->register_instance(current_cluster->save());
 }
 
 auto ParticleDistributor::parse() -> void
 {
-    if (m_end || (m_primaries.size() > 10)) {
-        return;
-    }
-    for (std::size_t i { 0 }; i < 100; i++) {
+    while ((m_stream.good()) && (m_stream.peek() != EOF)) {
         while (std::isspace(m_stream.peek()) != 0) {
             (void)m_stream.get();
         } // skip any whitespace
         if (!(m_stream.good()) || (m_stream.peek() == EOF)) {
-            m_end = true;
             return;
         }
         PrimaryParticle primary;
@@ -126,20 +128,9 @@ auto ParticleDistributor::parse() -> void
             m_stream.get();
             primary.momentum.m = std::stod(field);
         }
-        m_primaries.push(primary);
+        if (m_scorer->score(primary) > m_scorer->limit()) {
+            m_primaries.push_back(primary);
+        }
     }
-}
-
-auto ParticleDistributor::has_next() const -> bool
-{
-    return !(m_primaries.empty());
-}
-
-auto ParticleDistributor::next() -> PrimaryParticle
-{
-    parse();
-    PrimaryParticle primary { m_primaries.front() };
-    m_primaries.pop();
-    return primary;
 }
 }
