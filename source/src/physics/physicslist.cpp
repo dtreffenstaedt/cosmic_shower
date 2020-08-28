@@ -51,17 +51,6 @@ PhysicsList::PhysicsList(std::shared_ptr<Recorder> recorder, std::shared_ptr<Can
 PhysicsList::~PhysicsList()
     = default;
 
-void PhysicsList::SetCuts()
-{
-    SetCutsWithDefault();
-    SetCutValue(10000 * parsec, "nu_e");
-    SetCutValue(10000 * parsec, "nu_tau");
-    SetCutValue(10000 * parsec, "nu_mu");
-    SetCutValue(10000 * parsec, "anti_nu_e");
-    SetCutValue(10000 * parsec, "anti_nu_tau");
-    SetCutValue(10000 * parsec, "anti_nu_mu");
-}
-
 void PhysicsList::ConstructProcess()
 {
     G4VModularPhysicsList::ConstructProcess();
