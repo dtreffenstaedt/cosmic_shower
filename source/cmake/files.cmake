@@ -55,6 +55,7 @@ set(NODE_SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/clusterrule.cpp"
     "${PROJECT_SOURCE_DIR}/particlescorer.cpp"
     "${PROJECT_SOURCE_DIR}/particledistributor.cpp"
+    "${PROJECT_SOURCE_DIR}/particlecollector.cpp"
     )
 set(NODE_HEADER_FILES
     "${PROJECT_INCLUDE_DIR}/node.h"
@@ -63,6 +64,7 @@ set(NODE_HEADER_FILES
     "${PROJECT_INCLUDE_DIR}/clusterrule.h"
     "${PROJECT_INCLUDE_DIR}/particlescorer.h"
     "${PROJECT_INCLUDE_DIR}/particledistributor.h"
+    "${PROJECT_INCLUDE_DIR}/particlecollector.h"
     )
 
 set(VIS_SOURCE_FILES "${PROJECT_SOURCE_DIR}/vis.cpp")

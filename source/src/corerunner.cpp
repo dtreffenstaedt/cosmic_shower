@@ -2,6 +2,7 @@
 
 #include "cluster.h"
 #include "particledistributor.h"
+#include "particlecollector.h"
 
 #include <algorithm>
 #include <filesystem>
