@@ -17,7 +17,8 @@ class Cluster;
 
 class CoreRunner {
 public:
-    explicit CoreRunner(const std::string& directory);
+    explicit CoreRunner(const std::string& directory, const std::string& configfile, const bool run = true);
+    explicit CoreRunner(const std::string& directory, const std::string& configfile, const std::vector<std::string>& instances);
     virtual ~CoreRunner();
 
     auto register_instance(const std::string& name) -> void;

@@ -11,15 +11,32 @@
 
 namespace Node {
 
-CoreRunner::CoreRunner(const std::string& directory)
+CoreRunner::CoreRunner(const std::string& directory, const std::string& configfile, const bool run)
     : m_directory { directory }
+    , m_distributor { std::make_unique<ParticleDistributor> (this, std::make_shared<ParticleScorer>(), directory, configfile)}
 {
+    libconfig::Config config;
+    config.readFile((m_directory + "/" + configfile).c_str());
+    libconfig::Setting& root = config.getRoot();
+
+    std::string output_directory;
+    root.lookupValue("data_directory", output_directory);
+    m_collector = std::make_unique<ParticleCollector> (output_directory, configfile);
+
+    if (run) {
+        register_instance(configfile);
+    }
 }
 
-CoreRunner::~CoreRunner()
+CoreRunner::CoreRunner(const std::string& directory, const std::string& configfile, const std::vector<std::string>& instances)
+    : CoreRunner{directory, configfile, false}
 {
-    m_run = false;
+    for (const auto& instance: instances) {
+        register_instance(instance);
+    }
 }
+
+CoreRunner::~CoreRunner() = default;
 
 auto CoreRunner::register_instance(const std::string& name) -> void
 {

@@ -26,9 +26,7 @@ auto main(const int argc, const char* argv[]) -> int
         return 1;
     }
 
-    Node::CoreRunner core { config_dir };
-
-    core.register_instance(name);
+    Node::CoreRunner core { config_dir, name};
 
     return core.run();
 }
