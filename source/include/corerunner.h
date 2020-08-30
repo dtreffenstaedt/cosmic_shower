@@ -14,6 +14,8 @@
 namespace Node {
 
 class Cluster;
+class ParticleDistributor;
+class ParticleCollector;
 
 class CoreRunner {
 public:
@@ -43,7 +45,10 @@ private:
     std::mutex m_active_mutex {};
     std::mutex m_queued_mutex {};
 
-    std::atomic<std::size_t> m_preserved;
+    std::atomic<std::size_t> m_running { 0 };
+
+    std::unique_ptr<ParticleDistributor> m_distributor { nullptr };
+    std::unique_ptr<ParticleCollector> m_collector { nullptr };
 };
 
 }

@@ -8,6 +8,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <condition_variable>
 
 namespace Node {
 
@@ -19,26 +20,28 @@ class CoreRunner;
 
 class ParticleDistributor {
 public:
-    explicit ParticleDistributor(CoreRunner* runner, const std::string& directory, std::string config, const std::string& secondaries);
-    auto pre_conditions() -> void;
+    explicit ParticleDistributor(CoreRunner* runner, const std::shared_ptr<ParticleScorer>& scorer, const std::string& directory, std::string config);
     auto distribute() -> void;
+    auto collect(const std::string& secondaries) -> void;
     virtual ~ParticleDistributor();
 
 private:
     [[nodiscard]] auto has_next() const -> bool;
     [[nodiscard]] auto next() -> PrimaryParticle;
-    auto parse() -> void;
+    auto parse(const std::string& secondaries) -> void;
+    auto pre_conditions() -> void;
+    auto run() -> std::future<void>;
 
-    std::vector<std::shared_ptr<Cluster>> m_clusters {};
-
+    CoreRunner* m_runner;
     std::string m_directory { "./primaries/" };
     std::string m_config_file { "shower.cfg" };
-    std::string m_secondaries { "secondaries" };
     std::shared_ptr<ParticleScorer> m_scorer { std::make_shared<ParticleScorer>() };
     std::vector<PrimaryParticle> m_primaries {};
-    std::ifstream m_stream {};
-    CoreRunner* m_runner;
     std::shared_ptr<ClusterRule> m_cluster_rule {};
+    std::condition_variable m_has_primaries {};
+    std::atomic<bool> m_run { true };
+    std::mutex m_primary_mutex {};
+    std::future<void> m_future {};
 };
 
 }

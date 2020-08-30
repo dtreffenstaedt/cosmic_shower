@@ -129,8 +129,7 @@ auto CoreRunner::run(const std::string& name) -> void
         std::cout << "Checking for secondaries: " << secondaryfile << '\n'
                   << std::flush;
         if (std::filesystem::exists(secondaryfile)) {
-            ParticleDistributor distributor { this, m_directory, name, secondaryfile };
-            distributor.distribute();
+            m_distributor->collect(secondaryfile);
         } else {
             std::cout << "Not found.\n"
                       << std::flush;

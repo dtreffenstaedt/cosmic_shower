@@ -11,30 +11,31 @@
 
 namespace Node {
 
-ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::string& directory, std::string config, const std::string& secondaries)
-    : m_directory { directory }
-    , m_config_file { std::move(config) }
-    , m_secondaries { secondaries }
-    , m_stream { secondaries, std::ifstream::in }
-    , m_runner { runner }
+ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::shared_ptr<ParticleScorer>& scorer, const std::string& directory, std::string config)
+    : m_runner { runner }
+    , m_directory { directory }
+    , m_config_file { config }
+    , m_scorer { scorer }
+    , m_future { run() }
 {
-    if (!m_stream.is_open()) {
-        std::cout << "Error opening file '" << secondaries << "'\n"
-                  << std::flush;
-    }
-    runner->preserve(true);
-    if (!std::filesystem::exists(directory)) {
-        std::filesystem::create_directory(directory);
-    }
-    parse();
     m_cluster_rule = std::make_shared<FixedClusterRule>(m_scorer, m_primaries);
 }
 
 ParticleDistributor::~ParticleDistributor()
 {
-    m_primaries.clear();
-    m_stream.close();
-    m_runner->preserve(false);
+    m_run = false;
+    m_future.wait();
+}
+
+auto ParticleDistributor::run() -> std::future<void> {
+    return std::async(std::launch::async, [this]{
+        std::mutex mutex {};
+        while (m_run || !m_primaries.empty()) {
+            std::unique_lock lock { mutex };
+            m_has_primaries.wait(lock);
+            distribute();
+        }
+    });
 }
 
 auto ParticleDistributor::pre_conditions() -> void {
@@ -43,16 +44,14 @@ auto ParticleDistributor::pre_conditions() -> void {
 
 auto ParticleDistributor::distribute() -> void
 {
+    std::scoped_lock lock { m_primary_mutex };
     pre_conditions();
-    m_clusters.clear();
     std::shared_ptr<Cluster> current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
-    m_clusters.push_back(current_cluster);
     m_cluster_rule->update_cluster(current_cluster);
     for (auto& primary: m_primaries) {
         if (m_cluster_rule->result(primary) == ClusterRule::Result::NewCluster) {
             m_runner->register_instance(current_cluster->save());
             current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
-            m_clusters.push_back(current_cluster);
             m_cluster_rule->update_cluster(current_cluster);
         }
         current_cluster->add(primary);
@@ -61,76 +60,90 @@ auto ParticleDistributor::distribute() -> void
     m_runner->register_instance(current_cluster->save());
 }
 
-auto ParticleDistributor::parse() -> void
-{
-    while ((m_stream.good()) && (m_stream.peek() != EOF)) {
-        while (std::isspace(m_stream.peek()) != 0) {
-            (void)m_stream.get();
+auto ParticleDistributor::collect(const std::string& secondaries) -> void {
+
+    std::scoped_lock lock { m_primary_mutex };
+
+    parse(secondaries);
+    m_has_primaries.notify_all();
+}
+
+auto ParticleDistributor::parse(const std::string& secondaries) -> void {
+    std::ifstream stream {secondaries, std::ifstream::in};
+    if (!stream.is_open()) {
+        std::cout << "Error opening file '" << secondaries << "'\n"
+                  << std::flush;
+    }
+    std::vector<PrimaryParticle> primaries {};
+    while ((stream.good()) && (stream.peek() != EOF)) {
+        while (std::isspace(stream.peek()) != 0) {
+            (void)stream.get();
         } // skip any whitespace
-        if (!(m_stream.good()) || (m_stream.peek() == EOF)) {
-            return;
+        if (!(stream.good()) || (stream.peek() == EOF)) {
+            break;
         }
         PrimaryParticle primary;
         constexpr std::size_t len { 50 };
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.particle = std::stoi(field);
             primary.n_particles = 1;
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.name = field;
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.origin.x = std::stod(field);
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.origin.y = std::stod(field);
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.origin.z = std::stod(field);
         }
         primary.origin.absolute = true;
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.momentum.x = std::stod(field);
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.momentum.y = std::stod(field);
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, ',');
-            m_stream.get();
+            stream.get(field, len, ',');
+            stream.get();
             primary.momentum.z = std::stod(field);
         }
         {
             char field[len] = "";
-            m_stream.get(field, len, '\n');
-            m_stream.get();
+            stream.get(field, len, '\n');
+            stream.get();
             primary.momentum.m = std::stod(field);
         }
         if (m_scorer->score(primary) > m_scorer->limit()) {
             m_primaries.push_back(primary);
         }
     }
+    stream.close();
 }
 }
