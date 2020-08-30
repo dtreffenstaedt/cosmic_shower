@@ -52,12 +52,8 @@ auto Cluster::save() const -> std::string
     } else {
         root.add("parent", libconfig::Setting::TypeString) = name;
     }
-    if (name.find('+') > name.size()) {
-        name += "+0+";
-    }
-    std::string last = name.substr(name.find('+') + 1);
     name = name.substr(0, name.find('+'));
-    name += '+' + std::to_string(std::stoi(last.substr(0, last.find('+'))) + 1) + '+' + generate_id();
+    name += '+' + generate_id();
     root.lookup("name") = name;
     root.remove("primary");
     libconfig::Setting& primary_setting = root.add("primary", libconfig::Setting::TypeList);
