@@ -54,13 +54,7 @@ auto CoreRunner::register_instance(const std::string& name) -> void
 
 auto CoreRunner::run() -> int
 {
-    while (m_run) {
-        if (m_active.empty() && m_queued.empty() && (m_preserved == 0)) {
-            std::cout << "Quitting\n"
-                      << std::flush;
-            m_run = false;
-            break;
-        }
+    while (!m_active.empty() || !m_queued.empty() || (m_running > 0)) {
         if (!m_locked) {
             m_locked = true;
             std::scoped_lock<std::mutex> lock { m_active_mutex };
@@ -92,21 +86,12 @@ auto CoreRunner::run() -> int
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-    return 0;
-}
 
-auto CoreRunner::preserve(const bool state) -> void
-{
-    if (state) {
-        m_preserved++;
-    } else {
-        m_preserved--;
-    }
+    return 0;
 }
 
 auto CoreRunner::run(const std::string& name) -> void
 {
-
     libconfig::Config config;
     config.readFile((m_directory + "/" + name).c_str());
     libconfig::Setting& root = config.getRoot();
@@ -116,6 +101,7 @@ auto CoreRunner::run(const std::string& name) -> void
     output_directory += "/" + name + "/";
 
     m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> void {
+        m_running++;
         std::string configfile { m_directory + "/" + name };
         if (system(("./run -c " + configfile).c_str()) != 0) {
             std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
@@ -134,6 +120,8 @@ auto CoreRunner::run(const std::string& name) -> void
             std::cout << "Not found.\n"
                       << std::flush;
         }
+        m_collector->collect(name);
+        m_running--;
     }));
 }
 

@@ -27,7 +27,6 @@ public:
 
     [[nodiscard]] auto run() -> int;
 
-    auto preserve(const bool state) -> void;
 
 private:
     auto run(const std::string& name) -> void;
@@ -37,7 +36,6 @@ private:
     std::queue<std::string> m_queued {};
     std::vector<std::future<void>> m_active {};
 
-    std::atomic<bool> m_run { true };
     std::atomic<bool> m_locked { false };
 
     static constexpr std::size_t m_max_threads { 4 };
