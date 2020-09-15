@@ -77,22 +77,29 @@ void Recorder::store_secondary(const Secondary& intensity)
 {
     m_secondaries.push_back(intensity);
     if (m_secondaries.size() > 200) {
-        std::ofstream stream { directory() + "/secondaries", std::fstream::out | std::fstream::app };
-        for (const auto& prim : m_secondaries) {
-            stream
-                << prim.pdg << ','
-                << prim.name << ','
-                << std::setprecision(10) << prim.position.x / m << ','
-                << std::setprecision(10) << prim.position.y / m << ','
-                << std::setprecision(10) << prim.position.z / m << ','
-                << std::setprecision(10) << prim.energy.x << ','
-                << std::setprecision(10) << prim.energy.y << ','
-                << std::setprecision(10) << prim.energy.z << ','
-                << std::setprecision(10) << prim.kinetic_energy / MeV << '\n';
-        }
-        stream.close();
-        m_secondaries.clear();
+        save_secondaries();
     }
+}
+
+void Recorder::save_secondaries() {
+    std::ofstream stream { directory() + "/secondaries", std::fstream::out | std::fstream::app };
+    for (const auto& prim : m_secondaries) {
+        stream
+            << prim.pdg << ','
+            << prim.name << ','
+            << std::setprecision(15) << prim.position.x / m << ','
+            << std::setprecision(15) << prim.position.y / m << ','
+            << std::setprecision(15) << prim.position.z / m << ','
+            << std::setprecision(15) << prim.energy.x << ','
+            << std::setprecision(15) << prim.energy.y << ','
+            << std::setprecision(15) << prim.energy.z << ','
+            << std::setprecision(15) << prim.kinetic_energy / MeV << ','
+            << std::setprecision(15) << prim.time.global / ns << ','
+            << std::setprecision(15) << prim.time.proper / ns << ','
+            << std::setprecision(15) << prim.time.local / ns << '\n';
+    }
+    stream.close();
+    m_secondaries.clear();
 }
 
 void Recorder::next_event()
@@ -131,7 +138,7 @@ void Recorder::save()
 
             for (const auto& h : m_detailed_hits) {
                 file
-                    << h.pdg << ','
+                    << h.pdg << ','<<h.name<<','
                     << h.position.x() / meter << ',' << h.position.y() / meter << ',' << h.position.z() / meter << ','
                     << h.momentum_direction.x() << ',' << h.momentum_direction.y() << ',' << h.momentum_direction.z() << ','
                     << h.momentum / MeV << ','
@@ -157,21 +164,7 @@ void Recorder::save()
         }
     }
     if (!m_secondaries.empty()) {
-        std::ofstream stream { directory() + "/secondaries", std::fstream::out | std::fstream::app };
-        for (const auto& prim : m_secondaries) {
-            stream
-                << prim.pdg << ','
-                << prim.name << ','
-                << std::setprecision(10) << prim.position.x / m << ','
-                << std::setprecision(10) << prim.position.y / m << ','
-                << std::setprecision(10) << prim.position.z / m << ','
-                << std::setprecision(10) << prim.energy.x << ','
-                << std::setprecision(10) << prim.energy.y << ','
-                << std::setprecision(10) << prim.energy.z << ','
-                << std::setprecision(10) << prim.kinetic_energy / MeV << '\n';
-        }
-        stream.close();
-        m_secondaries.clear();
+        save_secondaries();
     }
 }
 
@@ -212,7 +205,6 @@ void Recorder::Bin<N>::initialise(const size_t& x, const size_t& y, const double
     m_x_max = world_size * (static_cast<double>(x + 1) / static_cast<double>(N) - 0.5);
     m_y_min = world_size * (static_cast<double>(y) / static_cast<double>(N) - 0.5);
     m_y_max = world_size * (static_cast<double>(y + 1) / static_cast<double>(N) - 0.5);
-    m_inverse_bin_area = std::pow((1.0e6 * static_cast<double>(N)) / (world_size), 2.0); // area is in km2
 }
 
 template <size_t N>
@@ -223,13 +215,13 @@ auto Recorder::Bin<N>::in_bin(const double& x, const double& y) const -> bool
 template <size_t N>
 void Recorder::Bin<N>::store_momentum(const double& momentum)
 {
-    m_momentum_density = m_momentum_density + momentum; // * m_inverse_bin_area;
+    m_momentum_density = m_momentum_density + momentum;
     m_empty = false;
 }
 template <size_t N>
 void Recorder::Bin<N>::store_energy(const double& energy)
 {
-    m_energy_density = m_energy_density + energy; // * m_inverse_bin_area;
+    m_energy_density = m_energy_density + energy;
     m_empty = false;
 }
 template <size_t N>

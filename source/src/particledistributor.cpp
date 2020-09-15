@@ -31,7 +31,7 @@ auto ParticleDistributor::run() -> std::future<void> {
     return std::async(std::launch::async, [this]{
         std::mutex mutex {};
         while (m_run || !m_primaries.empty()) {
-            std::unique_lock lock { mutex };
+            std::unique_lock<std::mutex> lock { mutex };
             m_has_primaries.wait(lock);
             distribute();
         }
@@ -44,7 +44,7 @@ auto ParticleDistributor::pre_conditions() -> void {
 
 auto ParticleDistributor::distribute() -> void
 {
-    std::scoped_lock lock { m_primary_mutex };
+    std::scoped_lock<std::mutex> lock { m_primary_mutex };
     pre_conditions();
     std::shared_ptr<Cluster> current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
     m_cluster_rule->update_cluster(current_cluster);
@@ -62,7 +62,7 @@ auto ParticleDistributor::distribute() -> void
 
 auto ParticleDistributor::collect(const std::string& secondaries) -> void {
 
-    std::scoped_lock lock { m_primary_mutex };
+    std::scoped_lock<std::mutex> lock { m_primary_mutex };
 
     parse(secondaries);
     m_has_primaries.notify_all();
@@ -136,9 +136,27 @@ auto ParticleDistributor::parse(const std::string& secondaries) -> void {
         }
         {
             char field[len] = "";
-            stream.get(field, len, '\n');
+            stream.get(field, len, ',');
             stream.get();
             primary.momentum.m = std::stod(field);
+        }
+        {
+            char field[len] = "";
+            stream.get(field, len, ',');
+            stream.get();
+            primary.time.global = std::stod(field);
+        }
+        {
+            char field[len] = "";
+            stream.get(field, len, ',');
+            stream.get();
+            primary.time.proper = std::stod(field);
+        }
+        {
+            char field[len] = "";
+            stream.get(field, len, '\n');
+            stream.get();
+            primary.time.local = std::stod(field);
         }
         if (m_scorer->score(primary) > m_scorer->limit()) {
             m_primaries.push_back(primary);

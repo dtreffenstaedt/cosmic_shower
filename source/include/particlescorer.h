@@ -22,6 +22,11 @@ struct PrimaryParticle {
 
         double m; // momentum magnitude
     } momentum;
+    struct {
+        double global;
+        double proper;
+        double local;
+    } time;
 
     int n_particles;
     int particle; // type of initial particle

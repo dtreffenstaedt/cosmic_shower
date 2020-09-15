@@ -27,11 +27,11 @@ auto ParticleKiller::PostStepDoIt(const G4Track& track, const G4Step& step) -> G
         const G4ThreeVector mom = track.GetMomentumDirection();
         m_recorder->store_secondary({ { pos.x(), pos.y(), pos.z() },
             { mom.x(), mom.y(), mom.z() },
+            {track.GetGlobalTime(), track.GetProperTime(), track.GetLocalTime()},
             track.GetKineticEnergy(),
             track.GetParticleDefinition()->GetPDGEncoding(),
-            track.GetParticleDefinition()->GetParticleName() });
+            track.GetParticleDefinition()->GetParticleName()});
     }
-
     pParticleChange->Initialize(track);
     pParticleChange->ProposeTrackStatus(fStopAndKill);
     return pParticleChange;

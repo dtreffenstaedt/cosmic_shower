@@ -33,6 +33,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
             gun->SetParticlePosition(G4ThreeVector((primary.origin.x) + m_offset_top.x, (primary.origin.y) + m_offset_top.y, (primary.origin.z) + m_offset_top.z));
         }
         gun->SetParticleMomentumDirection(G4ThreeVector(primary.momentum.x, primary.momentum.y, primary.momentum.z));
+        gun->SetParticleTime(primary.time.global);
+        gun->SetParticleProperTime(primary.time.proper);
+        gun->SetParticleLocalTime(primary.time.local);
         m_particle_guns.push_back(gun);
     }
 }

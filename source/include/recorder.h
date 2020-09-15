@@ -47,6 +47,11 @@ struct Secondary {
         const double y {};
         const double z {};
     } energy;
+    struct {
+        double global {};
+        double proper {};
+        double local {};
+    } time;
     const double kinetic_energy {};
     const int pdg {};
     const std::string name {};
@@ -106,10 +111,10 @@ public:
         std::atomic<double> m_x_max { 0 };
         std::atomic<double> m_y_min { 0 };
         std::atomic<double> m_y_max { 0 };
-        std::atomic<double> m_inverse_bin_area { 0 };
     };
 
 private:
+    void save_secondaries();
     [[nodiscard]] auto directory() const -> std::string;
     [[nodiscard]] auto bins_empty() const -> bool;
 

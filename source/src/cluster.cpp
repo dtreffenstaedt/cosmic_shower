@@ -61,6 +61,7 @@ auto Cluster::save() const -> std::string
         libconfig::Setting& primary = primary_setting.add(libconfig::Setting::TypeGroup);
         libconfig::Setting& origin = primary.add("origin", libconfig::Setting::TypeGroup);
         libconfig::Setting& momentum = primary.add("momentum", libconfig::Setting::TypeGroup);
+        libconfig::Setting& time = primary.add("time", libconfig::Setting::TypeGroup);
         origin.add("x", libconfig::Setting::TypeFloat) = prim.origin.x;
         origin.add("y", libconfig::Setting::TypeFloat) = prim.origin.y;
         origin.add("z", libconfig::Setting::TypeFloat) = prim.origin.z;
@@ -70,6 +71,10 @@ auto Cluster::save() const -> std::string
         momentum.add("y", libconfig::Setting::TypeFloat) = prim.momentum.y;
         momentum.add("z", libconfig::Setting::TypeFloat) = prim.momentum.z;
         momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.momentum.m;
+
+        time.add("global", libconfig::Setting::TypeFloat) = prim.time.global;
+        time.add("proper", libconfig::Setting::TypeFloat) = prim.time.proper;
+        time.add("local", libconfig::Setting::TypeFloat) = prim.time.local;
 
         primary.add("n_particles", libconfig::Setting::TypeInt) = prim.n_particles;
         primary.add("particle", libconfig::Setting::TypeInt) = prim.particle;
