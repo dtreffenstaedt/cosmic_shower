@@ -38,7 +38,7 @@ private:
 
     std::atomic<bool> m_locked { false };
 
-    static constexpr std::size_t m_max_threads { 4 };
+    static constexpr std::size_t m_max_threads { 6 };
 
     std::mutex m_active_mutex {};
     std::mutex m_queued_mutex {};
