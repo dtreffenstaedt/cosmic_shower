@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
+#include <iomanip>
+#include <ctime>
 
 #include <libconfig.h++>
 
@@ -102,6 +104,7 @@ auto CoreRunner::run(const std::string& name) -> void
     output_directory += "/" + name + "/";
 
     m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> void {
+        const auto start = std::chrono::system_clock::now();
         m_running++;
         std::string configfile { m_directory + "/" + name };
         if (system(("./run -c " + configfile).c_str()) != 0) {
@@ -110,8 +113,20 @@ auto CoreRunner::run(const std::string& name) -> void
                 << std::flush;
             log.close();
         }
+        const auto end = std::chrono::system_clock::now();
 
         std::string secondaryfile { output_directory + "event_1/secondaries" };
+        std::string runinfofile { output_directory + "runinfo" };
+
+        std::ofstream out{runinfofile};
+        std::time_t start_t = std::chrono::system_clock::to_time_t(start);
+        std::time_t end_t = std::chrono::system_clock::to_time_t(end);
+
+        out<<"start: "<<std::put_time(std::localtime(&start_t), "%F %T")
+          <<"\nend: "<<std::put_time(std::localtime(&end_t), "%F %T")
+         <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
+
+
 
         std::cout << "Checking for secondaries: " << secondaryfile << '\n'
                   << std::flush;
