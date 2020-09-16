@@ -61,9 +61,6 @@ auto ParticleDistributor::distribute() -> void
 }
 
 auto ParticleDistributor::collect(const std::string& secondaries) -> void {
-
-    std::scoped_lock<std::mutex> lock { m_primary_mutex };
-
     parse(secondaries);
     m_has_primaries.notify_all();
 }
@@ -74,6 +71,7 @@ auto ParticleDistributor::parse(const std::string& secondaries) -> void {
         std::cout << "Error opening file '" << secondaries << "'\n"
                   << std::flush;
     }
+    std::scoped_lock<std::mutex> lock { m_primary_mutex };
     std::vector<PrimaryParticle> primaries {};
     while ((stream.good()) && (stream.peek() != EOF)) {
         while (std::isspace(stream.peek()) != 0) {
@@ -142,7 +140,7 @@ auto ParticleDistributor::parse(const std::string& secondaries) -> void {
         }
         {
             char field[len] = "";
-            stream.get(field, len, ',');
+            stream.get(field, len, '\n');
             stream.get();
             primary.time.global = std::stod(field);
         }

@@ -38,7 +38,7 @@ Recorder::Recorder(const std::shared_ptr<Configuration>& config, const std::shar
         }
     }
 
-    config->config_dump(m_directory + "/config_dump");
+//    config->config_dump(m_directory + "/config_dump");
     m_secondaries.reserve(20000);
 }
 
