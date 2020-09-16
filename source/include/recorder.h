@@ -49,8 +49,6 @@ struct Secondary {
     } energy;
     struct {
         double global {};
-        double proper {};
-        double local {};
     } time;
     const double kinetic_energy {};
     const int pdg {};

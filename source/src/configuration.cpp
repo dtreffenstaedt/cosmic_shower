@@ -141,7 +141,7 @@ auto Configuration::get_primaries(const bool& fallback) const -> std::vector<Con
         const libconfig::Setting& momentum = primary_setting["momentum"];
         const libconfig::Setting& time = primary_setting["time"];
         Config::PrimaryParticle primary {};
-        if (!(origin.lookupValue("absolute", primary.origin.absolute) && origin.lookupValue("x", primary.origin.x) && origin.lookupValue("y", primary.origin.y) && origin.lookupValue("z", primary.origin.z) && momentum.lookupValue("x", primary.momentum.y) && momentum.lookupValue("y", primary.momentum.y) && momentum.lookupValue("z", primary.momentum.z) && momentum.lookupValue("magnitude", primary.momentum.m) && time.lookupValue("global", primary.time.global) && time.lookupValue("proper", primary.time.proper) && time.lookupValue("local", primary.time.local) && primary_setting.lookupValue("n_particles", primary.n_particles) && primary_setting.lookupValue("name", primary.name) && primary_setting.lookupValue("particle", primary.particle))) {
+        if (!(origin.lookupValue("absolute", primary.origin.absolute) && origin.lookupValue("x", primary.origin.x) && origin.lookupValue("y", primary.origin.y) && origin.lookupValue("z", primary.origin.z) && momentum.lookupValue("x", primary.momentum.y) && momentum.lookupValue("y", primary.momentum.y) && momentum.lookupValue("z", primary.momentum.z) && momentum.lookupValue("magnitude", primary.momentum.m) && time.lookupValue("global", primary.time.global) && primary_setting.lookupValue("n_particles", primary.n_particles) && primary_setting.lookupValue("name", primary.name) && primary_setting.lookupValue("particle", primary.particle))) {
             throw FaultyPrimaryDefinition();
         }
         primary.origin.x *= m;
@@ -149,8 +149,6 @@ auto Configuration::get_primaries(const bool& fallback) const -> std::vector<Con
         primary.origin.z *= m;
         primary.momentum.m *= MeV;
         primary.time.global *= ns;
-        primary.time.proper *= ns;
-        primary.time.local *= ns;
         primaries.push_back(primary);
     }
     return primaries;
@@ -344,7 +342,6 @@ void Configuration::config_dump(const std::string& filename)
             origin.add("absolute", libconfig::Setting::TypeBoolean) = prim.origin.absolute;
 
             time.add("global", libconfig::Setting::TypeFloat) = prim.time.global / ns;
-            time.add("local", libconfig::Setting::TypeFloat) = prim.time.local / ns;
 
             momentum.add("x", libconfig::Setting::TypeFloat) = prim.momentum.x;
             momentum.add("y", libconfig::Setting::TypeFloat) = prim.momentum.y;

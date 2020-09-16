@@ -66,8 +66,6 @@ namespace Config {
 
         struct {
             double global;
-            double proper;
-            double local;
         } time;
 
         int n_particles;

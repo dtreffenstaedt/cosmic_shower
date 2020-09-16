@@ -146,18 +146,6 @@ auto ParticleDistributor::parse(const std::string& secondaries) -> void {
             stream.get();
             primary.time.global = std::stod(field);
         }
-        {
-            char field[len] = "";
-            stream.get(field, len, ',');
-            stream.get();
-            primary.time.proper = std::stod(field);
-        }
-        {
-            char field[len] = "";
-            stream.get(field, len, '\n');
-            stream.get();
-            primary.time.local = std::stod(field);
-        }
         if (m_scorer->score(primary) > m_scorer->limit()) {
             m_primaries.push_back(primary);
         }

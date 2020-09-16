@@ -20,18 +20,15 @@ auto ParticleKiller::IsApplicable(const G4ParticleDefinition & /*particle*/) -> 
 
 auto ParticleKiller::PostStepDoIt(const G4Track& track, const G4Step& step) -> G4VParticleChange*
 {
-    const int pdg = std::abs(track.GetParticleDefinition()->GetPDGEncoding());
-    if (!((pdg == 12) || (pdg == 14) || (pdg == 16))) {
-        const G4StepPoint* pre = step.GetPreStepPoint();
-        const G4ThreeVector pos = pre->GetPosition();
-        const G4ThreeVector mom = track.GetMomentumDirection();
-        m_recorder->store_secondary({ { pos.x(), pos.y(), pos.z() },
-            { mom.x(), mom.y(), mom.z() },
-            {track.GetGlobalTime(), track.GetProperTime(), track.GetLocalTime()},
-            track.GetKineticEnergy(),
-            track.GetParticleDefinition()->GetPDGEncoding(),
-            track.GetParticleDefinition()->GetParticleName()});
-    }
+    const G4StepPoint* pre = step.GetPreStepPoint();
+    const G4ThreeVector pos = pre->GetPosition();
+    const G4ThreeVector mom = track.GetMomentumDirection();
+    m_recorder->store_secondary({ { pos.x(), pos.y(), pos.z() },
+        { mom.x(), mom.y(), mom.z() },
+        {track.GetGlobalTime()},
+        track.GetKineticEnergy(),
+        track.GetParticleDefinition()->GetPDGEncoding(),
+        track.GetParticleDefinition()->GetParticleName()});
     pParticleChange->Initialize(track);
     pParticleChange->ProposeTrackStatus(fStopAndKill);
     return pParticleChange;

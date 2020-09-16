@@ -73,8 +73,6 @@ auto Cluster::save() const -> std::string
         momentum.add("magnitude", libconfig::Setting::TypeFloat) = prim.momentum.m;
 
         time.add("global", libconfig::Setting::TypeFloat) = prim.time.global;
-        time.add("proper", libconfig::Setting::TypeFloat) = prim.time.proper;
-        time.add("local", libconfig::Setting::TypeFloat) = prim.time.local;
 
         primary.add("n_particles", libconfig::Setting::TypeInt) = prim.n_particles;
         primary.add("particle", libconfig::Setting::TypeInt) = prim.particle;

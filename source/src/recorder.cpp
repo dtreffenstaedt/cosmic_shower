@@ -94,9 +94,7 @@ void Recorder::save_secondaries() {
             << std::setprecision(15) << prim.energy.y << ','
             << std::setprecision(15) << prim.energy.z << ','
             << std::setprecision(15) << prim.kinetic_energy / MeV << ','
-            << std::setprecision(15) << prim.time.global / ns << ','
-            << std::setprecision(15) << prim.time.proper / ns << ','
-            << std::setprecision(15) << prim.time.local / ns << '\n';
+            << std::setprecision(15) << prim.time.global / ns << '\n';
     }
     stream.close();
     m_secondaries.clear();
