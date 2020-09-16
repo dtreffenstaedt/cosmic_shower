@@ -5,6 +5,7 @@
 #include "actions/eventaction.h"
 #include "actions/primarygeneratoraction.h"
 #include "actions/steppingaction.h"
+#include "actions/stackingaction.h"
 
 #include "cancelcriterion.h"
 #include "configuration.h"
@@ -44,5 +45,7 @@ void ActionInitialization::Build() const
 #endif
 
     SetUserAction(new SteppingAction { m_recorder, m_configuration });
+
+    SetUserAction(new StackingAction {});
 }
 }
