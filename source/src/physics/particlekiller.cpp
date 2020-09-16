@@ -39,13 +39,11 @@ auto ParticleKiller::GetMeanFreePath(const G4Track& /*track*/, G4double /*step_s
     return std::numeric_limits<G4double>::max();
 }
 
-auto ParticleKiller::PostStepGetPhysicalInteractionLength(const G4Track& track, G4double /*step_size*/, G4ForceCondition* condition) -> G4double
+auto ParticleKiller::PostStepGetPhysicalInteractionLength(const G4Track& /*track*/, G4double /*step_size*/, G4ForceCondition* condition) -> G4double
 {
     *condition = NotForced;
 
-    const int pdg = std::abs(track.GetParticleDefinition()->GetPDGEncoding());
-
-    if (m_cancel_criterion->met() || (pdg == 12) || (pdg == 14) || (pdg == 16)) {
+    if (m_cancel_criterion->met()) {
         return 0.0;
     }
     return std::numeric_limits<G4double>::max();
