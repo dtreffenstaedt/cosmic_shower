@@ -134,7 +134,7 @@ void Core::setup()
 
     m_run_manager->SetUserInitialization(new DetectorConstruction { m_recorder, m_configuration });
 
-    auto cancel_criterion {std::make_shared<TimedCancel>(std::chrono::minutes { 30 })};
+    auto cancel_criterion {std::make_shared<TimedCancel>(std::chrono::minutes { 30 }, 0.1)};
 
     m_run_manager->SetUserInitialization(new PhysicsList { m_recorder, cancel_criterion});
 

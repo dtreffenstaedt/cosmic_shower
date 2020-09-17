@@ -109,7 +109,7 @@ auto CoreRunner::run(const std::string& name) -> void
         std::string configfile { m_directory + "/" + name };
         if (system(("./run -c " + configfile).c_str()) != 0) {
             std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
-            log << "Error executing for" << configfile << '\n'
+            log << "Error executing for " << configfile << '\n'
                 << std::flush;
             log.close();
         }
