@@ -41,7 +41,7 @@ if(${SHOWER_BUILD_UI})
 else(${SHOWER_BUILD_UI})
   find_package(Geant4 REQUIRED)
 endif(${SHOWER_BUILD_UI})
-find_package(libconfig++ REQUIRED)
+#find_package(libconfig++ REQUIRED)
 
 set(Geant4_CXX_FLAGS "")
 set(Geant4_CXX_FLAGS_DEBUG "")
@@ -63,6 +63,9 @@ add_compile_options(
   -Werror
   -O3)
 
+
+set(LIBCONFIG++_LIBRARIES "config++")
+
 include(cmake/files.cmake)
 
 include(${Geant4_USE_FILE})
@@ -81,8 +84,8 @@ target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES}
 add_executable(node ${NODE_SOURCE_FILES} ${NODE_HEADER_FILES})
 target_link_libraries(node ${LIBCONFIG++_LIBRARIES} pthread)
 
-add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
-target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
+#add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
+#target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
 
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES} ${ATMOS_HEADER_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
