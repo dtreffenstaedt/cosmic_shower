@@ -20,12 +20,14 @@ ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, s
     : m_recorder { std::move(recorder) }
     , m_configuration { std::move(configuration) }
     , m_benchmark { std::move(benchmark) }
+    , m_cancel_criterion {std::move(cancel_criterion)}
 {
 }
 #else
-ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration)
+ActionInitialization::ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration, std::shared_ptr<CancelCriterion> cancel_criterion)
     : m_recorder { std::move(recorder) }
     , m_configuration { std::move(configuration) }
+    , m_cancel_criterion {std::move(cancel_criterion)}
 {
 }
 #endif
@@ -46,6 +48,6 @@ void ActionInitialization::Build() const
 
     SetUserAction(new SteppingAction { m_recorder, m_configuration });
 
-    SetUserAction(new StackingAction {});
+    SetUserAction(new StackingAction {m_recorder, m_cancel_criterion});
 }
 }

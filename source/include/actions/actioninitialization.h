@@ -18,20 +18,21 @@ class Benchmark;
 class ActionInitialization : public G4VUserActionInitialization {
 public:
 #ifdef SHOWER_BENCHMARK
-    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration, std::shared_ptr<Benchmark> benchmark);
+    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration, std::shared_ptr<Benchmark> benchmark, std::shared_ptr<CancelCriterion> cancel_criterion);
 #else
-    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration);
+    explicit ActionInitialization(std::shared_ptr<Recorder> recorder, std::shared_ptr<Configuration> configuration, std::shared_ptr<CancelCriterion> cancel_criterion);
 #endif
 
     void BuildForMaster() const override;
     void Build() const override;
 
 private:
-    std::shared_ptr<Recorder> m_recorder;
-    std::shared_ptr<Configuration> m_configuration;
+    std::shared_ptr<Recorder> m_recorder{nullptr};
+    std::shared_ptr<Configuration> m_configuration{nullptr};
 #ifdef SHOWER_BENCHMARK
-    std::shared_ptr<Benchmark> m_benchmark;
+    std::shared_ptr<Benchmark> m_benchmark{nullptr};
 #endif
+    std::shared_ptr<CancelCriterion> m_cancel_criterion{nullptr};
 };
 }
 

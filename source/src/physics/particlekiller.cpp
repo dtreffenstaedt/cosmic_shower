@@ -43,7 +43,7 @@ auto ParticleKiller::PostStepGetPhysicalInteractionLength(const G4Track& /*track
 {
     *condition = NotForced;
 
-    if (m_cancel_criterion->met()) {
+    if (m_cancel_criterion->ultimate()) {
         return 0.0;
     }
     return std::numeric_limits<G4double>::max();

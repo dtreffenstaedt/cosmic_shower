@@ -5,19 +5,37 @@
 #include <G4NeutrinoMu.hh>
 #include <G4NeutrinoTau.hh>
 
+#include "recorder.h"
+#include "cancelcriterion.h"
 
 namespace Shower {
 
-StackingAction::StackingAction() = default;
+StackingAction::StackingAction(std::shared_ptr<Recorder> recorder, std::shared_ptr<CancelCriterion> cancel_criterion)
+    : m_recorder {recorder}
+    , m_cancel_criterion {cancel_criterion}
+{}
 
-auto StackingAction::ClassifyNewTrack(const G4Track* t) -> G4ClassificationOfNewTrack {
-    const auto* p = t->GetParticleDefinition();
+auto StackingAction::ClassifyNewTrack(const G4Track* track) -> G4ClassificationOfNewTrack {
+    const auto* p = track->GetParticleDefinition();
 
     if (
             (p == G4NeutrinoE::NeutrinoE()) ||
             (p == G4NeutrinoMu::NeutrinoMu()) ||
             (p == G4NeutrinoTau::NeutrinoTau())
             ) {
+        return fKill;
+    }
+    if (m_cancel_criterion->met()) {
+        const auto step = track->GetStep();
+        const G4StepPoint* pre = step->GetPreStepPoint();
+        const G4ThreeVector pos = pre->GetPosition();
+        const G4ThreeVector mom = track->GetMomentumDirection();
+        m_recorder->store_secondary({ { pos.x(), pos.y(), pos.z() },
+            { mom.x(), mom.y(), mom.z() },
+            {track->GetGlobalTime()},
+            track->GetKineticEnergy(),
+            track->GetParticleDefinition()->GetPDGEncoding(),
+            track->GetParticleDefinition()->GetParticleName()});
         return fKill;
     }
     return fUrgent;
