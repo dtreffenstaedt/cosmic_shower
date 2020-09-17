@@ -8,6 +8,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "particlescorer.h"
 
@@ -31,7 +32,10 @@ public:
 private:
     auto run(const std::string& name) -> void;
 
+    void write_data_point();
+
     std::string m_directory { "./primaries/" };
+    std::ofstream m_data_file { "node.dat" };
 
     std::queue<std::string> m_queued {};
     std::vector<std::future<void>> m_active {};
@@ -44,6 +48,9 @@ private:
     std::mutex m_queued_mutex {};
 
     std::atomic<std::size_t> m_running { 0 };
+    std::atomic<std::size_t> m_total { 0 };
+    std::atomic<std::size_t> m_finished { 0 };
+    std::atomic<std::size_t> m_failed { 0 };
 
     std::unique_ptr<ParticleDistributor> m_distributor { nullptr };
     std::unique_ptr<ParticleCollector> m_collector { nullptr };

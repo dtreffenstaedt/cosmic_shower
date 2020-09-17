@@ -26,9 +26,7 @@ auto StackingAction::ClassifyNewTrack(const G4Track* track) -> G4ClassificationO
         return fKill;
     }
     if (m_cancel_criterion->met()) {
-        const auto step = track->GetStep();
-        const G4StepPoint* pre = step->GetPreStepPoint();
-        const G4ThreeVector pos = pre->GetPosition();
+        const G4ThreeVector pos = track->GetPosition();
         const G4ThreeVector mom = track->GetMomentumDirection();
         m_recorder->store_secondary({ { pos.x(), pos.y(), pos.z() },
             { mom.x(), mom.y(), mom.z() },

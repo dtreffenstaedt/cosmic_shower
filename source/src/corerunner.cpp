@@ -43,6 +43,8 @@ CoreRunner::~CoreRunner() = default;
 
 auto CoreRunner::register_instance(const std::string& name) -> void
 {
+    std::cout<<"Registering instance: "<<name<<'\n'<<std::flush;
+    m_total++;
     std::scoped_lock<std::mutex, std::mutex> lock { m_active_mutex, m_queued_mutex };
     m_locked = true;
     if (m_active.size() < m_max_threads) {
@@ -53,6 +55,15 @@ auto CoreRunner::register_instance(const std::string& name) -> void
                   << std::flush;
     }
     m_locked = false;
+}
+
+void CoreRunner::write_data_point() {
+    m_data_file
+            <<m_running<<','
+            <<m_finished<<','
+            <<m_failed<<','
+            <<m_total<<','
+            <<m_queued.size()<<'\n'<<std::flush;
 }
 
 auto CoreRunner::run() -> int
@@ -112,31 +123,33 @@ auto CoreRunner::run(const std::string& name) -> void
             log << "Error executing for " << configfile << '\n'
                 << std::flush;
             log.close();
-        }
-        const auto end = std::chrono::system_clock::now();
-
-        std::string secondaryfile { output_directory + "event_1/secondaries" };
-        std::string runinfofile { output_directory + "runinfo" };
-
-        std::ofstream out{runinfofile};
-        std::time_t start_t = std::chrono::system_clock::to_time_t(start);
-        std::time_t end_t = std::chrono::system_clock::to_time_t(end);
-
-        out<<"start: "<<std::put_time(std::localtime(&start_t), "%F %T")
-          <<"\nend: "<<std::put_time(std::localtime(&end_t), "%F %T")
-         <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
-
-
-
-        std::cout << "Checking for secondaries: " << secondaryfile << '\n'
-                  << std::flush;
-        if (std::filesystem::exists(secondaryfile)) {
-            m_distributor->collect(secondaryfile);
+            m_failed++;
+            register_instance(name);
+            std::filesystem::remove(output_directory);
         } else {
-            std::cout << "Not found.\n"
-                      << std::flush;
+            std::string secondaryfile { output_directory + "event_1/secondaries" };
+
+
+
+            std::cout << "Checking for secondaries: " << secondaryfile << '\n'<< std::flush;
+            if (std::filesystem::exists(secondaryfile)) {
+                m_distributor->collect(secondaryfile);
+            } else {
+                std::cout << "Not found.\n"<< std::flush;
+            }
+            m_collector->collect(name);
+            m_finished++;
+            const auto end = std::chrono::system_clock::now();
+            std::string runinfofile { output_directory + "runinfo" };
+
+            std::ofstream out{runinfofile};
+            std::time_t start_t = std::chrono::system_clock::to_time_t(start);
+            std::time_t end_t = std::chrono::system_clock::to_time_t(end);
+
+            out<<"start: "<<std::put_time(std::localtime(&start_t), "%F %T")
+              <<"\nend: "<<std::put_time(std::localtime(&end_t), "%F %T")
+             <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
         }
-        m_collector->collect(name);
         m_running--;
     }));
 }

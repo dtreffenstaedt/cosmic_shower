@@ -44,6 +44,7 @@ auto ParticleDistributor::pre_conditions() -> void {
 
 auto ParticleDistributor::distribute() -> void
 {
+    std::cout << "Distributing\n"<< std::flush;
     std::scoped_lock<std::mutex> lock { m_primary_mutex };
     pre_conditions();
     std::shared_ptr<Cluster> current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
