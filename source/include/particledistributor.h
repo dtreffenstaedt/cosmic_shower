@@ -21,9 +21,11 @@ class CoreRunner;
 class ParticleDistributor {
 public:
     explicit ParticleDistributor(CoreRunner* runner, const std::shared_ptr<ParticleScorer>& scorer, const std::string& directory, std::string config);
-    auto distribute() -> void;
+    auto distribute(const bool force = false) -> void;
     auto collect(const std::string& secondaries) -> void;
     virtual ~ParticleDistributor();
+
+    [[nodiscard]] auto empty() const -> bool;
 
 private:
     [[nodiscard]] auto has_next() const -> bool;
@@ -42,6 +44,10 @@ private:
     std::atomic<bool> m_run { true };
     std::mutex m_primary_mutex {};
     std::future<void> m_future {};
+    std::shared_ptr<Cluster> m_current_cluster {nullptr};
+    std::atomic<double> m_total_energy{0};
+    std::atomic<double> m_simulated_energy{0};
+    std::atomic<double> m_queued_energy{0};
 };
 
 }

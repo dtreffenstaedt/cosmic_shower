@@ -28,6 +28,8 @@ private:
     std::shared_ptr<ParticleScorer> m_scorer { nullptr };
     std::vector<PrimaryParticle> m_primaries {};
 
+    double m_score {0};
+
     std::string m_directory { "./primaries/" };
     std::string m_config_file { "shower.cfg" };
 };

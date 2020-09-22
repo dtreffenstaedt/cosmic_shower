@@ -21,18 +21,13 @@ Cluster::Cluster(std::shared_ptr<ParticleScorer> scorer, std::string directory, 
 
 auto Cluster::score() const -> double
 {
-    double total { 0 };
-
-    for (const auto& particle : m_primaries) {
-        total += m_scorer->score(particle);
-    }
-
-    return total;
+    return m_score;
 }
 
 auto Cluster::add(PrimaryParticle primary) -> void
 {
     m_primaries.push_back(primary);
+    m_score +=  m_scorer->score(primary);
 }
 
 auto Cluster::number() const -> std::size_t

@@ -27,9 +27,12 @@ public:
 
 protected:
     [[nodiscard]] auto current_cluster() const -> std::shared_ptr<Cluster>;
+    std::shared_ptr<ParticleScorer> m_scorer { nullptr };
+
+    [[nodiscard]] auto has_cluster() const -> bool;
+
 
 private:
-    std::shared_ptr<ParticleScorer> m_scorer { nullptr };
     std::shared_ptr<Cluster> m_current_cluster { nullptr };
 };
 
@@ -43,6 +46,20 @@ public:
 
 private:
     constexpr static std::size_t s_max { 100000 };
+};
+
+class ScoreClusterRule : public ClusterRule {
+public:
+    explicit ScoreClusterRule(std::shared_ptr<ParticleScorer> scorer);
+
+    [[nodiscard]] auto result(const PrimaryParticle& particle) const -> Result override;
+
+    ~ScoreClusterRule() override = default;
+
+private:
+    constexpr static double s_default_max_score { 10000000.0 };
+
+    double m_max_score { s_default_max_score };
 };
 
 class FixedClusterRule : public ClusterRule {

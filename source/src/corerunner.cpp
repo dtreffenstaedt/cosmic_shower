@@ -68,7 +68,7 @@ void CoreRunner::write_data_point() {
 
 auto CoreRunner::run() -> int
 {
-    while (!m_active.empty() || !m_queued.empty() || (m_running > 0)) {
+    while (!m_active.empty() || !m_queued.empty() || (m_running > 0) || (!m_distributor->empty())) {
         if (!m_locked) {
             m_locked = true;
             std::scoped_lock<std::mutex> lock { m_active_mutex };
@@ -97,6 +97,9 @@ auto CoreRunner::run() -> int
                 }
             }
             m_locked = false;
+        }
+        if ((!m_distributor->empty()) && (m_active.empty()) && (m_queued.empty()) && (m_running > 0)) {
+            m_distributor->distribute(true);
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
