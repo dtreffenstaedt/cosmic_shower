@@ -26,6 +26,7 @@ public:
     virtual ~ParticleDistributor();
 
     [[nodiscard]] auto empty() const -> bool;
+    [[nodiscard]] auto size() const -> size_t;
 
 private:
     [[nodiscard]] auto has_next() const -> bool;

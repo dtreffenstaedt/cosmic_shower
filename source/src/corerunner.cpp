@@ -68,13 +68,14 @@ void CoreRunner::write_data_point() {
 
 auto CoreRunner::run() -> int
 {
-    while (!m_active.empty() || !m_queued.empty() || (m_running > 0) || (!m_distributor->empty())) {
+    while (m_run) {
         if (!m_locked) {
             m_locked = true;
             std::scoped_lock<std::mutex> lock { m_active_mutex };
             std::vector<std::size_t> remove {};
             for (std::size_t i { 0 }; i < m_active.size(); i++) {
                 if (m_active[i].wait_for(std::chrono::microseconds(10)) == std::future_status::ready) {
+                    m_active[i].get();
                     remove.push_back(i);
                 }
             }
@@ -101,9 +102,14 @@ auto CoreRunner::run() -> int
         if ((!m_distributor->empty()) && (m_active.empty()) && (m_queued.empty()) && (m_running > 0)) {
             m_distributor->distribute(true);
         }
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-
+    for (auto& future: m_active) {
+        future.wait();
+    }
+    m_active.clear();
+    std::cout<<"All done, bye."<<std::flush;
     return 0;
 }
 
@@ -117,7 +123,7 @@ auto CoreRunner::run(const std::string& name) -> void
     root.lookupValue("data_directory", output_directory);
     output_directory += "/" + name + "/";
 
-    m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> void {
+    m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> int {
         const auto start = std::chrono::system_clock::now();
         m_running++;
         std::string configfile { m_directory + "/" + name };
@@ -131,8 +137,6 @@ auto CoreRunner::run(const std::string& name) -> void
             std::filesystem::remove(output_directory);
         } else {
             std::string secondaryfile { output_directory + "event_1/secondaries" };
-
-
 
             std::cout << "Checking for secondaries: " << secondaryfile << '\n'<< std::flush;
             if (std::filesystem::exists(secondaryfile)) {
@@ -154,6 +158,10 @@ auto CoreRunner::run(const std::string& name) -> void
              <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
         }
         m_running--;
+        if (m_running == 0 && m_queued.size() == 0 && m_distributor->size() == 0) {
+            m_run = false;
+        }
+        return 0;
     }));
 }
 

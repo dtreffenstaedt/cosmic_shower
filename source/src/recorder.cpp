@@ -251,7 +251,7 @@ auto Recorder::Bin<N>::get_y_center() const -> double
 template <size_t N>
 void Recorder::Bin<N>::store(std::ofstream& stream)
 {
-    stream << get_x_center() / meter << ',' << get_y_center() / meter << ',' << m_momentum_density << ',' << m_energy_density << ',' << std::to_string(m_n_charged) << ',' << std::to_string(m_n_uncharged) << '\n';
+    stream << get_x_center() / meter << ',' << get_y_center() / meter << ',' << m_momentum_density / MeV << ',' << m_energy_density / MeV << ',' << std::to_string(m_n_charged) << ',' << std::to_string(m_n_uncharged) << '\n';
     clear();
 }
 

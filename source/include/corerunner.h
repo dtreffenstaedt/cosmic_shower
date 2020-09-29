@@ -38,9 +38,11 @@ private:
     std::ofstream m_data_file { "node.dat" };
 
     std::queue<std::string> m_queued {};
-    std::vector<std::future<void>> m_active {};
+    std::vector<std::future<int>> m_active {};
 
     std::atomic<bool> m_locked { false };
+
+    std::atomic<bool> m_run { true };
 
     static constexpr std::size_t m_max_threads { 6 };
 
