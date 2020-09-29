@@ -30,14 +30,18 @@ ParticleDistributor::~ParticleDistributor()
 auto ParticleDistributor::empty() const -> bool {
     return (m_primaries.empty() && (m_current_cluster == nullptr));
 }
+auto ParticleDistributor::size() const -> size_t {
+    return m_primaries.size();
+}
 
 auto ParticleDistributor::run() -> std::future<void> {
     return std::async(std::launch::async, [this]{
         std::mutex mutex {};
         while (m_run || !m_primaries.empty()) {
             std::unique_lock<std::mutex> lock { mutex };
-            m_has_primaries.wait(lock);
-            distribute();
+            if (m_has_primaries.wait_for(lock, std::chrono::seconds{1}) == std::cv_status::no_timeout) {
+                distribute();
+            }
         }
     });
 }
