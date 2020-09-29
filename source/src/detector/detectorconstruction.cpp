@@ -118,7 +118,7 @@ void DetectorConstruction::construct_atmosphere()
     for (size_t i = 0; i < len; i++) {
         Config::AtmosphereLayer definition = m_atmosphere_layers[i];
         G4double layer_lower = definition.lower; // lower end of each layer
-        G4double layer_thickness = (definition.upper - definition.lower); // layer thickness
+        G4double layer_thickness = (definition.upper - definition.lower) + 0.1 * meter; //  + 2 * std::numeric_limits<double>::epsilon(); // layer thickness
         G4double density = definition.density;
         G4double pressure = definition.pressure;
         G4double temperature = definition.temperature;
