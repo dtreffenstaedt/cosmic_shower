@@ -46,9 +46,9 @@ private:
     std::mutex m_primary_mutex {};
     std::future<void> m_future {};
     std::shared_ptr<Cluster> m_current_cluster {nullptr};
-    std::atomic<double> m_total_energy{0};
-    std::atomic<double> m_simulated_energy{0};
-    std::atomic<double> m_queued_energy{0};
+    double m_total_energy{0};
+    double m_simulated_energy{0};
+    double m_queued_energy{0};
 };
 
 }
