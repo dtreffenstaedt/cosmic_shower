@@ -9,8 +9,6 @@ if(${SHOWER_BUILD_TIDY})
       -checks=-*,readability-*,bugprone-*,performace-*,clang-analyzer-*,modernize-*,hicpp-*;
       -fix)
 endif(${SHOWER_BUILD_TIDY})
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_C_COMPILER clang)
 set(CMAKE_BUILD_TYPE Debug)
 set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(PROJECT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -41,7 +39,10 @@ if(${SHOWER_BUILD_UI})
 else(${SHOWER_BUILD_UI})
   find_package(Geant4 REQUIRED)
 endif(${SHOWER_BUILD_UI})
-find_package(libconfig++ REQUIRED)
+#find_package(libconfig++ REQUIRED)
+
+set(LIBCONFIG++_INCLUDE_DIRS "")
+set(LIBCONFIG++_LIBRARIES "config++")
 
 set(Geant4_CXX_FLAGS "")
 set(Geant4_CXX_FLAGS_DEBUG "")
@@ -81,8 +82,8 @@ target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES}
 add_executable(node ${NODE_SOURCE_FILES} ${NODE_HEADER_FILES})
 target_link_libraries(node ${LIBCONFIG++_LIBRARIES} pthread)
 
-add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
-target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
+#add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
+#target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
 
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES} ${ATMOS_HEADER_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
