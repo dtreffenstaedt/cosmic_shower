@@ -75,6 +75,8 @@ public:
 
     void store_secondary(const Secondary& intensity);
 
+    void store_primary_energy(const double& energy);
+
     void next_event();
 
     void save();
@@ -130,6 +132,10 @@ private:
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};
 
     std::atomic<size_t> m_event_number { 0 };
+
+    double m_primary_energy {0.0};
+    double m_secondary_energy {0.0};
+    double m_absorbed_energy {0.0};
 };
 }
 #endif // RECORDER_H

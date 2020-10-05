@@ -38,7 +38,7 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction { m_configuration });
+    SetUserAction(new PrimaryGeneratorAction {m_recorder, m_configuration });
 
 #ifdef SHOWER_BENCHMARK
     SetUserAction(new EventAction { m_recorder, m_benchmark });
