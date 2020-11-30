@@ -125,7 +125,7 @@ private:
     std::vector<Hit> m_hits {};
     std::vector<DetailedHit> m_detailed_hits {};
     std::vector<Secondary> m_secondaries {};
-    static constexpr size_t m_size { 10 };
+    static constexpr size_t m_size { 40 };
 
     std::array<std::array<Bin<m_size>, m_size>, m_size> m_bins {};
 
