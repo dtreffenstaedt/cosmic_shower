@@ -204,13 +204,14 @@ void DetectorConstruction::construct_detectors()
     } else {
         detectors = std::get<std::vector<Config::DetectorPlacement>>(m_detectors);
         for (auto placement : detectors) {
-            place_detector(placement.name, (placement.x * m) + m_offset_bottom.x, (placement.y * m) + m_offset_bottom.y, (placement.z * m) + m_offset_bottom.z);
+            place_detector(placement.name, (placement.x) + m_offset_bottom.x, (placement.y) + m_offset_bottom.y, (placement.z) + m_offset_bottom.z);
         }
     }
 }
 
 void DetectorConstruction::place_detector(const std::string& name, const G4double& x, const G4double& y, const G4double& z)
 {
+    std::cout<<"Placing detector '"<< name <<"' at" << x << ", "<<y<<", "<<z<<'\n'<<std::flush;
     Config::DetectorPlacement det;
     det.x = x;
     det.y = y;
