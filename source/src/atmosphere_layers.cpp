@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <libconfig.h++>
+#include <iomanip>
 
 #include "atmosphere_layers.h"
 
@@ -71,6 +72,9 @@ Layer::Layer(const long double& lower, const long double& upper, OptimisationTar
 Layer::~Layer()
 {
     delete m_target;
+    if (m_next != nullptr) {
+        m_next->m_target = nullptr;
+    }
     delete m_next;
 }
 
@@ -159,14 +163,14 @@ auto Layer::total_n(const bool& all) const -> long double
 
 auto Layer::fit_to_area(const long double& target) -> bool
 {
-    if (std::abs(integral(m_lower, m_upper) - target) < std::numeric_limits<long double>::epsilon()) {
+    if (std::abs(integral(m_lower, m_upper) - target) < Consts::deviation) {
         return true;
     }
     size_t i { 0 };
     do {
         resize(target / (integral(m_lower, m_upper) / thickness()));
         i++;
-    } while ((std::abs(integral(m_lower, m_upper) - target) > std::numeric_limits<long double>::epsilon()) && (i < Consts::max_tries));
+    } while ((std::abs(integral(m_lower, m_upper) - target) > Consts::deviation) && (i < Consts::max_tries));
     return false;
 }
 
@@ -186,7 +190,7 @@ auto Layer::optimise(const size_t& j, const size_t& i) -> bool
     if (m_next != nullptr) {
         m_next->optimise(0, i + 1);
     }
-    if (std::abs(average_integral() - integral(m_lower, m_upper)) > std::numeric_limits<long double>::epsilon()) {
+    if (std::abs(average_integral() - integral(m_lower, m_upper)) > Consts::deviation) {
         return optimise(j + 1, i);
     }
     return finished;
@@ -211,7 +215,7 @@ void Layer::print_detailed(const size_t& n)
     Density rho;
     Pressure p;
     Temperature t;
-    std::cout << "\nlayer " << std::to_string(n) << ":\n lower bound: " << m_lower << "m\n upper bound: " << m_upper << "m\n t = " << m_upper - m_lower << 'm';
+    std::cout << "\nlayer " << std::to_string(n) << ":\n lower bound: " << std::setprecision(5) << m_lower << "m\n upper bound: " << m_upper << "m\n t = " << m_upper - m_lower << 'm';
     std::cout << "\n ρ = " << (rho.integral(m_lower, m_upper) / thickness()) << " kg/m^3\n p = " << (p.integral(m_lower, m_upper) / thickness()) << " Pa\n T = " << (t.integral(m_lower, m_upper) / thickness()) << " K\n";
     if (m_next != nullptr) {
         m_next->print_detailed(n + 1);
@@ -333,9 +337,11 @@ auto main(int argc, char* argv[]) -> int
     }
     if (!csv && !config) {
         std::cout << "Calculating layers for parameters:\n\th_max = " << upper << " m\n\tρ_0 = " << Consts::rho_0 << " kg/m^3\n\tp_0 = " << Consts::p_0 << " Pa\n\tT_0 = " << Consts::T_0 << " K\n\tκ = " << Consts::kappa << "\n\tn = " << std::to_string(n) << '\n';
+        std::cout << "Using precision of " << Consts::deviation << '\n';
     }
     // lower bound, upper bound, layers
     Layer* layers = Layer::create(lower, upper, new Density(), n);
+
     layers->optimise();
     if (csv) {
         layers->print_csv();

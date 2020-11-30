@@ -18,7 +18,7 @@ ParticleDistributor::ParticleDistributor(CoreRunner* runner, const std::shared_p
     , m_scorer { scorer }
     , m_future { run() }
 {
-    m_cluster_rule = std::make_shared<FixedClusterRule>(m_scorer, m_primaries);
+    m_cluster_rule = std::make_shared<ScoreClusterRule>(m_scorer);
 }
 
 ParticleDistributor::~ParticleDistributor()
@@ -27,13 +27,29 @@ ParticleDistributor::~ParticleDistributor()
     m_future.wait();
 }
 
+auto ParticleDistributor::empty() const -> bool {
+    return (m_primaries.empty() && (m_current_cluster == nullptr));
+}
+auto ParticleDistributor::size() const -> size_t {
+    return m_primaries.size();
+}
+auto ParticleDistributor::queued_energy() const -> double
+{
+    double total = 0.0;
+    for (auto& prim: m_primaries) {
+        total += prim.momentum.m;
+    }
+    return total;
+}
+
 auto ParticleDistributor::run() -> std::future<void> {
     return std::async(std::launch::async, [this]{
         std::mutex mutex {};
         while (m_run || !m_primaries.empty()) {
             std::unique_lock<std::mutex> lock { mutex };
-            m_has_primaries.wait(lock);
-            distribute();
+            if (m_has_primaries.wait_for(lock, std::chrono::seconds{1}) == std::cv_status::no_timeout) {
+                distribute();
+            }
         }
     });
 }
@@ -42,23 +58,36 @@ auto ParticleDistributor::pre_conditions() -> void {
     std::random_shuffle(m_primaries.begin(), m_primaries.end());
 }
 
-auto ParticleDistributor::distribute() -> void
+auto ParticleDistributor::distribute(const bool force) -> void
 {
     std::cout << "Distributing\n"<< std::flush;
     std::scoped_lock<std::mutex> lock { m_primary_mutex };
     pre_conditions();
-    std::shared_ptr<Cluster> current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
-    m_cluster_rule->update_cluster(current_cluster);
+    if (m_current_cluster == nullptr) {
+        m_current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
+        m_cluster_rule->update_cluster(m_current_cluster);
+    }
+
     for (auto& primary: m_primaries) {
         if (m_cluster_rule->result(primary) == ClusterRule::Result::NewCluster) {
-            m_runner->register_instance(current_cluster->save());
-            current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
-            m_cluster_rule->update_cluster(current_cluster);
+            m_runner->register_instance(m_current_cluster->save());
+            m_current_cluster.reset();
+            m_current_cluster = std::make_shared<Cluster>(m_scorer, m_directory, m_config_file);
+            m_cluster_rule->update_cluster(m_current_cluster);
         }
-        current_cluster->add(primary);
+        m_current_cluster->add(primary);
     }
     m_primaries.clear();
-    m_runner->register_instance(current_cluster->save());
+    if (m_current_cluster->number() == 0) {
+        m_current_cluster.reset();
+        m_current_cluster = nullptr;
+        m_cluster_rule->update_cluster(m_current_cluster);
+    } else if (force) {
+        m_runner->register_instance(m_current_cluster->save());
+        m_current_cluster.reset();
+        m_current_cluster = nullptr;
+        m_cluster_rule->update_cluster(m_current_cluster);
+    }
 }
 
 auto ParticleDistributor::collect(const std::string& secondaries) -> void {
@@ -146,6 +175,7 @@ auto ParticleDistributor::parse(const std::string& secondaries) -> void {
             primary.time.global = std::stod(field);
         }
         if (m_scorer->score(primary) > m_scorer->limit()) {
+            m_queued_energy += m_scorer->score(primary);
             m_primaries.push_back(primary);
         }
     }

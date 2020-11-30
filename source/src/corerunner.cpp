@@ -47,10 +47,12 @@ auto CoreRunner::register_instance(const std::string& name) -> void
     m_total++;
     std::scoped_lock<std::mutex, std::mutex> lock { m_active_mutex, m_queued_mutex };
     m_locked = true;
+    write_data_point();
     if (m_active.size() < m_max_threads) {
         run(name);
     } else {
         m_queued.push(name);
+        m_n_queued++;
         std::cout << "Holding Event '" << name << "' (" << m_queued.size() << " in queue)\n"
                   << std::flush;
     }
@@ -58,23 +60,26 @@ auto CoreRunner::register_instance(const std::string& name) -> void
 }
 
 void CoreRunner::write_data_point() {
+    auto time = std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now() - m_start).count();
     m_data_file
+            <<std::to_string(time)<<','
             <<m_running<<','
             <<m_finished<<','
             <<m_failed<<','
             <<m_total<<','
-            <<m_queued.size()<<'\n'<<std::flush;
+            <<m_n_queued<<'\n'<<std::flush;
 }
 
 auto CoreRunner::run() -> int
 {
-    while (!m_active.empty() || !m_queued.empty() || (m_running > 0)) {
+    while (m_run) {
         if (!m_locked) {
             m_locked = true;
             std::scoped_lock<std::mutex> lock { m_active_mutex };
             std::vector<std::size_t> remove {};
             for (std::size_t i { 0 }; i < m_active.size(); i++) {
                 if (m_active[i].wait_for(std::chrono::microseconds(10)) == std::future_status::ready) {
+                    m_active[i].get();
                     remove.push_back(i);
                 }
             }
@@ -91,6 +96,7 @@ auto CoreRunner::run() -> int
             if (m_active.size() < m_max_threads) {
                 if (!m_queued.empty()) {
                     run(m_queued.front());
+                    m_n_queued--;
                     std::cout << "Getting Event '" << m_queued.front() << "' (" << m_queued.size() - 1 << " in queue)\n"
                               << std::flush;
                     m_queued.pop();
@@ -98,9 +104,17 @@ auto CoreRunner::run() -> int
             }
             m_locked = false;
         }
+        if ((!m_distributor->empty()) && (m_active.empty()) && (m_queued.empty()) && (m_running > 0)) {
+            m_distributor->distribute(true);
+        }
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-
+    for (auto& future: m_active) {
+        future.wait();
+    }
+    m_active.clear();
+    std::cout<<"All done, bye."<<std::flush;
     return 0;
 }
 
@@ -114,9 +128,10 @@ auto CoreRunner::run(const std::string& name) -> void
     root.lookupValue("data_directory", output_directory);
     output_directory += "/" + name + "/";
 
-    m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> void {
+    m_active.push_back(std::async(std::launch::async, [this, name, output_directory]() -> int {
         const auto start = std::chrono::system_clock::now();
         m_running++;
+        write_data_point();
         std::string configfile { m_directory + "/" + name };
         if (system(("./run -c " + configfile).c_str()) != 0) {
             std::ofstream log { "node.log", std::fstream::out | std::fstream::app };
@@ -128,8 +143,6 @@ auto CoreRunner::run(const std::string& name) -> void
             std::filesystem::remove(output_directory);
         } else {
             std::string secondaryfile { output_directory + "event_1/secondaries" };
-
-
 
             std::cout << "Checking for secondaries: " << secondaryfile << '\n'<< std::flush;
             if (std::filesystem::exists(secondaryfile)) {
@@ -151,6 +164,11 @@ auto CoreRunner::run(const std::string& name) -> void
              <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
         }
         m_running--;
+        write_data_point();
+        if (m_running == 0 && m_queued.size() == 0 && m_distributor->size() == 0) {
+            m_run = false;
+        }
+        return 0;
     }));
 }
 

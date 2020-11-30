@@ -40,7 +40,6 @@ else(${SHOWER_BUILD_UI})
   find_package(Geant4 REQUIRED)
 endif(${SHOWER_BUILD_UI})
 #find_package(libconfig++ REQUIRED)
-
 set(LIBCONFIG++_INCLUDE_DIRS "")
 set(LIBCONFIG++_LIBRARIES "config++")
 
@@ -63,6 +62,9 @@ add_compile_options(
   -Wshadow
   -Werror
   -O3)
+
+
+set(LIBCONFIG++_LIBRARIES "config++")
 
 include(cmake/files.cmake)
 
