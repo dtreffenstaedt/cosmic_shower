@@ -1,5 +1,7 @@
 #include "actions/primarygeneratoraction.h"
 
+#include "recorder.h"
+
 #include <G4Event.hh>
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleGun.hh>
@@ -8,7 +10,7 @@
 #include <G4UnitsTable.hh>
 
 namespace Shower {
-PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configuration>& configuration)
+PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Recorder>& recorder, const std::shared_ptr<Configuration>& configuration)
     : m_atmosphere_height { configuration->get_atmosphere_height() }
     , m_primaries { configuration->get_primaries() }
     , m_offset_top { 0, 0, m_atmosphere_height * 0.5 }
@@ -35,6 +37,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const std::shared_ptr<Configurati
         gun->SetParticleMomentumDirection(G4ThreeVector(primary.momentum.x, primary.momentum.y, primary.momentum.z));
         gun->SetParticleTime(primary.time.global);
         m_particle_guns.push_back(gun);
+        recorder->store_primary_energy(primary.momentum.m);
     }
 }
 

@@ -79,6 +79,13 @@ void Recorder::store_secondary(const Secondary& intensity)
     if (m_secondaries.size() > 200) {
         save_secondaries();
     }
+    m_secondary_energy += intensity.kinetic_energy;
+    m_absorbed_energy -= intensity.kinetic_energy;
+}
+
+void Recorder::store_primary_energy(const double& energy) {
+    m_primary_energy += energy;
+    m_absorbed_energy += energy;
 }
 
 void Recorder::save_secondaries() {
@@ -163,6 +170,15 @@ void Recorder::save()
     }
     if (!m_secondaries.empty()) {
         save_secondaries();
+    }
+    std::ofstream file(directory() + "/energy", std::ofstream::app);
+    if (file.is_open()) {
+        file
+                << "primary: " << m_primary_energy << '\n'
+                << "secondary: " << m_secondary_energy << '\n'
+                << "absorbed: " << m_absorbed_energy << '\n';
+
+        file.close();
     }
 }
 
@@ -251,7 +267,7 @@ auto Recorder::Bin<N>::get_y_center() const -> double
 template <size_t N>
 void Recorder::Bin<N>::store(std::ofstream& stream)
 {
-    stream << get_x_center() / meter << ',' << get_y_center() / meter << ',' << m_momentum_density << ',' << m_energy_density << ',' << std::to_string(m_n_charged) << ',' << std::to_string(m_n_uncharged) << '\n';
+    stream << get_x_center() / meter << ',' << get_y_center() / meter << ',' << m_momentum_density / MeV << ',' << m_energy_density / MeV << ',' << std::to_string(m_n_charged) << ',' << std::to_string(m_n_uncharged) << '\n';
     clear();
 }
 

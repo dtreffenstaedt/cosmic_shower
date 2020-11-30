@@ -14,9 +14,12 @@ class G4Event;
 class G4Box;
 
 namespace Shower {
+
+class Recorder;
+
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 public:
-    PrimaryGeneratorAction(const std::shared_ptr<Configuration>& configuration);
+    PrimaryGeneratorAction(const std::shared_ptr<Recorder> &recorder, const std::shared_ptr<Configuration>& configuration);
     ~PrimaryGeneratorAction() override;
 
     void GeneratePrimaries(G4Event* e) override;

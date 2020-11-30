@@ -2,7 +2,9 @@
 #define ATMOSPHERE_LAYERS_H
 
 #include <cstddef>
+#include <cstdint>
 #include <libconfig.h++>
+#include <limits>
 
 namespace Consts {
 static constexpr long double R = 8.31446261815324L;
@@ -14,9 +16,10 @@ namespace Initial {
     static constexpr long double T_0 = 273.15L + 15.0L;
     static constexpr long double kappa = 1.235L;
     static constexpr long double height = 40000.0L;
-    static constexpr size_t layers = 10;
+    static constexpr std::size_t layers = 10;
 }
-static constexpr size_t max_tries = 10;
+static constexpr std::size_t max_tries = 10;
+static constexpr long double deviation = std::numeric_limits<long double>::epsilon() * 1000.0L;
 
 static long double rho_0 = Initial::rho_0;
 static long double p_0 = Initial::p_0;

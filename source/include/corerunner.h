@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #include "particlescorer.h"
 
@@ -38,9 +39,11 @@ private:
     std::ofstream m_data_file { "node.dat" };
 
     std::queue<std::string> m_queued {};
-    std::vector<std::future<void>> m_active {};
+    std::vector<std::future<int>> m_active {};
 
     std::atomic<bool> m_locked { false };
+
+    std::atomic<bool> m_run { true };
 
     static constexpr std::size_t m_max_threads { 6 };
 
@@ -49,8 +52,12 @@ private:
 
     std::atomic<std::size_t> m_running { 0 };
     std::atomic<std::size_t> m_total { 0 };
+    std::atomic<std::size_t> m_n_queued { 0 };
     std::atomic<std::size_t> m_finished { 0 };
     std::atomic<std::size_t> m_failed { 0 };
+
+    std::chrono::system_clock::time_point m_start { std::chrono::system_clock::now() };
+    std::chrono::system_clock::time_point m_last { std::chrono::system_clock::now() };
 
     std::unique_ptr<ParticleDistributor> m_distributor { nullptr };
     std::unique_ptr<ParticleCollector> m_collector { nullptr };
