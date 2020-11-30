@@ -28,6 +28,8 @@ public:
     [[nodiscard]] auto empty() const -> bool;
     [[nodiscard]] auto size() const -> size_t;
 
+    [[nodiscard]] auto queued_energy() const -> double;
+
 private:
     [[nodiscard]] auto has_next() const -> bool;
     [[nodiscard]] auto next() -> PrimaryParticle;

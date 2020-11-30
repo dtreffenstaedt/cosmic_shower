@@ -33,6 +33,14 @@ auto ParticleDistributor::empty() const -> bool {
 auto ParticleDistributor::size() const -> size_t {
     return m_primaries.size();
 }
+auto ParticleDistributor::queued_energy() const -> double
+{
+    double total = 0.0;
+    for (auto& prim: m_primaries) {
+        total += prim.momentum.m;
+    }
+    return total;
+}
 
 auto ParticleDistributor::run() -> std::future<void> {
     return std::async(std::launch::async, [this]{
