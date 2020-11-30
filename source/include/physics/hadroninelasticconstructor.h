@@ -53,11 +53,11 @@ class HadronInelasticConstructor : public G4VPhysicsConstructor {
 public:
     explicit HadronInelasticConstructor(G4int verbose = 1);
     explicit HadronInelasticConstructor(const G4String& name, G4bool quasiElastic = false);
-    virtual ~HadronInelasticConstructor();
+    ~HadronInelasticConstructor() override;
 
 public:
-    virtual void ConstructParticle();
-    virtual void ConstructProcess();
+    void ConstructParticle() override;
+    void ConstructProcess() override;
 
 private:
     void CreateModels();
