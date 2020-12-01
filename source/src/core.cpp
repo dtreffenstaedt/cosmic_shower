@@ -50,7 +50,6 @@ Core::Core(int argc, char* argv[])
 
 Core::~Core()
 {
-    m_recorder->save();
     delete m_run_manager;
 
 #ifdef SHOWER_BUILD_UI
