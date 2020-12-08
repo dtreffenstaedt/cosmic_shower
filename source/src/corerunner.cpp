@@ -67,7 +67,8 @@ void CoreRunner::write_data_point() {
             <<m_finished<<','
             <<m_failed<<','
             <<m_total<<','
-            <<m_n_queued<<'\n'<<std::flush;
+            <<m_n_queued<<','
+            <<m_absorbed<<'\n'<<std::flush;
 }
 
 auto CoreRunner::run() -> int
@@ -162,6 +163,25 @@ auto CoreRunner::run(const std::string& name) -> void
             out<<"start: "<<std::put_time(std::localtime(&start_t), "%F %T")
               <<"\nend: "<<std::put_time(std::localtime(&end_t), "%F %T")
              <<"\nduratiton: "<<std::chrono::duration_cast<std::chrono::minutes>(end - start).count()<<'\n';
+
+            std::string energy_file { output_directory + "event_1/energy" };
+
+            if (std::filesystem::exists(energy_file)) {
+                std::ifstream energy_stream { energy_file };
+                std::string line {};
+                // +++ skip first two lines
+                std::getline(energy_stream, line);
+                std::getline(energy_stream, line);
+                line.clear();
+                // --- skip first two lines
+                std::getline(energy_stream, line);
+                line.erase(line.begin(), line.begin() + 9);
+
+                m_absorbed += std::stod(line);
+
+            } else {
+                std::cout << "couldn't find energy file.\n"<< std::flush;
+            }
         }
         m_running--;
         write_data_point();

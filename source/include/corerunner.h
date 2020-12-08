@@ -55,6 +55,7 @@ private:
     std::atomic<std::size_t> m_n_queued { 0 };
     std::atomic<std::size_t> m_finished { 0 };
     std::atomic<std::size_t> m_failed { 0 };
+    double m_absorbed { 0.0 };
 
     std::chrono::system_clock::time_point m_start { std::chrono::system_clock::now() };
     std::chrono::system_clock::time_point m_last { std::chrono::system_clock::now() };
