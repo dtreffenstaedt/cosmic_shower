@@ -48,8 +48,8 @@ set(Geant4_CXX_FLAGS_DEBUG "")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_compile_options(
-  -Weverything
   -Wno-c++98-compat
   -Wno-c++98-compat-bind-to-temporary-copy
   -Wno-padded
@@ -61,7 +61,8 @@ add_compile_options(
   -Wpedantic
   -Wshadow
   -Werror
-  -O3)
+  -O3
+  )
 
 
 set(LIBCONFIG++_LIBRARIES "config++")

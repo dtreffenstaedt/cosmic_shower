@@ -67,6 +67,11 @@ primary = (
             magnitude = 500000.0;
         };
 
+        time :
+        {
+            global = 0.0;
+        };
+
         n_particles = 1;
 
         particle = 2212;
@@ -82,7 +87,7 @@ primary_event_limit = 100.0;
 # cut_range is the production cut in m
 # cut_energy is the production cut in MeV.
 cuts = {
-    range = 10.0;
+    range = 2.0;
     energy = 0.5;
 };
 # list of secondary particles to detect, use PDG codes.
