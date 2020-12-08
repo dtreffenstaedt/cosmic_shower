@@ -4,6 +4,9 @@
 #include <G4NeutrinoE.hh>
 #include <G4NeutrinoMu.hh>
 #include <G4NeutrinoTau.hh>
+#include <G4AntiNeutrinoE.hh>
+#include <G4AntiNeutrinoMu.hh>
+#include <G4AntiNeutrinoTau.hh>
 
 #include "recorder.h"
 #include "cancelcriterion.h"
@@ -19,9 +22,12 @@ auto StackingAction::ClassifyNewTrack(const G4Track* track) -> G4ClassificationO
     const auto* p = track->GetParticleDefinition();
 
     if (
-            (p == G4NeutrinoE::NeutrinoE()) ||
-            (p == G4NeutrinoMu::NeutrinoMu()) ||
-            (p == G4NeutrinoTau::NeutrinoTau())
+            (p == G4NeutrinoE::NeutrinoE())
+            || (p == G4NeutrinoMu::NeutrinoMu())
+            || (p == G4NeutrinoTau::NeutrinoTau())
+            || (p == G4AntiNeutrinoE::AntiNeutrinoE())
+            || (p == G4AntiNeutrinoMu::AntiNeutrinoMu())
+            || (p == G4AntiNeutrinoTau::AntiNeutrinoTau())
             ) {
         return fKill;
     }
