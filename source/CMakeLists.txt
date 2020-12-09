@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(cosmic_shower)
 
+set(SHOWER_BUILD_LAYERS OFF)
+
 set(SHOWER_BUILD_TIDY OFF)
 if(${SHOWER_BUILD_TIDY})
   set(CMAKE_CXX_CLANG_TIDY
@@ -23,17 +25,14 @@ include(cmake/version.cmake)
 
 configure_file("${PROJECT_CONFIG_DIR}/global.h.in"
                "${PROJECT_INCLUDE_DIR}/global.h")
-configure_file("${PROJECT_CONFIG_DIR}/shower.cfg.in"
+configure_file("${PROJECT_CONFIG_DIR}/shower.cfg"
                "${PROJECT_BINARY_DIR}/shower.cfg")
-configure_file("${PROJECT_CONFIG_DIR}/init_vis.mac.in"
-               "${PROJECT_BINARY_DIR}/init_vis.mac")
-configure_file("${PROJECT_CONFIG_DIR}/vis.mac.in"
-               "${PROJECT_BINARY_DIR}/vis.mac")
-configure_file("${PROJECT_CONFIG_DIR}/plot.plt.in"
-               "${PROJECT_BINARY_DIR}/plot.plt")
-configure_file("${PROJECT_CONFIG_DIR}/mem.plt.in"
-               "${PROJECT_BINARY_DIR}/mem.plt")
-configure_file("${PROJECT_CONFIG_DIR}/run.in" "${PROJECT_BINARY_DIR}/run")
+configure_file("${PROJECT_CONFIG_DIR}/run"
+                "${PROJECT_BINARY_DIR}/run")
+configure_file("${PROJECT_CONFIG_DIR}/start"
+                "${PROJECT_BINARY_DIR}/start")
+configure_file("${PROJECT_CONFIG_DIR}/rundata.plt"
+                "${PROJECT_BINARY_DIR}/rundata.plt")
 if(${SHOWER_BUILD_UI})
   find_package(Geant4 REQUIRED ui_all vis_all)
 else(${SHOWER_BUILD_UI})
@@ -87,8 +86,8 @@ target_link_libraries(node ${LIBCONFIG++_LIBRARIES} pthread)
 
 #add_executable(vis ${VIS_SOURCE_FILES} ${VIS_HEADER_FILES})
 #target_link_libraries(vis ${LIBCONFIG++_LIBRARIES} gd)
-
+if (${SHOWER_BUILD_LAYERS})
 add_executable(atmosphere_layers ${ATMOS_SOURCE_FILES} ${ATMOS_HEADER_FILES})
 target_link_libraries(atmosphere_layers ${LIBCONFIG++_LIBRARIES})
-
+endif (${SHOWER_BUILD_LAYERS})
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
