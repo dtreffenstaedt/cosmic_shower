@@ -1,8 +1,8 @@
 #ifndef cosmic_shower_GLOBAL_H
 #define cosmic_shower_GLOBAL_H
 
-/* #undef SHOWER_BUILD_UI */
-/* #undef SHOWER_BENCHMARK */
+#define SHOWER_BUILD_VISUALISATION
+
 
 #include <G4SystemOfUnits.hh>
 #include <exception>

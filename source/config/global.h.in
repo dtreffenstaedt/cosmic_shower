@@ -1,8 +1,8 @@
 #ifndef @PROJECT_NAME@_GLOBAL_H
 #define @PROJECT_NAME@_GLOBAL_H
 
-#cmakedefine SHOWER_BUILD_UI
-#cmakedefine SHOWER_BENCHMARK
+#cmakedefine SHOWER_BUILD_VISUALISATION
+
 
 #include <G4SystemOfUnits.hh>
 #include <exception>

@@ -14,6 +14,7 @@ set(SIM_SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/recorder.cpp"
     "${PROJECT_SOURCE_DIR}/cancelcriterion.cpp"
     "${PROJECT_SOURCE_DIR}/core.cpp"
+    "${PROJECT_SOURCE_DIR}/visualisation.cpp"
     "${PROJECT_SOURCE_DIR}/physics/physicslist.cpp"
     "${PROJECT_SOURCE_DIR}/physics/particlekiller.cpp"
     "${PROJECT_SOURCE_DIR}/physics/decayconstructor.cpp"
@@ -21,7 +22,8 @@ set(SIM_SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/physics/hadroninelasticconstructor.cpp"
     "${PROJECT_SOURCE_DIR}/physics/hadronelasticconstructor.cpp"
     "${PROJECT_SOURCE_DIR}/detector/sensitivedetector.cpp"
-    "${PROJECT_SOURCE_DIR}/detector/detailedsensitivedetector.cpp")
+    "${PROJECT_SOURCE_DIR}/detector/detailedsensitivedetector.cpp"
+    )
 set(SIM_HEADER_FILES
     "${SHARED_HEADER_FILES}"
     "${PROJECT_INCLUDE_DIR}/detector/detectorconstruction.h"
@@ -34,6 +36,7 @@ set(SIM_HEADER_FILES
     "${PROJECT_INCLUDE_DIR}/recorder.h"
     "${PROJECT_INCLUDE_DIR}/cancelcriterion.h"
     "${PROJECT_INCLUDE_DIR}/core.h"
+    "${PROJECT_INCLUDE_DIR}/visualisation.h"
     "${PROJECT_INCLUDE_DIR}/physics/physicslist.h"
     "${PROJECT_INCLUDE_DIR}/physics/particlekiller.h"
     "${PROJECT_INCLUDE_DIR}/physics/decayconstructor.h"
