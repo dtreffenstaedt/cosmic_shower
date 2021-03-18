@@ -1,0 +1,13 @@
+diff --git a/source/processes/hadronic/util/src/G4HadronicParameters.cc b/source/processes/hadronic/util/src/G4HadronicParameters.cc
+index 883235335..7a3b00aff 100644
+--- a/source/processes/hadronic/util/src/G4HadronicParameters.cc
++++ b/source/processes/hadronic/util/src/G4HadronicParameters.cc
+@@ -60,7 +60,7 @@ G4HadronicParameters::~G4HadronicParameters() {}
+ 
+ 
+ G4HadronicParameters::G4HadronicParameters() {
+-  fMaxEnergy = 100.0*CLHEP::TeV;
++  fMaxEnergy = 1.0e20*CLHEP::eV;
+   fMinEnergyTransitionFTF_Cascade = 3.0*CLHEP::GeV;
+   fMaxEnergyTransitionFTF_Cascade = 6.0*CLHEP::GeV;
+   fMinEnergyTransitionQGS_FTF = 12.0*CLHEP::GeV;
