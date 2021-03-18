@@ -1,14 +1,13 @@
-FROM fedora:30
+FROM debian:bullseye
 
-RUN dnf install gcc g++ make cmake wget expat-devel gdb qt5-devel libX11-devel freeglut-devel libXmu-devel libconfig libconfig-devel -y
+RUN apt update && apt install -y clang make cmake qtbase5-dev libconfig++-dev wget libexpat1-dev git
 
-RUN mkdir -p /builddir/geant4/
+RUN mkdir -p /builddir/cosmic_shower/build && cd /builddir/cosmic_shower && git clone https://github.com/dtreffenstaedt/cosmic_shower.git
 
-RUN cd /builddir/geant4 && wget https://github.com/Geant4/geant4/archive/v10.6.1.tar.gz && tar xvzf v10.6.1.tar.gz && rm v10.6.1.tar.gz && mkdir /builddir/geant4/build
+RUN mkdir -p /builddir/geant4/build && cd /builddir/geant4 && git clone https://github.com/Geant4/geant4.git && cd geant4 && git checkout v10.6.1 && git apply /builddir/cosmic_shower/cosmic_shower/changes/geant4-patch
 
-RUN cd /builddir/geant4/build && cmake -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON ../geant4-10.6.1 && cmake -DGEANT4_INSTALL_DATA=ON . && make -j4 && make install
+RUN cd /builddir/geant4/build && cmake -DGEANT4_USE_QT=OFF -DGEANT4_USE_OPENGL_X11=OFF ../geant4 && cmake -DGEANT4_INSTALL_DATA=ON . && make -j6 && make install
 
-LABEL build podman run --pod=sim --name=sim-build -it -v ./source/:/builddir/source:Z IMAGE '/builddir/source/containerbuild build'
-LABEL clean podman run --pod=sim --name=sim-clean -it -v ./source/:/builddir/source:Z IMAGE '/builddir/source/containerbuild clean'
-LABEL run podman run --pod=sim --name=sim-run -it -v ./source/:/builddir/source:Z IMAGE '/builddir/source/containerbuild run'
-LABEL shell podman run --pod=sim --name=sim-shell -it -v ./source/:/builddir/source:Z IMAGE '/bin/bash'
+RUN cd /builddir/cosmic_shower/build && cmake ../cosmic_shower/source && make -j6
+
+ENTRYPOINT ["/bin/bash"]
